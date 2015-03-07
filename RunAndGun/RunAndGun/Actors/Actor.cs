@@ -226,18 +226,18 @@ namespace RunAndGun.Actors
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            Rectangle boundingbox = this.BoundingBox();
-            Texture2D txt = new Texture2D(spriteBatch.GraphicsDevice, boundingbox.Width, boundingbox.Height);
+            //Rectangle boundingbox = this.BoundingBox();
+            //Texture2D txt = new Texture2D(spriteBatch.GraphicsDevice, boundingbox.Width, boundingbox.Height);
 
-            Color[] data = new Color[txt.Width * txt.Height];
+            //Color[] data = new Color[txt.Width * txt.Height];
 
-            for (int i = 0; i < data.Length; i++)
-            {
-                data[i].R = 255;
-            }
+            //for (int i = 0; i < data.Length; i++)
+            //{
+            //    data[i].R = 255;
+            //}
 
-            txt.SetData(data);
-            spriteBatch.Draw(txt, new Vector2(boundingbox.X - currentStage.CameraPosition.X, boundingbox.Y - currentStage.CameraPosition.Y), Color.White);            
+            //txt.SetData(data);
+            //spriteBatch.Draw(txt, new Vector2(boundingbox.X - currentStage.CameraPosition.X, boundingbox.Y - currentStage.CameraPosition.Y), Color.White);            
             
         }
 

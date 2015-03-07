@@ -46,20 +46,22 @@ namespace RunAndGun
 
         private bool bGamePaused;
         public bool GamePaused { get { return bGamePaused; } }
-        TextWriterTraceListener tr1 = new TextWriterTraceListener(System.IO.File.CreateText("Trace.txt"));
+        //TextWriterTraceListener tr1 = new TextWriterTraceListener(System.IO.File.CreateText("Trace.txt"));
 
         public Game()
         {
-            
-            Debug.Listeners.Add(tr1);
 
+            //Debug.Listeners.Add(tr1);
+            
             graphics = new GraphicsDeviceManager(this);
             
             // Non-World-Specific Game Content: Player sprite, Generic sound effects, etc.
             Content.RootDirectory = "Content";
 
             if (!this.LaunchParameters.ContainsKey("WindowedMode"))
-                graphics.IsFullScreen = true;
+            {
+                //graphics.IsFullScreen = true;
+            }
 
             graphics.PreferredBackBufferWidth = 768;
             graphics.PreferredBackBufferHeight = 720;            
@@ -144,7 +146,7 @@ namespace RunAndGun
                             
                         foreach (Player player in players)
                             player.Initialize(Content,
-                                            new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + ((player.ID - 1) * currentStage.iTileWidth) + 500, GraphicsDevice.Viewport.TitleSafeArea.Y),
+                                            new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + ((player.ID - 1) * currentStage.iTileWidth) , GraphicsDevice.Viewport.TitleSafeArea.Y),
                                             currentStage);
 
                         if (currentGame == GameType.Contra)
@@ -153,7 +155,7 @@ namespace RunAndGun
                         }
                         else
                         {
-                            currentStage.Initialize(this, worldContent, "Castlevania1-1-2", 16, 16);
+                            currentStage.Initialize(this, worldContent, "Castlevania1-1-1", 16, 16);
                         }
                         currentStage.Players = players;
 

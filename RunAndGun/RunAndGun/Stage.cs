@@ -127,6 +127,8 @@ namespace RunAndGun
             worldContent = worldcontent;
 
             TiledSharp.TmxMap tmx;
+            string appDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
             if (game.currentGame == Game.GameType.Contra)
             {
                 tilesource.Add(worldcontent.Load<Texture2D>("StageData/Level1Tileset"));
@@ -137,9 +139,23 @@ namespace RunAndGun
 
                 gameplayMusic = worldcontent.Load<Song>("Music/Contra - Jungle Theme");
                 fanfare = worldcontent.Load<Song>("Music/fanfare");
-                tmx = new TiledSharp.TmxMap("Content\\StageData\\" + stageid + ".tmx");
-                iScreenTileWidth = 8;
+
                 PlayMusic();
+
+                string tmxFile =  appDirectory + "\\LevelMaps\\" + stageid + ".tmx";
+                
+                if (File.Exists(tmxFile))
+                {
+                    Trace.TraceInformation("Tmx file located: {0}", tmxFile);
+                    tmx = new TiledSharp.TmxMap(tmxFile);
+                    Trace.TraceInformation("Tmx file loaded.");
+                }
+                else
+                {
+                    throw new FileNotFoundException(string.Format("Cannot load file: {0}", tmxFile));
+                }
+                iScreenTileWidth = 8;
+                
             }
             else
             {
@@ -151,7 +167,7 @@ namespace RunAndGun
                             gameplayMusic = worldcontent.Load<Song>("Music/Level1VampireKiller");
                             PlayMusic();
                             tilesource.Add(worldcontent.Load<Texture2D>("StageData/Level1A"));
-                            tmx = new TiledSharp.TmxMap("ContraVania\\StageData\\" + stageid + ".tmx");
+                            tmx = new TiledSharp.TmxMap(appDirectory + "\\LevelMaps\\" + stageid + ".tmx");
                             iScreenTileWidth = 16;
 
                             Stage nextSection = new Stage(worldcontent);
@@ -163,7 +179,7 @@ namespace RunAndGun
                     case "Castlevania1-1-2":
                         {
                             tilesource.Add(worldcontent.Load<Texture2D>("StageData/Level1B"));
-                            tmx = new TiledSharp.TmxMap("ContraVania\\StageData\\" + stageid + ".tmx");
+                            tmx = new TiledSharp.TmxMap(appDirectory + "\\LevelMaps\\" + stageid + ".tmx");
                             iScreenTileWidth = 16;
                             break;
                         }
