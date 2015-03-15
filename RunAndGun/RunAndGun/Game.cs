@@ -278,7 +278,7 @@ namespace RunAndGun
                     }
 
                     
-                    spriteBatch.DrawString(font, players[0].IsOnStairs.ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y ), Color.Red);
+                    //spriteBatch.DrawString(font, players[0].IsOnStairs.ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y ), Color.Red);
                     
                     
                     break;

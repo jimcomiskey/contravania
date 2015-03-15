@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("RunAndGun")]
-[assembly: AssemblyProduct("RunAndGun")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyCopyright("Copyright ©  2013")]
+[assembly: AssemblyTitle("Contravania")]
+[assembly: AssemblyProduct("Contravania")]
+[assembly: AssemblyDescription("Contra vs Castlevania Mashup Created for fun, definitely not profit.")]
+[assembly: AssemblyCompany("None")]
+[assembly: AssemblyCopyright("Contra and Castlevania both created by Konami")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
