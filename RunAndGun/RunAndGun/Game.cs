@@ -139,11 +139,17 @@ namespace RunAndGun
                         for (int iPlayerID = 1; iPlayerID <= titleScreen.NumPlayers; iPlayerID ++)
                             players.Add(new Player(iPlayerID, this));
                         //players.Add(new Player(2, this));
-                            
+
+                        int playerStartingPosition = 0;
+                        if (this.LaunchParameters.ContainsKey("PlayerStartingPosition"))
+                        {
+                            playerStartingPosition = int.Parse(this.LaunchParameters["PlayerStartingPosition"]);
+                        }
+
                         foreach (Player player in players)
                             player.Initialize(Content,
                                             new Vector2(
-                                            GraphicsDevice.Viewport.TitleSafeArea.X + ((player.ID - 1) * currentStage.iTileWidth) + int.Parse(this.LaunchParameters["PlayerStartingPosition"]), 
+                                            GraphicsDevice.Viewport.TitleSafeArea.X + ((player.ID - 1) * currentStage.iTileWidth) + playerStartingPosition, 
                                             GraphicsDevice.Viewport.TitleSafeArea.Y),
                                             currentStage);
 
