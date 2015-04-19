@@ -20,9 +20,9 @@ namespace RunAndGun
         public enum GameType { ContraVania = 1, Contra = 2}
 
         public enum GameState { TitleScreen, Initializing, Playing };
-        public GameState CurrentGameState = GameState.Initializing;
+        public GameState CurrentGameState;
 
-        public GameType currentGame = GameType.ContraVania;
+        public GameType currentGame;
         
         GraphicsDeviceManager graphics;
         ContentManager worldContent;
@@ -46,30 +46,52 @@ namespace RunAndGun
 
         public Game()
         {
-
-            //Debug.Listeners.Add(tr1);
-            
+            CurrentGameState = GameState.TitleScreen;
+                        
             graphics = new GraphicsDeviceManager(this);
             
             // Non-World-Specific Game Content: Player sprite, Generic sound effects, etc.
             Content.RootDirectory = "Content";
 
-            if (!this.LaunchParameters.ContainsKey("WindowedMode"))
-            {
-                //graphics.IsFullScreen = true;
-            }
-
             graphics.PreferredBackBufferWidth = 768;
-            graphics.PreferredBackBufferHeight = 720;            
-            this.Window.AllowUserResizing = true;
+            graphics.PreferredBackBufferHeight = 720;
+            Window.AllowUserResizing = true;
 
         }
 
         protected override void Initialize()
         {
-            bGamePaused = false;            
+            bGamePaused = false;
+
+            InitializeGameLaunchParameters();
 
             base.Initialize();
+        }
+
+        private void InitializeGameLaunchParameters()
+        {
+            if (this.LaunchParameters.ContainsKey("StartupGame"))
+            {
+                string startupGame = this.LaunchParameters["StartupGame"];
+                if (startupGame == "Contra")
+                {
+                    currentGame = GameType.Contra;
+                }
+                else if (startupGame == "ContraVania")
+                {
+                    currentGame = GameType.ContraVania;
+                }
+                else
+                {
+                    throw new System.Exception(string.Format("Unexpected StartupGame Launch Parameter: {0}", startupGame));
+                }
+                CurrentGameState = GameState.Initializing;
+            }
+
+            if (!this.LaunchParameters.ContainsKey("WindowedMode"))
+            {
+                //graphics.IsFullScreen = true;
+            }
         }
 
         protected override void LoadContent()
