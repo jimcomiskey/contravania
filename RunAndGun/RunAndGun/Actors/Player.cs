@@ -469,7 +469,7 @@ namespace RunAndGun.Actors
                 }
                 #endregion
 
-                #region Initiate Move Towards Stairs if not on stairs and stairs are nearby                
+                #region Initiate or Continue Move Towards Stairs if not on stairs and stairs are nearby
                 if (this.IsOnGround && !this.IsOnStairs && 
                     (this.CurrentInputState.DirectionUp || this.MovingTowardsStairs))
                 {
@@ -509,11 +509,9 @@ namespace RunAndGun.Actors
                 }
                 #endregion
 
-                
-
                 #region Begin Jump/Drop Down
                 // Jump/Drop Down
-                if (!this.PreviousInputState.JumpButtonPressed && this.CurrentInputState.JumpButtonPressed && this.IsOnGround)
+                if (!this.PreviousInputState.JumpButtonPressed && this.CurrentInputState.JumpButtonPressed && this.IsOnGround && !this.MovingUpStairs && !this.MovingDownStairs && !this.MovingTowardsStairs)
                 {
                     // cancel prone status if it's activated.
                     this.IsProne = false;
