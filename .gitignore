@@ -15,6 +15,7 @@ build/
 bld/
 [Bb]in/
 [Oo]bj/
+[Dd]eploy/
 
 # Roslyn cache directories
 *.ide/
@@ -188,3 +189,5 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+*.deploy
+RunAndGun/RunAndGun/Publish Notes.txt
