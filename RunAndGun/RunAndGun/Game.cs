@@ -1,11 +1,7 @@
-using System;
-using System.Diagnostics;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
@@ -24,7 +20,7 @@ namespace RunAndGun
         public enum GameType { ContraVania = 1, Contra = 2}
 
         public enum GameState { TitleScreen, Initializing, Playing };
-        public GameState CurrentGameState = GameState.TitleScreen;
+        public GameState CurrentGameState = GameState.Initializing;
 
         public GameType currentGame = GameType.ContraVania;
         
@@ -146,7 +142,9 @@ namespace RunAndGun
                             
                         foreach (Player player in players)
                             player.Initialize(Content,
-                                            new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + ((player.ID - 1) * currentStage.iTileWidth) , GraphicsDevice.Viewport.TitleSafeArea.Y),
+                                            new Vector2(
+                                            GraphicsDevice.Viewport.TitleSafeArea.X + ((player.ID - 1) * currentStage.iTileWidth) + int.Parse(this.LaunchParameters["PlayerStartingPosition"]), 
+                                            GraphicsDevice.Viewport.TitleSafeArea.Y),
                                             currentStage);
 
                         if (currentGame == GameType.Contra)
@@ -155,7 +153,7 @@ namespace RunAndGun
                         }
                         else
                         {
-                            currentStage.Initialize(this, worldContent, "Castlevania1-1-1", 16, 16);
+                            currentStage.Initialize(this, worldContent, "Castlevania1-1-2", 16, 16);
                         }
                         currentStage.Players = players;
 
@@ -277,11 +275,16 @@ namespace RunAndGun
                         currentStage.EnemyProjectiles[i].Draw(spriteBatch, currentStage.CameraPosition);
                     }
 
-                    
-                    //spriteBatch.DrawString(font, players[0].IsOnStairs.ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y ), Color.Red);
-                    
-                    
-                    break;
+
+                        //spriteBatch.DrawString(font, players[0].IsOnStairs.ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y ), Color.Red);
+                        spriteBatch.DrawString(font, players[0].WorldPosition.X.ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y), Color.Red);
+                        spriteBatch.DrawString(font, players[0].WorldPosition.Y.ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y+20), Color.Red);
+                        spriteBatch.DrawString(font, players[0].MovingUpStairs.ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y +40), Color.Red);
+                        spriteBatch.DrawString(font, players[0].IsOnStairsRight.ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + 60), Color.Red);
+
+
+
+                        break;
                     } // GameState.Playing
             }
 

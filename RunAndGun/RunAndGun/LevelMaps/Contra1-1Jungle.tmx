@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="108" height="8" tilewidth="32" tileheight="32" backgroundcolor="#ffffff">
  <tileset firstgid="1" name="Level1Tileset" tilewidth="32" tileheight="32">
-  <image source="../../../../../../RunAndGunContent/StageData/Level1Tileset.png" trans="ffffff" width="192" height="224"/>
+  <image source="../../RunAndGunContent/StageData/Level1Tileset.png" trans="ffffff" width="192" height="224"/>
   <terraintypes>
    <terrain name="Platform" tile="-1"/>
   </terraintypes>
@@ -13,7 +13,7 @@
   <tile id="16" terrain="0,0,,"/>
  </tileset>
  <tileset firstgid="43" name="CollisionTiles" tilewidth="32" tileheight="32">
-  <image source="../../../../../../RunAndGunContent/StageData/CollisionTiles.png" trans="ffffff" width="160" height="32"/>
+  <image source="../../RunAndGunContent/StageData/CollisionTiles.png" trans="ffffff" width="160" height="32"/>
   <tile id="0">
    <properties>
     <property name="Collision" value="Platform"/>
@@ -42,10 +42,10 @@
   </tile>
  </tileset>
  <tileset firstgid="48" name="Sniper" tilewidth="32" tileheight="48">
-  <image source="../../../../../../RunAndGunContent/Sprites/Enemies/Sniper.png" trans="ffffff" width="32" height="48"/>
+  <image source="../../RunAndGunContent/Sprites/Enemies/Sniper.png" trans="ffffff" width="32" height="48"/>
  </tileset>
  <tileset firstgid="49" name="Boss1Panel" tilewidth="26" tileheight="32">
-  <image source="../../../../../../RunAndGunContent/Sprites/Bosses/boss1panel.png" trans="005500" width="78" height="32"/>
+  <image source="../../RunAndGunContent/Sprites/Bosses/boss1panel.png" trans="005500" width="78" height="32"/>
   <tile id="0">
    <properties>
     <property name="Type" value="Level1BossPanel"/>
@@ -53,13 +53,13 @@
   </tile>
  </tileset>
  <tileset firstgid="52" name="boss1backlayer" tilewidth="128" tileheight="192">
-  <image source="../../../../../../RunAndGunContent/Sprites/Bosses/boss1backlayer.png" width="128" height="192"/>
+  <image source="../../RunAndGunContent/Sprites/Bosses/boss1backlayer.png" width="128" height="192"/>
  </tileset>
  <tileset firstgid="53" name="boss1frontlayer" tilewidth="128" tileheight="192">
-  <image source="../../../../../../RunAndGunContent/Sprites/Bosses/boss1frontlayer.png" width="128" height="192"/>
+  <image source="../../RunAndGunContent/Sprites/Bosses/boss1frontlayer.png" width="128" height="192"/>
  </tileset>
  <tileset firstgid="54" name="boss1paneldestroyed" tilewidth="32" tileheight="32">
-  <image source="../../../../../../RunAndGunContent/Sprites/Bosses/boss1paneldestroyed.png" trans="ff007f" width="128" height="64"/>
+  <image source="../../RunAndGunContent/Sprites/Bosses/boss1paneldestroyed.png" trans="ff007f" width="128" height="64"/>
  </tileset>
  <layer name="Background" width="108" height="8">
   <data encoding="csv">

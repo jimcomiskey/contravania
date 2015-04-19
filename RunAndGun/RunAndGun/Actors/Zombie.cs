@@ -71,10 +71,11 @@ namespace RunAndGun.Actors
                         if (stageTile.IsPlatform() && y == bottomTile)
                         {
 
-                            List<Rectangle> tileboundsList = currentStage.getTilePlatformBoundsByGridPosition(x, bottomTile);
+                            List<Platform> tileboundsList = currentStage.getTilePlatformBoundsByGridPosition(x, bottomTile);
 
-                            foreach (Rectangle tilebounds in tileboundsList)
+                            foreach (Platform platformbounds in tileboundsList)
                             {
+                                Rectangle tilebounds = platformbounds.PlatformBounds;
                                 if (proposedbounds.Bottom >= tilebounds.Top && proposedbounds.Intersects(tilebounds))
                                 {
                                     bWouldBeOnGround = true;

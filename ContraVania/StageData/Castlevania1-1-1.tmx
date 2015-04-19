@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="48" height="11" tilewidth="16" tileheight="16">
  <tileset firstgid="1" name="Level1A" tilewidth="16" tileheight="16">
-  <image source="Level1A.png" trans="ffffff" width="768" height="184"/>
+  <image source="..\..\..\Contravania\StageData\Level1A.png" trans="ffffff" width="768" height="184"/>
   <tile id="427">
    <properties>
     <property name="Portal" value="Castlevania1-1-2"/>
@@ -14,7 +14,7 @@
   </tile>
  </tileset>
  <tileset firstgid="529" name="collisiontiles" tilewidth="16" tileheight="16">
-  <image source="collisiontiles.png" trans="ff007f" width="80" height="16"/>
+  <image source="..\..\..\Contravania\StageData\collisiontiles.png" trans="ff007f" width="80" height="16"/>
   <tile id="0">
    <properties>
     <property name="Collision" value="Impassable"/>

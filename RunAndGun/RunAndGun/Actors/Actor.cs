@@ -155,9 +155,10 @@ namespace RunAndGun.Actors
 
                         else if (stageTile.IsPlatform() && y == bottomTile)
                         {
-                            List<Rectangle> tileboundsList = currentStage.getTilePlatformBoundsByGridPosition(x, bottomTile);
-                            foreach (Rectangle tilebounds in tileboundsList)
+                            List<Platform> tileboundsList = currentStage.getTilePlatformBoundsByGridPosition(x, bottomTile);
+                            foreach (Platform platformbounds in tileboundsList)
                             {
+                                Rectangle tilebounds = platformbounds.PlatformBounds;
                                 Vector2 depth = RectangleExtensions.GetIntersectionDepth(actorbounds, tilebounds);
 
 
@@ -226,19 +227,20 @@ namespace RunAndGun.Actors
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            //Rectangle boundingbox = this.BoundingBox();
-            //Texture2D txt = new Texture2D(spriteBatch.GraphicsDevice, boundingbox.Width, boundingbox.Height);
 
-            //Color[] data = new Color[txt.Width * txt.Height];
+            Rectangle boundingbox = this.BoundingBox();
+            Texture2D txt = new Texture2D(spriteBatch.GraphicsDevice, boundingbox.Width, boundingbox.Height);
 
-            //for (int i = 0; i < data.Length; i++)
-            //{
-            //    data[i].R = 255;
-            //}
+            Color[] data = new Color[txt.Width * txt.Height];
 
-            //txt.SetData(data);
-            //spriteBatch.Draw(txt, new Vector2(boundingbox.X - currentStage.CameraPosition.X, boundingbox.Y - currentStage.CameraPosition.Y), Color.White);            
-            
+            for (int i = 0; i < data.Length; i++)
+            {
+                data[i].R = 255;
+            }
+
+            txt.SetData(data);
+            spriteBatch.Draw(txt, new Vector2(boundingbox.X - currentStage.CameraPosition.X, boundingbox.Y - currentStage.CameraPosition.Y), Color.White);
+
         }
 
 

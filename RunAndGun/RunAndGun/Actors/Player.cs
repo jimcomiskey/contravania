@@ -86,6 +86,9 @@ namespace RunAndGun.Actors
         private const float StairHeight = 8f; // to the player, stairs are 8 pixels in height.
         public bool SecuringStairStep;
 
+        public bool MovingTowardsStairs;
+        public int MovingTowardsStairsPosition;                
+
         public override int Width
         {
             get { return idle.FrameWidth; }
@@ -226,7 +229,7 @@ namespace RunAndGun.Actors
         // Update the player animation
         public void Update(GameTime gameTime)
         {
-            GetInput();
+            this.GetInput();
 
             if (!PreviousInputState.StartButtonPressed && CurrentInputState.StartButtonPressed)
                 game.TogglePause();                
@@ -236,34 +239,34 @@ namespace RunAndGun.Actors
                 if (SpawnTimeRemaining > 0)
                     SpawnTimeRemaining -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                UpdateAnimations(gameTime);
+                this.UpdateAnimations(gameTime);
 
-                Move(gameTime);
+                this.Move(gameTime);
 
-                ApplyPhysics(gameTime);
+                this.ApplyPhysics(gameTime);
 
-                if (LifeCount > 0)
+                if (this.LifeCount > 0)
                 {
                     if (IsDying && deathAnimation.Active == false)
                     {
                         // dead player's death animation has completed, re-spawn player.
-                        Spawn();
+                        this.Spawn();
                     }
 
 
-                    if (SpawnTimeRemaining > 0)
+                    if (this.SpawnTimeRemaining > 0)
                     {
-                        UpdateSpawnFlicker(gameTime);
+                        this.UpdateSpawnFlicker(gameTime);
                     }
                     else
                     {
-                        Visible = true;
+                        this.Visible = true;
                     }
                 }
                 else
                 {
                     // player is inactive.
-                    Visible = false;
+                    this.Visible = false;
                 }
             }
 
@@ -408,10 +411,11 @@ namespace RunAndGun.Actors
 
         public override void Move(GameTime gameTime)
         {
-
+            #region Set Horizontal Velocity, if Player isn't in the process of performing an automated action such as climbing stairs
             if ((!this.IsOnStairs ||
                 (this.IsOnStairs && this.standingOnStairTop())) && 
-                !this.SecuringStairStep)
+                !this.SecuringStairStep && 
+                !this.MovingTowardsStairs)
             {
                 if (this.IsDying && !this.IsOnGround)
                 {
@@ -427,12 +431,12 @@ namespace RunAndGun.Actors
                     else if (this.Velocity.X < 0)
                         this.playerDirection = Player.PlayerDirection.Left;
                 }
-
             }
+            #endregion
 
             if (!IsDying)
             {
-                // Use the Keyboard / Dpad
+                #region Walk Left or Right
                 if ((!this.IsOnStairs ||
                     (this.IsOnStairs && this.standingOnStairTop())) &&
                     !this.SecuringStairStep)
@@ -440,18 +444,18 @@ namespace RunAndGun.Actors
                     if (CurrentInputState.DirectionLeft)
                     {
                         this.Velocity.X = -MaxGroundVelocity;
-                        //this.Status = Player.PlayerStatus.Running;
                         this.playerDirection = Player.PlayerDirection.Left;
                     }
                     else if (CurrentInputState.DirectionRight)
                     {
                         this.Velocity.X = MaxGroundVelocity;
-                        //this.Status = Player.PlayerStatus.Running;
                         this.playerDirection = Player.PlayerDirection.Right;
                     }
                 
                 }
-
+                #endregion
+                
+                #region Player Ducking
                 if (!this.IsOnStairs)
                 {
                     // player only stays prone as long as he is pressing down.
@@ -463,7 +467,53 @@ namespace RunAndGun.Actors
                         this.IsProne = true;
                     }
                 }
+                #endregion
 
+                #region Initiate Move Towards Stairs if not on stairs and stairs are nearby                
+                if (this.IsOnGround && !this.IsOnStairs && 
+                    (this.CurrentInputState.DirectionUp || this.MovingTowardsStairs))
+                {
+                    // are there stairs nearby?  
+                    Vector2? moveToLocation = this.FindNearbyStairbase();
+                    
+                    if (moveToLocation.HasValue)
+                    {                        
+                        //this.MovingTowardsStairsPosition = (int)this.BoundingBox().Center.X;
+                        if (moveToLocation.Value.X == this.BoundingBox().Center.X)
+                        {
+                            // player already aligned with stairs
+                            Console.WriteLine("Player aligned with stairs");
+                            moveToLocation = null;
+                            this.Velocity.X = 0;
+                            this.MovingTowardsStairs = false;
+                        }
+                        else if (moveToLocation.Value.X < (int)this.BoundingBox().Center.X)
+                        {                            
+                            this.playerDirection = PlayerDirection.Left;
+                            this.Velocity.X = -1;
+                        }
+                        else
+                        {
+                            this.playerDirection = PlayerDirection.Right;
+                            this.Velocity.X = 1;
+                        }
+
+                        if (moveToLocation.HasValue)
+                        {
+                            this.MovingTowardsStairsPosition = (int)moveToLocation.Value.X;
+                            this.MovingTowardsStairs = true;
+                        }
+                    }
+
+                    // if yes, then what are the nearest set of stairs?
+
+                    // if the player is not already 
+                }
+                #endregion
+
+                
+
+                #region Begin Jump/Drop Down
                 // Jump/Drop Down
                 if (!this.PreviousInputState.JumpButtonPressed && this.CurrentInputState.JumpButtonPressed && this.IsOnGround)
                 {
@@ -483,7 +533,10 @@ namespace RunAndGun.Actors
                         this.JumpInProgress = true;
                     }                    
                 }
-                                
+
+                #endregion
+                
+                #region Move Up Stairs if on stairs and pressing up
                 if (this.IsOnStairs && 
                     (CurrentInputState.DirectionUp ||
                     (CurrentInputState.DirectionRight && this.IsOnStairsRight) || 
@@ -499,7 +552,9 @@ namespace RunAndGun.Actors
                         playerDirection = PlayerDirection.Right;
                     
                 }
+                #endregion
 
+                #region Move Down Stairs if on stairs and pressing down
                 if (this.IsOnStairs && 
                     (CurrentInputState.DirectionDown ||
                     (CurrentInputState.DirectionRight && this.IsOnStairsLeft) || 
@@ -513,9 +568,12 @@ namespace RunAndGun.Actors
                     else
                         playerDirection = PlayerDirection.Left;
                 }
+                #endregion
 
+                
                 if (!this.MovingDownStairs && !this.MovingUpStairs & !this.SecuringStairStep)
                 {
+                    #region Point Gun
                     if (CurrentInputState.DirectionUp && !CurrentInputState.DirectionLeft && !CurrentInputState.DirectionRight)
                         gunDirection = GunDirection.StraightUp;
                     else if (CurrentInputState.DirectionUp && !CurrentInputState.DirectionLeft && !CurrentInputState.DirectionRight && JumpInProgress)
@@ -526,11 +584,16 @@ namespace RunAndGun.Actors
                         gunDirection = GunDirection.Low;
                     else
                         gunDirection = GunDirection.Neutral;
+                    #endregion
                 }
                 else
                 {
                     gunDirection = GunDirection.Neutral;
                 }
+
+                
+
+                #region Fire gun if button pressed
 
                 if ((!PreviousInputState.WeaponButtonPressed && CurrentInputState.WeaponButtonPressed) &&
                     // firing gun (note: player cannot fire gun while underwater)
@@ -544,15 +607,41 @@ namespace RunAndGun.Actors
 
                     soundGunshot.Play();
                 }
+                #endregion
 
             }  // !IsDying
 
             
 
         }
+
+        
+
         public override void ApplyPhysics(GameTime gameTime)
         {
-            if (MovingUpStairs)
+            if (this.MovingTowardsStairs)
+            {
+                Rectangle playerbounds = this.BoundingBox();
+                if (this.playerDirection == PlayerDirection.Left && this.MovingTowardsStairsPosition > playerbounds.Left)
+                {
+                    this.WorldPosition.X += (this.MovingTowardsStairsPosition - playerbounds.Left);
+                    this.MovingTowardsStairs = false;
+                    this.MovingTowardsStairsPosition = 0;                    
+                    this.MovingUpStairs = true;
+                    this.IsOnStairsRight = true;
+                    lastStairtopHeight = this.BoundingBox().Bottom;
+                }
+                else if (this.playerDirection == PlayerDirection.Right && this.MovingTowardsStairsPosition < playerbounds.Right)
+                {
+                    this.WorldPosition.X += (this.MovingTowardsStairsPosition - playerbounds.Right);
+                    this.MovingTowardsStairs = false;
+                    this.MovingTowardsStairsPosition = 0;
+                    this.MovingUpStairs = true;
+                    this.IsOnStairsRight = true;
+                    lastStairtopHeight = this.BoundingBox().Bottom;
+                }
+            }
+            if (this.MovingUpStairs)
             {
                 if (this.IsOnStairsRight)
                 {
@@ -572,7 +661,7 @@ namespace RunAndGun.Actors
                     this.PreviousBottom = this.BoundingBox().Bottom;
                 }
             }
-            else if (MovingDownStairs)
+            else if (this.MovingDownStairs)
             {
                 if (this.BoundingBox().Bottom + 1 <= lastStairtopHeight + StairHeight)
                 {
@@ -626,6 +715,38 @@ namespace RunAndGun.Actors
 
             
         }
+        public Vector2? FindNearbyStairbase()
+        {
+            int searchRange = currentStage.iTileWidth / 2;
+
+            Rectangle playerbounds = this.BoundingBox(new Vector2(0f, 1f));
+            Rectangle playerSearchbounds = new Rectangle(playerbounds.Left - searchRange, playerbounds.Top, playerbounds.Width + searchRange, playerbounds.Height);
+            Vector2? nearestTileCenter = null;
+            Vector2? nearestTileCenterDepth = null;
+
+            int leftTile = (int)Math.Floor((float)(playerSearchbounds.Left) / currentStage.iTileWidth);
+            int rightTile = (int)Math.Ceiling(((float)(playerSearchbounds.Right) / currentStage.iTileWidth)) - 1;
+            int bottomTile = (int)Math.Ceiling(((float)playerSearchbounds.Bottom / currentStage.iTileHeight)) - 1;
+
+            for (int x = leftTile; x <= rightTile; ++x)
+            {
+                StageTile stageTile = currentStage.getStageTileByGridPosition(x, bottomTile);
+                if (stageTile.CollisionType == StageTile.TileCollisionType.StairsBottomLeft || stageTile.CollisionType == StageTile.TileCollisionType.StairsBottomRight)
+                {
+                    foreach(var platform in currentStage.getTilePlatformBoundsByGridPosition(x, bottomTile))
+                    {
+                        if (nearestTileCenter == null || Math.Abs(platform.PlatformBounds.GetIntersectionDepth(playerbounds).X) < Math.Abs(nearestTileCenterDepth.Value.X))
+                        {
+                            nearestTileCenterDepth = platform.PlatformBounds.GetIntersectionDepth(playerbounds);
+                            nearestTileCenter = new Vector2(playerbounds.X + nearestTileCenterDepth.Value.X, platform.PlatformBounds.Top);
+                        }
+                    }
+                }
+            }
+
+            return nearestTileCenter;
+        }
+
         public override void HandleCollisions(GameTime gameTime)
         {
 
@@ -650,13 +771,11 @@ namespace RunAndGun.Actors
             int topTile = (int)Math.Floor((float)playerbounds.Top / currentStage.iTileHeight);
             int bottomTile = (int)Math.Ceiling(((float)playerbounds.Bottom / currentStage.iTileHeight)) - 1;
 
-            
-            this.DebugInfo = bottomTile.ToString();
             // For each potentially colliding platform tile,
             for (int y = topTile; y <= bottomTile; ++y)
             {
                 for (int x = leftTile; x <= rightTile; ++x)
-                {   
+                {
                     StageTile stageTile = currentStage.getStageTileByGridPosition(x, y);
 
                     if (stageTile != null)
@@ -671,52 +790,18 @@ namespace RunAndGun.Actors
                                 WorldPosition = new Vector2(WorldPosition.X + depth.X, WorldPosition.Y);
                                 playerbounds = this.BoundingBox();
                             }
-                        }
-
-                        else if (stageTile.IsPlatform() && y == bottomTile)
-                        {
-
-                            List<Rectangle> tileboundsList = currentStage.getTilePlatformBoundsByGridPosition(x, bottomTile);
-                            foreach (Rectangle tilebounds in tileboundsList)
-                            {
-                                Vector2 depth = RectangleExtensions.GetIntersectionDepth(playerbounds, tilebounds);
-
-                                if (this.PreviousBottom <= tilebounds.Top && Velocity.Y >= 0 && playerbounds.Intersects(tilebounds))
-                                //if (Velocity.Y >= 0 && (depth.Y < 0)) // || this.IgnoreNextPlatform))
-                                {
-                                    if (this.IgnoreNextPlatform == false)
-                                    {
-                                        this.JumpInProgress = false;
-                                        this.DropInProgress = false;
-                                        this.IsOnGround = true;
-                                        this.SecuringStairStep = false;
-                                        if (stageTile.IsWaterPlatform())
-                                            this.IsInWater = true;
-                                        else
-                                            this.IsInWater = false;
-
-                                        this.WorldPosition.Y += depth.Y;                                        
-                                        // perform further collisions with the new bounds
-                                        playerbounds = this.BoundingBox();
-
-                                    }
-                                    else
-                                    {
-                                        droppedthroughplatform = true;
-                                    }
-                                }
-                            }
-                        }
+                        }                                                        
                         else if (stageTile.IsStairs() && y == bottomTile)
-                        {                             
+                        {
                             if (playerwasonstairs || CurrentInputState.DirectionUp || SecuringStairStep || this.standingOnStairTop())
-                            { 
-                                List<Rectangle> tileboundsList = currentStage.getTilePlatformBoundsByGridPosition(x, bottomTile);
-                                foreach (Rectangle tilebounds in tileboundsList)
+                            {
+                                List<Platform> tileboundsList = currentStage.getTilePlatformBoundsByGridPosition(x, bottomTile);
+                                foreach (Platform platformBounds in tileboundsList)
                                 {
-                                    Vector2 depth = RectangleExtensions.GetIntersectionDepth(playerbounds, tilebounds);
+                                    Rectangle tileBounds = platformBounds.PlatformBounds;
+                                    Vector2 depth = RectangleExtensions.GetIntersectionDepth(playerbounds, tileBounds);
 
-                                    if (this.PreviousBottom <= tilebounds.Top && Velocity.Y >= 0 && playerbounds.Intersects(tilebounds))
+                                    if (this.PreviousBottom <= tileBounds.Top && Velocity.Y >= 0 && playerbounds.Intersects(tileBounds))
                                     //if (Velocity.Y >= 0 && (depth.Y < 0)) // || this.IgnoreNextPlatform))
                                     {
                                         if (this.IgnoreNextPlatform == false)
@@ -733,13 +818,13 @@ namespace RunAndGun.Actors
                                             {
                                                 this.IsOnStairsLeft = true;
                                                 if (!this.standingOnStairTop())
-                                                    this.WorldPosition.X += tilebounds.Left - this.BoundingBox().Left;
+                                                    this.WorldPosition.X += tileBounds.Left - this.BoundingBox().Left;
                                             }
                                             else
                                             {
                                                 this.IsOnStairsRight = true;
                                                 if (!this.standingOnStairTop())
-                                                    this.WorldPosition.X += tilebounds.Right - (this.BoundingBox().Right);
+                                                    this.WorldPosition.X += tileBounds.Right - (this.BoundingBox().Right);
                                             }
 
                                             // perform further collisions with the new bounds
@@ -752,11 +837,47 @@ namespace RunAndGun.Actors
                                         }
                                     }
                                 }
-                            }                            
+                            }
+                        }                        
+                        else if (stageTile.IsPlatform() && y == bottomTile)
+                        {
+
+                            List<Platform> platforms = currentStage.getTilePlatformBoundsByGridPosition(x, bottomTile);
+                            foreach (Platform platform in platforms)
+                            {
+                                Rectangle tilebounds = platform.PlatformBounds;
+                                Vector2 depth = RectangleExtensions.GetIntersectionDepth(playerbounds, tilebounds);
+
+                                if (this.PreviousBottom <= tilebounds.Top && Velocity.Y >= 0 && playerbounds.Intersects(tilebounds))
+                                //if (Velocity.Y >= 0 && (depth.Y < 0)) // || this.IgnoreNextPlatform))
+                                {
+                                    if (this.IgnoreNextPlatform == false)
+                                    {
+                                        this.JumpInProgress = false;
+                                        this.DropInProgress = false;
+                                        this.IsOnGround = true;
+                                        this.SecuringStairStep = false;
+                                        if (stageTile.IsWaterPlatform())
+                                            this.IsInWater = true;
+                                        else
+                                            this.IsInWater = false;
+
+                                        this.WorldPosition.Y += depth.Y;
+                                        // perform further collisions with the new bounds
+                                        playerbounds = this.BoundingBox();
+
+                                    }
+                                    else
+                                    {
+                                        droppedthroughplatform = true;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
+            
 
             if (droppedthroughplatform)
                 this.IgnoreNextPlatform = false;
@@ -777,7 +898,7 @@ namespace RunAndGun.Actors
         }
         public override Rectangle BoundingBox()
         {
-            int iFootWidth = 10;
+            int iFootWidth = 8;
             int iSpriteOffsetTop;
             int iSpriteOffsetBottom;
             if (IsProne)

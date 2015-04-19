@@ -43,6 +43,8 @@ namespace RunAndGun
         {
             get
             {
+                // in Contra, player is slightly inset into the platform tile.
+                // in Castlevania, player is directly on top of the tile, they do not intersect with it.
                 if (game.currentGame == Game.GameType.Contra)
                     return 4;
                 else
@@ -142,7 +144,7 @@ namespace RunAndGun
 
                 PlayMusic();
 
-                string tmxFile =  appDirectory + "\\LevelMaps\\" + stageid + ".tmx";
+                string tmxFile = appDirectory + "\\LevelMaps\\" + stageid + ".tmx";
                 
                 if (File.Exists(tmxFile))
                 {
@@ -168,6 +170,7 @@ namespace RunAndGun
                             PlayMusic();
                             tilesource.Add(worldcontent.Load<Texture2D>("StageData/Level1A"));
                             tmx = new TiledSharp.TmxMap(appDirectory + "\\LevelMaps\\" + stageid + ".tmx");
+                            
                             iScreenTileWidth = 16;
 
                             Stage nextSection = new Stage(worldcontent);
@@ -254,7 +257,24 @@ namespace RunAndGun
                         if (t.Properties["Collision"] == "StairsRight")
                             st.CollisionType = StageTile.TileCollisionType.StairsRight;
 
-                        
+                        if (t.Properties["Collision"] == "StairsBottomLeft")
+                            st.CollisionType = StageTile.TileCollisionType.StairsBottomLeft;
+                        if (t.Properties["Collision"] == "StairsBottomRight")
+                            st.CollisionType = StageTile.TileCollisionType.StairsBottomRight;
+
+                        if ((st.CollisionType == StageTile.TileCollisionType.Impassable || st.CollisionType == StageTile.TileCollisionType.Platform) && 
+                            st.X > 0 && st.Y > 0 && st.X + 1 < this.MapWidth)
+                        {
+                            if (this.getStageTileByGridPosition(st.X-1, st.Y-1).CollisionType == StageTile.TileCollisionType.StairsLeft)
+                            {
+                                st.CollisionType = StageTile.TileCollisionType.StairsBottomLeft;
+                            }
+                            if (this.getStageTileByGridPosition(st.X+1, st.Y-1).CollisionType == StageTile.TileCollisionType.StairsRight)
+                            {
+                                st.CollisionType = StageTile.TileCollisionType.StairsBottomRight;
+                            }
+                        }
+
                     }
                     if (t.Properties.ContainsKey("Collision") && t.Properties.ContainsKey("WaterTile"))
                     {
@@ -429,7 +449,11 @@ namespace RunAndGun
         {
             return new Rectangle(x * iTileWidth, (y * iTileHeight) + iTilePlatformDropOffset, iTileWidth, iTileHeight);
         }
-        public List<Rectangle> getTilePlatformBoundsByGridPosition(int x, int y)
+        public Rectangle getTileBoundsByWorldPosition(int x, int y)
+        {
+            return new Rectangle((x / iTileWidth) * iTileWidth, (y / iTileHeight) * iTileHeight, iTileWidth, iTileHeight);
+        }
+        public List<Platform> getTilePlatformBoundsByGridPosition(int x, int y)
         {
 
             ///int iTileID = this.getTileIDByGridPosition(x, y, "Meta");
@@ -448,30 +472,92 @@ namespace RunAndGun
             //    }
             //}
 
-            List<Rectangle> returnValue = new List<Rectangle>();
+            List<Platform> returnValue = new List<Platform>();
 
             if (stageTile != null)
             {
 
                 if (stageTile.CollisionType == StageTile.TileCollisionType.PlatformHalfDrop)
                 {
-                    returnValue.Add(new Rectangle(x * iTileWidth, (y * iTileHeight) + (iTileHeight / 2) + iTilePlatformDropOffset, iTileWidth, 1));
+                    returnValue.Add(
+                        new Platform(
+                            new Rectangle(x * iTileWidth, 
+                            (y * iTileHeight) + (iTileHeight / 2) + iTilePlatformDropOffset, 
+                            iTileWidth, 
+                            1), 
+                            Platform.PlatformTypes.Normal));
+                }
+                else if (stageTile.CollisionType == StageTile.TileCollisionType.StairsBottomLeft)
+                {
+                    returnValue.Add(
+                        new Platform(
+                            new Rectangle(
+                                x * iTileWidth,
+                                (y * iTileHeight) + iTilePlatformDropOffset,
+                                iTileWidth / 2,
+                                4), 
+                            Platform.PlatformTypes.StairsBottom)
+                            );
+
+                    returnValue.Add(new Platform(new Rectangle(
+                        x * iTileWidth,
+                        (y * iTileHeight) + iTilePlatformDropOffset,
+                        iTileWidth, 1), Platform.PlatformTypes.Normal));
+                }
+                else if (stageTile.CollisionType == StageTile.TileCollisionType.StairsBottomRight)
+                {
+                    returnValue.Add(
+                        new Platform(
+                        new Rectangle(
+                        (x * iTileWidth) + (iTileWidth / 2),
+                        (y * iTileHeight) + iTilePlatformDropOffset,
+                        iTileWidth / 2,
+                        4), Platform.PlatformTypes.StairsBottom));
+
+                    returnValue.Add(new Platform(new Rectangle(
+                        x * iTileWidth,
+                        (y * iTileHeight) + iTilePlatformDropOffset,
+                        iTileWidth, 1), Platform.PlatformTypes.Normal));
+
                 }
                 else if (stageTile.CollisionType == StageTile.TileCollisionType.StairsLeft)
                 {
                     // stairs going up to the left
-                    returnValue.Add(new Rectangle(x * iTileWidth, (y * iTileHeight) + iTilePlatformDropOffset, iTileWidth / 2, 4));
-                    returnValue.Add(new Rectangle((x * iTileWidth) + (iTileWidth / 2), (y * iTileHeight) + iTilePlatformDropOffset + (iTileHeight / 2), iTileWidth / 2, 4));
+                    // upper left
+                    returnValue.Add(new Platform(new Rectangle(
+                        x * iTileWidth, 
+                        (y * iTileHeight) + iTilePlatformDropOffset, 
+                        iTileWidth / 2, 
+                        4), Platform.PlatformTypes.Stairs));
+                    // bottom right
+                    returnValue.Add(new Platform(new Rectangle(
+                        (x * iTileWidth) + (iTileWidth / 2), 
+                        (y * iTileHeight) + iTilePlatformDropOffset + (iTileHeight / 2), 
+                        iTileWidth / 2, 
+                        4), Platform.PlatformTypes.Stairs));
                 }
                 else if (stageTile.CollisionType == StageTile.TileCollisionType.StairsRight)
                 {
                     // stairs going up to the right
-                    returnValue.Add(new Rectangle(x * iTileWidth, (y * iTileHeight) + iTilePlatformDropOffset + (iTileHeight / 2), iTileWidth / 2, 4));
-                    returnValue.Add(new Rectangle((x * iTileWidth) + (iTileWidth / 2), (y * iTileHeight) + iTilePlatformDropOffset, iTileWidth / 2, 4));
+                    // bottom left
+                    returnValue.Add(new Platform(new Rectangle(
+                        x * iTileWidth, 
+                        (y * iTileHeight) + iTilePlatformDropOffset + (iTileHeight / 2), 
+                        iTileWidth / 2, 
+                        4), Platform.PlatformTypes.Stairs));
+                    // upper right
+                    returnValue.Add(new Platform(new Rectangle(
+                        (x * iTileWidth) + (iTileWidth / 2), 
+                        (y * iTileHeight) + iTilePlatformDropOffset, 
+                        iTileWidth / 2, 
+                        4), Platform.PlatformTypes.Stairs));
                 }
                 else
                 {
-                    returnValue.Add(new Rectangle(x * iTileWidth, (y * iTileHeight) + iTilePlatformDropOffset, iTileWidth, 1));
+                    returnValue.Add(new Platform(new Rectangle(
+                        x * iTileWidth, 
+                        (y * iTileHeight) + iTilePlatformDropOffset, 
+                        iTileWidth, 1), Platform.PlatformTypes.Normal));
                 }
             }
 
@@ -656,7 +742,7 @@ namespace RunAndGun
                         CameraPosition.X += 1.2f;
                 }
 
-                SpawnEnemies(gameTime);
+                //SpawnEnemies(gameTime);
 
                 UpdateEnemies(gameTime);
 

@@ -21,7 +21,7 @@ namespace RunAndGun
         public enum TileStatus { Active, BeingDestroyed, Destroyed}
         public TileStatus Status = TileStatus.Active;
 
-        public enum TileCollisionType { None, Impassable, Platform, PlatformHalfDrop, PlatformWater, StairsLeft, StairsRight }
+        public enum TileCollisionType { None, Impassable, Platform, PlatformHalfDrop, PlatformWater, StairsLeft, StairsRight, StairsBottomRight, StairsBottomLeft }
         public TileCollisionType CollisionType = TileCollisionType.None;
 
         public bool IsImpassable()
@@ -40,7 +40,11 @@ namespace RunAndGun
         }
         public bool IsPlatform()
         {
-            if (CollisionType == StageTile.TileCollisionType.Platform || CollisionType == StageTile.TileCollisionType.PlatformHalfDrop || CollisionType == StageTile.TileCollisionType.PlatformWater)
+            if (CollisionType == StageTile.TileCollisionType.Platform || 
+                CollisionType == StageTile.TileCollisionType.PlatformHalfDrop || 
+                CollisionType == StageTile.TileCollisionType.PlatformWater || 
+                CollisionType == StageTile.TileCollisionType.StairsBottomLeft || 
+                CollisionType == StageTile.TileCollisionType.StairsBottomRight)
                 return true;
             else
                 return false;
