@@ -227,7 +227,7 @@ namespace RunAndGun.Actors
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-
+#if DEBUG
             Rectangle boundingbox = this.BoundingBox();
             Texture2D txt = new Texture2D(spriteBatch.GraphicsDevice, boundingbox.Width, boundingbox.Height);
 
@@ -240,7 +240,7 @@ namespace RunAndGun.Actors
 
             txt.SetData(data);
             spriteBatch.Draw(txt, new Vector2(boundingbox.X - currentStage.CameraPosition.X, boundingbox.Y - currentStage.CameraPosition.Y), Color.White);
-
+#endif 
         }
 
 

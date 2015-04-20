@@ -87,7 +87,8 @@ namespace RunAndGun.Actors
         public bool SecuringStairStep;
 
         public bool MovingTowardsStairs;
-        public int MovingTowardsStairsPosition;                
+        public int MovingTowardsStairsPosition;
+        public bool MovingTowardsStairsAscending;            
 
         public override int Width
         {
@@ -454,17 +455,46 @@ namespace RunAndGun.Actors
                 
                 }
                 #endregion
-                
+
                 #region Player Ducking
                 if (!this.IsOnStairs)
                 {
                     // player only stays prone as long as he is pressing down.
                     this.IsProne = false;
-                    if (CurrentInputState.DirectionDown
-                        && this.Velocity.X == 0
-                        && this.IsOnGround == true)
+                    if (CurrentInputState.DirectionDown)
                     {
-                        this.IsProne = true;
+                        if (this.FindNearbyStairtop().HasValue)
+                        {
+                            Vector2? moveToLocation = this.FindNearbyStairtop();
+                            if (moveToLocation.Value.X == this.BoundingBox().Center.X)
+                            {
+                                // player already aligned with stairs                            
+                                moveToLocation = null;
+                                this.Velocity.X = 0;
+                                this.MovingTowardsStairs = false;
+                            }
+                            else if (moveToLocation.Value.X < (int)this.BoundingBox().Center.X)
+                            {
+                                this.playerDirection = PlayerDirection.Left;
+                                this.Velocity.X = -1;
+                            }
+                            else
+                            {
+                                this.playerDirection = PlayerDirection.Right;
+                                this.Velocity.X = 1;
+                            }
+
+                            if (moveToLocation.HasValue)
+                            {
+                                this.MovingTowardsStairsPosition = (int)moveToLocation.Value.X;
+                                this.MovingTowardsStairs = true;
+                                this.MovingTowardsStairsAscending = false;
+                            }
+                        }
+                        else if (this.Velocity.X == 0 && this.IsOnGround == true)
+                        {
+                            this.IsProne = true;
+                        }
                     }
                 }
                 #endregion
@@ -500,6 +530,7 @@ namespace RunAndGun.Actors
                         {
                             this.MovingTowardsStairsPosition = (int)moveToLocation.Value.X;
                             this.MovingTowardsStairs = true;
+                            this.MovingTowardsStairsAscending = true;
                         }
                     }
 
@@ -631,13 +662,23 @@ namespace RunAndGun.Actors
                         this.WorldPosition.X += (this.MovingTowardsStairsPosition - playerbounds.Right);
                     }
                     this.MovingTowardsStairs = false;
-                    this.MovingTowardsStairsPosition = 0;                    
-                    this.MovingUpStairs = true;
-                    st = currentStage.getStageTileByWorldPosition(playerbounds.Center.X, playerbounds.Bottom);
+                    this.MovingTowardsStairsPosition = 0;
+                    if (this.MovingTowardsStairsAscending)
+                    {
+                        this.MovingUpStairs = true;
+                        st = currentStage.getStageTileByWorldPosition(playerbounds.Center.X, playerbounds.Bottom);
+                        this.IsOnStairsLeft = st.CollisionType == StageTile.TileCollisionType.StairsBottomLeft;
+                        this.IsOnStairsRight = st.CollisionType == StageTile.TileCollisionType.StairsBottomRight;
+                    }
+                    else
+                    {
+                        this.MovingDownStairs = true;
+                        st = currentStage.getStageTileByWorldPosition(playerbounds.Center.X, playerbounds.Bottom + 1);
+                        this.IsOnStairsLeft = st.CollisionType == StageTile.TileCollisionType.StairsLeft;
+                        this.IsOnStairsRight = st.CollisionType == StageTile.TileCollisionType.StairsRight;
+                    }
+                    
 
-
-                    this.IsOnStairsLeft = st.CollisionType == StageTile.TileCollisionType.StairsBottomLeft;
-                    this.IsOnStairsRight = st.CollisionType == StageTile.TileCollisionType.StairsBottomRight;
                     lastStairtopHeight = this.BoundingBox().Bottom;
                 }                
             }
@@ -716,12 +757,13 @@ namespace RunAndGun.Actors
         }
         public Vector2? FindNearbyStairbase()
         {
-            int searchRange = currentStage.iTileWidth / 2;
+            int searchRange = currentStage.iTileWidth;
 
             Rectangle playerbounds = this.BoundingBox(new Vector2(0f, 1f));
-            Rectangle playerSearchbounds = new Rectangle(playerbounds.Left - searchRange, playerbounds.Top, playerbounds.Width + searchRange, playerbounds.Height);
+            Rectangle playerSearchbounds = new Rectangle(playerbounds.Left - searchRange , playerbounds.Top, playerbounds.Width + searchRange, playerbounds.Height);
             
             int leftTile = (int)Math.Floor((float)(playerSearchbounds.Left) / currentStage.iTileWidth);
+            leftTile = leftTile < 0 ? 0 : leftTile;
             int rightTile = (int)Math.Ceiling(((float)(playerSearchbounds.Right) / currentStage.iTileWidth)) - 1;
             int bottomTile = (int)Math.Ceiling(((float)playerSearchbounds.Bottom / currentStage.iTileHeight)) - 1;
 
@@ -739,11 +781,41 @@ namespace RunAndGun.Actors
 
             return null;
         }
+        public Vector2? FindNearbyStairtop()
+        {
+            int searchRange = currentStage.iTileWidth;
+
+            Rectangle playerbounds = this.BoundingBox(new Vector2(0f, 1f));
+            Rectangle playerSearchbounds = new Rectangle(playerbounds.Left - searchRange, playerbounds.Top, playerbounds.Width + searchRange, playerbounds.Height);
+
+            int leftTile = (int)Math.Floor((float)(playerSearchbounds.Left) / currentStage.iTileWidth);
+            leftTile = leftTile < 0 ? 0 : leftTile;
+            int rightTile = (int)Math.Ceiling(((float)(playerSearchbounds.Right) / currentStage.iTileWidth)) - 1;
+            int bottomTile = (int)Math.Ceiling(((float)playerSearchbounds.Bottom / currentStage.iTileHeight)) - 1;
+
+            for (int x = leftTile; x <= rightTile; ++x)
+            {
+                StageTile stageTile = currentStage.getStageTileByGridPosition(x, bottomTile);
+                if (stageTile.IsStairs())
+                {
+                    Rectangle? stairTopBounds = currentStage.getStairTopBoundsByGridPosition(x, bottomTile);
+                    if (stairTopBounds.HasValue)
+                    {
+                        if (stairTopBounds.Value.Top == this.BoundingBox().Bottom)
+                        {
+                            return new Vector2(stairTopBounds.Value.Center.X, stairTopBounds.Value.Bottom);
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
 
         public override void HandleCollisions(GameTime gameTime)
         {
 
-            if (this.WorldPosition.Y > Game.iScreenModelWidth && IsDying == false)
+            if (this.WorldPosition.Y > Game.iScreenModelHeight && IsDying == false)
             {
                 Die(gameTime);
             }
@@ -786,7 +858,7 @@ namespace RunAndGun.Actors
                         }                                                        
                         else if (stageTile.IsStairs() && y == bottomTile)
                         {
-                            if (playerwasonstairs || CurrentInputState.DirectionUp || SecuringStairStep || this.StandingOnStairTop())
+                            if (playerwasonstairs || CurrentInputState.DirectionUp || SecuringStairStep)
                             {
                                 List<Platform> tileboundsList = currentStage.getTilePlatformBoundsByGridPosition(x, bottomTile);
                                 foreach (Platform platformBounds in tileboundsList)
@@ -891,28 +963,29 @@ namespace RunAndGun.Actors
         }
         public override Rectangle BoundingBox()
         {
-            int iFootWidth = 8;
-            int iSpriteOffsetTop;
-            int iSpriteOffsetBottom;
-            if (IsProne)
-            {
-                iSpriteOffsetTop = 27;
-                iSpriteOffsetBottom = 35;
-            }
-            else
-            {
-                iSpriteOffsetTop = 6;
-                iSpriteOffsetBottom = 14;
-            }
-            int iSpriteOffsetX = 0;
+            //int iFootWidth = 8;
+            //int iSpriteOffsetTop;
+            //int iSpriteOffsetBottom;
+            //if (IsProne)
+            //{
+            //    iSpriteOffsetTop = 27;
+            //    iSpriteOffsetBottom = 35;
+            //}
+            //else
+            //{
+            //    iSpriteOffsetTop = 6;
+            //    iSpriteOffsetBottom = 14;
+            //}
+            //int iSpriteOffsetX = 0;
 
-            if (playerDirection == PlayerDirection.Right)
-                iSpriteOffsetX = 11;
-            else
-                iSpriteOffsetX = 11;
+            //if (playerDirection == PlayerDirection.Right)
+            //    iSpriteOffsetX = 11;
+            //else
+            //    iSpriteOffsetX = 11;
 
 
-            return new Rectangle((int)WorldPosition.X + iSpriteOffsetX, (int)WorldPosition.Y + iSpriteOffsetTop, iFootWidth, idle.FrameHeight - iSpriteOffsetBottom);
+            //return new Rectangle((int)WorldPosition.X + iSpriteOffsetX, (int)WorldPosition.Y + iSpriteOffsetTop, iFootWidth, idle.FrameHeight - iSpriteOffsetBottom);
+            return BoundingBox(new Vector2(0, 0));
 
         }
         public Rectangle BoundingBox(Vector2 offset)
@@ -942,7 +1015,23 @@ namespace RunAndGun.Actors
 
             return new Rectangle((int)position.X + iSpriteOffsetX, (int)position.Y + iSpriteOffsetTop, iFootWidth, idle.FrameHeight - iSpriteOffsetBottom);
         }
-        private bool StandingOnStairTop()
+        public Rectangle HurtBox()
+        {
+            if (this.JumpInProgress)
+            {
+                int iSpriteOffsetTop = 6;
+                int iSpriteOffsetBottom = 30;
+                int iSpriteOffsetX = 8;                
+                Vector2 position = this.WorldPosition;
+
+                return new Rectangle((int)position.X + iSpriteOffsetX, (int)position.Y + iSpriteOffsetTop, this.Width - (iSpriteOffsetX * 2), idle.FrameHeight - iSpriteOffsetBottom);
+            }
+            else
+            {
+                return this.BoundingBox();
+            }
+        }
+        public bool StandingOnStairTop()
         {
             Rectangle playerbounds = this.BoundingBox(new Vector2(0f, 1f));
             List<StageTile> tiles = new List<StageTile>();
@@ -962,7 +1051,8 @@ namespace RunAndGun.Actors
                         if ((stageTile.CollisionType == StageTile.TileCollisionType.StairsLeft && !currentStage.getStageTileByGridPosition(x - 1, bottomTile - 1).IsStairs()) ||
                             (stageTile.CollisionType == StageTile.TileCollisionType.StairsRight && !currentStage.getStageTileByGridPosition(x + 1, bottomTile - 1).IsStairs()))
                         {
-                            if (playerbounds.Intersects(currentStage.getStairTopBoundsByGridPosition(x, bottomTile)))
+                            if (this.BoundingBox().Bottom == currentStage.getStairTopBoundsByGridPosition(x, bottomTile).Value.Top)
+                            //if (playerbounds.Intersects(currentStage.getStairTopBoundsByGridPosition(x, bottomTile)))
                                 bReturnValue = true;
                         }
                     }

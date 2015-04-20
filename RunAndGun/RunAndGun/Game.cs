@@ -70,7 +70,7 @@ namespace RunAndGun
 
         private void InitializeGameLaunchParameters()
         {
-            if (this.LaunchParameters.ContainsKey("StartupGame"))
+            if (this.LaunchParameters.ContainsKey("StartupGame") && this.LaunchParameters["StartupGame"] != "TitleScreen")
             {
                 string startupGame = this.LaunchParameters["StartupGame"];
                 if (startupGame == "Contra")
@@ -168,6 +168,23 @@ namespace RunAndGun
                             playerStartingPosition = int.Parse(this.LaunchParameters["PlayerStartingPosition"]);
                         }
 
+                        string initialStage;
+                        if (this.LaunchParameters.ContainsKey("StartupStage"))
+                        {
+                            initialStage = this.LaunchParameters["StartupStage"];
+                        }
+                        else
+                        {
+                            if (currentGame == GameType.Contra)
+                            {
+                                initialStage = "Contra1 - 1Jungle";
+                            }
+                            else
+                            {
+                                initialStage = "Castlevania1-1-1";
+                            }
+                        }
+
                         foreach (Player player in players)
                             player.Initialize(Content,
                                             new Vector2(
@@ -175,13 +192,15 @@ namespace RunAndGun
                                             GraphicsDevice.Viewport.TitleSafeArea.Y),
                                             currentStage);
 
+                        
                         if (currentGame == GameType.Contra)
                         {
-                            currentStage.Initialize(this, worldContent, "Contra1-1Jungle", 32, 32);
+
+                            currentStage.Initialize(this, worldContent, initialStage, 32, 32);
                         }
                         else
                         {
-                            currentStage.Initialize(this, worldContent, "Castlevania1-1-2", 16, 16);
+                            currentStage.Initialize(this, worldContent, initialStage, 16, 16);
                         }
                         currentStage.Players = players;
 
@@ -305,13 +324,16 @@ namespace RunAndGun
 
 
                         //spriteBatch.DrawString(font, players[0].IsOnStairs.ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y ), Color.Red);
-                        spriteBatch.DrawString(font, players[0].WorldPosition.X.ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y), Color.Red);
-                        spriteBatch.DrawString(font, players[0].WorldPosition.Y.ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y+20), Color.Red);
-                        spriteBatch.DrawString(font, players[0].MovingUpStairs.ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y +40), Color.Red);
-                        spriteBatch.DrawString(font, players[0].IsOnStairsRight.ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + 60), Color.Red);
+                        if (this.LaunchParameters.ContainsKey("DisplayDebugInfo"))
+                        {
+                            spriteBatch.DrawString(font, players[0].WorldPosition.X.ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y), Color.Red);
+                            //spriteBatch.DrawString(font, players[0].WorldPosition.Y.ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + 20), Color.Red);
+                            spriteBatch.DrawString(font, (players[0].BoundingBox().Bottom / currentStage.iTileHeight).ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + 20), Color.Red);
 
-
-
+                            spriteBatch.DrawString(font, string.Format("IsOnGround: {0}", players[0].IsOnGround), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + 40), Color.Blue);
+                            //spriteBatch.DrawString(font, players[0].IsOnStairsRight.ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + 60), Color.Red);
+                        }
+                        
                         break;
                     } // GameState.Playing
             }

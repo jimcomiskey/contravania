@@ -564,13 +564,13 @@ namespace RunAndGun
             return returnValue;
         }
 
-        public Rectangle getStairTopBoundsByGridPosition(int x, int y)
+        public Rectangle? getStairTopBoundsByGridPosition(int x, int y)
         { 
             StageTile stageTile = null;
 
             stageTile = this.getStageTileByGridPosition(x, y);
 
-            Rectangle returnValue = new Rectangle(0, 0, 0, 0);
+            Rectangle? returnValue = null;
 
             if (stageTile != null)
             {
@@ -742,7 +742,10 @@ namespace RunAndGun
                         CameraPosition.X += 1.2f;
                 }
 
-                //SpawnEnemies(gameTime);
+                if (!game.LaunchParameters.ContainsKey("DoNotSpawnEnemies"))
+                {
+                    SpawnEnemies(gameTime);
+                }
 
                 UpdateEnemies(gameTime);
 
@@ -792,7 +795,8 @@ namespace RunAndGun
             {
                 if (player.IsVulnerable())
                 {
-                    playerBoundingBox = player.BoundingBox();
+                    //playerBoundingBox = player.BoundingBox();
+                    playerBoundingBox = player.HurtBox();
                     for (int i = 0; i < EnemyProjectiles.Count; i++)
                     {
                         rectangle1 = new Rectangle((int)EnemyProjectiles[i].WorldPosition.X -
@@ -804,7 +808,6 @@ namespace RunAndGun
                             EnemyProjectiles[i].Active = false;
                         }
                     }
-
 
                     for (int i = 0; i < ActiveEnemies.Count; i++)
                     {
