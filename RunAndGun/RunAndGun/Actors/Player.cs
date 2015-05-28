@@ -603,7 +603,7 @@ namespace RunAndGun.Actors
                     #region Point Gun
                     if (CurrentInputState.DirectionUp && !CurrentInputState.DirectionLeft && !CurrentInputState.DirectionRight)
                         gunDirection = GunDirection.StraightUp;
-                    else if (CurrentInputState.DirectionUp && !CurrentInputState.DirectionLeft && !CurrentInputState.DirectionRight && JumpInProgress)
+                    else if (CurrentInputState.DirectionDown && !CurrentInputState.DirectionLeft && !CurrentInputState.DirectionRight && JumpInProgress)
                         gunDirection = GunDirection.StraightDown;
                     else if (CurrentInputState.DirectionUp && (CurrentInputState.DirectionLeft || CurrentInputState.DirectionRight))
                         gunDirection = GunDirection.High;

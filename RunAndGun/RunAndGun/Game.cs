@@ -9,9 +9,13 @@ using RunAndGun.Actors;
 
 namespace RunAndGun
 {
-    /// <summary>
-    /// This is the main type for your game
-    /// </summary>
+    // Command Line Arguments:
+    // 
+    // StartupGame
+    // WindowedMode
+    // StartupStage
+    // 
+
     public class Game : Microsoft.Xna.Framework.Game
     {
         public const float iScreenModelWidth = 256f;
@@ -177,7 +181,7 @@ namespace RunAndGun
                         {
                             if (currentGame == GameType.Contra)
                             {
-                                initialStage = "Contra1 - 1Jungle";
+                                initialStage = "Contra1-1Jungle";
                             }
                             else
                             {
