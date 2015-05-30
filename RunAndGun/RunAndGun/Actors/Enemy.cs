@@ -68,7 +68,12 @@ namespace RunAndGun.Actors
         {
             return BoundingBox(this.WorldPosition);
         }
-        public abstract Rectangle BoundingBox(Vector2 proposedPosition);
+        public abstract Rectangle BoundingBox(Vector2 proposedPosition);        
+
+        public virtual bool SpawnConditionsMet()
+        {
+            return this.BoundingBox().Intersects(currentStage.ScreenCoordinates());
+        }
         
         public override void Die(GameTime gameTime)
         {

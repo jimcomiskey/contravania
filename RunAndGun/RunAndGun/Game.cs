@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using RunAndGun.Actors;
+using RunAndGun.GameObjects;
 
 namespace RunAndGun
 {
@@ -14,6 +15,7 @@ namespace RunAndGun
     // StartupGame
     // WindowedMode
     // StartupStage
+    // DoNotSpawnEnemies - when setting is present, do not spawn enemies
     // 
 
     public class Game : Microsoft.Xna.Framework.Game

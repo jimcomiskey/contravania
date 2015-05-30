@@ -64,6 +64,10 @@ namespace TiledSharp
 
             for (int i = 0; i < this.Tilesets.Count; i++)
             {
+                if (this.Tilesets[i].FirstGid == GID && GID == 62)
+                {
+                    System.Diagnostics.Debugger.Break();
+                }
                 for (int j = 0; j < this.Tilesets[i].Tiles.Count; j++)
                 {
                     if (this.Tilesets[i].Tiles[j].Id + this.Tilesets[i].FirstGid == GID)

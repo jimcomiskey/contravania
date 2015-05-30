@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Audio;
 using RunAndGun.Actors;
 
 
-namespace RunAndGun
+namespace RunAndGun.GameObjects
 {
     class Projectile
     {
@@ -35,7 +35,6 @@ namespace RunAndGun
         private float projectileSpeed = 3.5f;
 
         
-        // Get the width of the projectile ship
         public int Width()
         {
             if (Image != null)
@@ -44,7 +43,6 @@ namespace RunAndGun
                 return ImageTexture.Width;
         }
 
-        // Get the height of the projectile ship
         public int Height()
         {
             if (Image != null)
@@ -144,7 +142,6 @@ namespace RunAndGun
 
         public void Update(GameTime gameTime, Vector2 cameraPosition)
         {
-            // Projectiles always move to the right    
             WorldPosition += Velocity;
 
             if (Image != null)

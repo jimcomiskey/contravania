@@ -181,16 +181,21 @@ namespace RunAndGun
         // Draw the Animation Strip
         public void Draw(SpriteBatch spriteBatch, Player.PlayerDirection dir, float depth)
         {
+            Draw(spriteBatch, dir, depth, new Vector2(0, 0));
+        }
+        public void Draw(SpriteBatch spriteBatch, Player.PlayerDirection dir, float depth, Vector2 offset)
+        {
+            var drawRect = new Rectangle((int)(destinationRect.X + offset.X), (int)(destinationRect.Y + offset.Y), destinationRect.Width, destinationRect.Height);
             // Only draw the animation when we are active
             if (Active)
             {
                 if (dir == Player.PlayerDirection.Left)
                 {
-                    spriteBatch.Draw(spriteStrip, destinationRect, sourceRect, color, 0, Vector2.Zero, SpriteEffects.FlipHorizontally, depth);                    
+                    spriteBatch.Draw(spriteStrip, drawRect, sourceRect, color, 0, Vector2.Zero, SpriteEffects.FlipHorizontally, depth);                    
                 }
                 else
                 {   
-                    spriteBatch.Draw(spriteStrip, destinationRect, sourceRect, color, 0, Vector2.Zero, SpriteEffects.None, depth);
+                    spriteBatch.Draw(spriteStrip, drawRect, sourceRect, color, 0, Vector2.Zero, SpriteEffects.None, depth);
                 }
             }
         }

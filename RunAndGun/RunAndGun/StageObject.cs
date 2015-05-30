@@ -50,5 +50,18 @@ namespace RunAndGun
             if (Active == true && texture != null)
                 spriteBatch.Draw(texture, new Rectangle((int)ScreenPosition.X, (int)ScreenPosition.Y, (int)texture.Width, (int)texture.Height), Color.White);
         }
+        public virtual Rectangle? CollisionBox()
+        {
+            return new Rectangle((int)WorldPosition.X, (int)WorldPosition.Y, Width, Height);
+        }
+
+        public virtual Rectangle? HurtBox()
+        {
+            return CollisionBox();
+        }
+        public virtual Rectangle? HitBox()
+        {
+            return CollisionBox();
+        }        
     }
 }

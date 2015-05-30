@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
 
 
-namespace RunAndGun
+namespace RunAndGun.GameObjects
 {
     class StageBridge : StageObject
     {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace RunAndGun
+namespace RunAndGun.GameObjects
 {
     public class Platform 
     {

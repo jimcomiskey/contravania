@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Media;
 using System.Xml;
 using System.IO;
 using RunAndGun.Actors;
+using RunAndGun.GameObjects;
 
 namespace RunAndGun
 {
@@ -65,10 +66,13 @@ namespace RunAndGun
         private const string waitingEnemiesObjectGroupName = "WaitingEnemies";
         public List<Actors.Enemy> waitingEnemies = new List<Actors.Enemy>();
 
-        private const string specialStageBackgroundObjectsGroupName = "SpecialStageBackgroundObjects";        
+        private const string specialStageBackgroundObjectsGroupName = "BackgroundObjects";        
         public List<StageObject> uniqueBackgroundObjects = new List<StageObject>();
-        private const string specialStageForegroundObjectsGroupName = "SpecialStageForegroundObjects";
+        private const string specialStageForegroundObjectsGroupName = "ForegroundObjects";
         public List<StageObject> uniqueForegroundObjects = new List<StageObject>();
+
+        private const string gameObjectsGroupName = "GameObjects";
+        public List<StageObject> gameObjects = new List<StageObject>();
 
         List<Animation> explosions;
         List<SoundEffectInstance> explosionsounds;
@@ -115,8 +119,6 @@ namespace RunAndGun
             bFanfarePlaying = false;
             bStageIsComplete = false;
             bProgresstoNextLevel = false;
-
-
         }
 
         public void Initialize(Game game, ContentManager worldcontent, string stageid, int tilewidth, int tileheight)
@@ -200,7 +202,7 @@ namespace RunAndGun
             {
                 InitializeWaitingEnemies(worldcontent, tmx);
                 InitializeSpecialStageObjects(worldcontent, tmx, tmx.ObjectGroups[specialStageBackgroundObjectsGroupName].Objects);
-                InitializeSpecialStageObjects(worldcontent, tmx, tmx.ObjectGroups[specialStageForegroundObjectsGroupName].Objects);
+                InitializeSpecialStageObjects(worldcontent, tmx, tmx.ObjectGroups[specialStageForegroundObjectsGroupName].Objects);                
             }
 
             // Set the time keepers to zero
@@ -313,20 +315,24 @@ namespace RunAndGun
                 }
 
                 Enemy e = null;
+                var enemyLocation = new Vector2((float)tmxObject.X, (float)tmxObject.Y - fObjectHeight);
                 switch (tmxObject.Type)
                 {
                     case "Sniper":
-                        e = new Actors.Sniper(content, new Vector2((float)tmxObject.X, (float)tmxObject.Y - fObjectHeight), this, tmxObject.Type);
+                        e = new Actors.Sniper(content, enemyLocation, this, tmxObject.Type);
                         break;
 
                     case "Turret":
-                        e = new Actors.Turret(content, new Vector2((float)tmxObject.X, (float)tmxObject.Y - fObjectHeight), this, tmxObject.Type);
+                        e = new Actors.Turret(content, enemyLocation, this, tmxObject.Type);
                         break;
 
                     case "Level1BossPanel":
-                        e = new Actors.Level1BossPanel(content, new Vector2((float)tmxObject.X, (float)tmxObject.Y - fObjectHeight), this, tmxObject.Type);
+                        e = new Actors.Level1BossPanel(content, enemyLocation, this, tmxObject.Type);
                         break;
 
+                    case "Capsule":
+                        e = new Actors.Capsule(content, enemyLocation, this, tmxObject.Type);
+                        break;
                     default:
                         throw new Exception("Unexpected enemy type encountered: " + tmxObject.Type);
                 }
@@ -904,7 +910,7 @@ namespace RunAndGun
             for (int i = waitingEnemies.Count-1; i >= 0; i--)
             {
                 Enemy e = waitingEnemies[i];
-                if (e.BoundingBox().Intersects(this.ScreenCoordinates()))
+                if (e.SpawnConditionsMet())
                 {
                     ActiveEnemies.Add(e);
                     waitingEnemies.Remove(e);

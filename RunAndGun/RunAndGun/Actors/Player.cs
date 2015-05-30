@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Audio;
 using System.Xml;
-
+using RunAndGun.GameObjects;
 
 namespace RunAndGun.Actors
 {
@@ -22,8 +22,10 @@ namespace RunAndGun.Actors
 
         public enum PlayerDirection { Left = -1, Right = 1};
         public PlayerDirection playerDirection;
+        public Gun Gun;
         public enum GunDirection { StraightUp, High, Low, Neutral, StraightDown };
         public GunDirection gunDirection;
+
 #endregion
 
         // for drawing prone sprite, and offsetting origin point of bullets
@@ -119,6 +121,8 @@ namespace RunAndGun.Actors
 
             // X, Y - Y velocity is 0.0 by default, and increases/decreases depending on if player is jumping or falling.
             Velocity = new Vector2(0.0f, 0.0f);
+
+            this.Gun = new Gun();
         }
         public bool IsVulnerable()
         {
@@ -237,6 +241,8 @@ namespace RunAndGun.Actors
 
             if (!game.GamePaused)
             {
+                this.Gun.Update(gameTime);
+
                 if (SpawnTimeRemaining > 0)
                     SpawnTimeRemaining -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -626,13 +632,16 @@ namespace RunAndGun.Actors
                     // firing gun (note: player cannot fire gun while underwater)
                     !(this.IsInWater && this.IsProne))
                 {
+                    if (this.Gun.RecoilTimeRemaining <= 0)
+                    {
+                        this.Gun.Fire();
+                        if (this.playerDirection == Player.PlayerDirection.Right)
+                            AddProjectile(new Vector2(this.WorldPosition.X + this.Width - 4, this.WorldPosition.Y + 18));
+                        else
+                            AddProjectile(new Vector2(this.WorldPosition.X + 4, this.WorldPosition.Y + 18));
 
-                    if (this.playerDirection == Player.PlayerDirection.Right)
-                        AddProjectile(new Vector2(this.WorldPosition.X + this.Width - 4, this.WorldPosition.Y + 18));
-                    else
-                        AddProjectile(new Vector2(this.WorldPosition.X + 4, this.WorldPosition.Y + 18));
-
-                    soundGunshot.Play();
+                        soundGunshot.Play();
+                    }
                 }
                 #endregion
 
@@ -1200,6 +1209,15 @@ namespace RunAndGun.Actors
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            Vector2 torsoOffset;
+            if (this.Gun.RecoilTimeRemaining > 0)
+            {
+                torsoOffset = new Vector2(0, 1);
+            }
+            else
+            {
+                torsoOffset = new Vector2(0, 0);
+            }
             if (deathAnimation.Active)
             {
                 deathAnimation.Draw(spriteBatch, playerDirection, 1f);
@@ -1217,11 +1235,11 @@ namespace RunAndGun.Actors
                 if (IsInWater)
                     playermiscsprites.Draw(spriteBatch, playerDirection, 1f, PlayerSpriteCollection.PlayerSpriteTypes.Underwater);
                 else
-                    prone.Draw(spriteBatch, playerDirection, 1f);
+                    prone.Draw(spriteBatch, playerDirection, 1f, torsoOffset);
             }
             else if (IsInWater)
             {
-                playermiscsprites.Draw(spriteBatch, playerDirection, 1f, PlayerSpriteCollection.PlayerSpriteTypes.Wading);
+                playermiscsprites.Draw(spriteBatch, playerDirection, 1f, PlayerSpriteCollection.PlayerSpriteTypes.Wading, torsoOffset);
             }
             else
             {
@@ -1231,13 +1249,20 @@ namespace RunAndGun.Actors
                     switch (gunDirection)
                     {
                         case GunDirection.High:
-                            playermiscsprites.Draw(spriteBatch, playerDirection, 1f, PlayerSpriteCollection.PlayerSpriteTypes.GunHigh);
+                            playermiscsprites.Draw(spriteBatch, playerDirection, 1f, PlayerSpriteCollection.PlayerSpriteTypes.GunHigh, torsoOffset);
                             break;
                         case GunDirection.Low:
-                            playermiscsprites.Draw(spriteBatch, playerDirection, 1f, PlayerSpriteCollection.PlayerSpriteTypes.GunLow);
+                            playermiscsprites.Draw(spriteBatch, playerDirection, 1f, PlayerSpriteCollection.PlayerSpriteTypes.GunLow, torsoOffset);
                             break;
-                        default:                            
-                            runningTorsoAnimation.Draw(spriteBatch, playerDirection, 1f);
+                        default:
+                            if (this.Gun.RecoilTimeRemaining > 0)
+                            {
+                                playermiscsprites.Draw(spriteBatch, playerDirection, 1.0f, PlayerSpriteCollection.PlayerSpriteTypes.GunNeutral, torsoOffset);
+                            }
+                            else
+                            {
+                                runningTorsoAnimation.Draw(spriteBatch, playerDirection, 1f, torsoOffset);                                
+                            }
                             break;
                     }
                 }
@@ -1246,10 +1271,14 @@ namespace RunAndGun.Actors
                     if (gunDirection == GunDirection.StraightUp)
                     {
                         idlelegs.Draw(spriteBatch, playerDirection, 0.9f);
-                        playermiscsprites.Draw(spriteBatch, playerDirection, 1.0f, PlayerSpriteCollection.PlayerSpriteTypes.GunStraightUp);
+                        playermiscsprites.Draw(spriteBatch, playerDirection, 1.0f, PlayerSpriteCollection.PlayerSpriteTypes.GunStraightUp, torsoOffset);
                     }
                     else
-                        idle.Draw(spriteBatch, playerDirection, 1f);
+                    {
+                        idlelegs.Draw(spriteBatch, playerDirection, 0.9f);
+                        playermiscsprites.Draw(spriteBatch, playerDirection, 1.0f, PlayerSpriteCollection.PlayerSpriteTypes.GunNeutral, torsoOffset);
+                        //idle.Draw(spriteBatch, playerDirection, 1f);
+                    }
                 }
             }
 

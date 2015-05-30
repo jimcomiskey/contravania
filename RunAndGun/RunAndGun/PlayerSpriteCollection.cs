@@ -70,15 +70,19 @@ namespace RunAndGun
         // Draw the Animation Strip
         public void Draw(SpriteBatch spriteBatch, Player.PlayerDirection dir, float depth, PlayerSpriteTypes spriteType)
         {
+            Draw(spriteBatch, dir, depth, spriteType, new Vector2(0, 0));
+        }
+        public void Draw(SpriteBatch spriteBatch, Player.PlayerDirection dir, float depth, PlayerSpriteTypes spriteType, Vector2 offset)
+        {
             int iYOffSet = 0;
 
             if (spriteType == PlayerSpriteTypes.Wading || spriteType == PlayerSpriteTypes.Underwater)
                 iYOffSet = 8;
             else
-                iYOffSet = -5;
+                iYOffSet = -4;
 
             sourceRect = new Rectangle((int)spriteType * FrameWidth, 0, FrameWidth, FrameHeight);
-            destinationRect = new Rectangle((int)ScreenPosition.X, (int)ScreenPosition.Y + iYOffSet, FrameWidth, FrameHeight);
+            destinationRect = new Rectangle((int)(ScreenPosition.X + offset.X), (int)(ScreenPosition.Y + iYOffSet + offset.Y), FrameWidth, FrameHeight);
 
             if (dir == Player.PlayerDirection.Left)
             {

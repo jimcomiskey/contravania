@@ -8,7 +8,7 @@ namespace RunAndGun.Actors
     class ActorAction
     {
         public enum ActionType { AscendStairs, DescendStairs, MoveToAscendingStairs, MoveToDescendingStairs };
-        public ActionType Action;
-        public bool Active;
+        //public ActionType Action;
+        //public bool Active;
     }
 }
