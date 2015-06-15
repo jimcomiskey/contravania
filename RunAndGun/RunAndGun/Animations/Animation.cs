@@ -6,9 +6,9 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using RunAndGun.Actors;
 
-namespace RunAndGun
+namespace RunAndGun.Animations
 {
-    class Animation
+    public class Animation
     {
         // The image representing the collection of images used for animation
         Texture2D spriteStrip;
@@ -20,22 +20,22 @@ namespace RunAndGun
         public int elapsedTime;
 
         // The time we display a frame until the next one
-        int frameTime;
+        protected int frameTime;
 
         // The number of frames that the animation contains
-        int frameCount;
+        protected int frameCount;
 
         // The index of the current frame we are displaying
-        int currentFrame;
+        protected int currentFrame;
 
         // The color of the frame we will be displaying
-        Color color;
+        protected Color color;
 
         // The area of the image strip we want to display
-        Rectangle sourceRect = new Rectangle();
+        public Rectangle sourceRect = new Rectangle();
         
         // The area where we want to display the image strip in the game
-        Rectangle destinationRect = new Rectangle();
+        public Rectangle destinationRect = new Rectangle();
 
         // Width of a given frame
         public int FrameWidth
@@ -61,13 +61,15 @@ namespace RunAndGun
         {
             return WorldPosition - currentStage.CameraPosition;
         }
-        
+
         public void Initialize(Texture2D texture, Vector2 position,
-            int frameCount, int frametime, Color color, float scale, bool looping, Stage stage)
+            int frameCount,
+            int frametime, Color color, float scale, bool looping, 
+            Stage stage)
         {
             this.color = color;
             WorldPosition = position;
-            currentStage = stage; 
+            currentStage = stage;
             spriteStrip = texture;
             Looping = looping;
             this.frameCount = frameCount;
@@ -75,11 +77,12 @@ namespace RunAndGun
             animatingforward = true;
             elapsedTime = 0;
             currentFrame = 0;
-            this.frameTime = frametime; 
+            this.frameTime = frametime;
         }
         public void Initialize(Texture2D texture, Vector2 position,
             int frameWidth, int frameHeight, int frameCount,
-            int frametime, Color color, float scale, bool looping, bool loopingbackandforth, Stage stage)
+            int frametime, Color color, float scale, bool looping, bool loopingbackandforth, 
+            Stage stage)
         {
             // Keep a local copy of the values passed in
             this.color = color;
@@ -112,7 +115,7 @@ namespace RunAndGun
             Active = true;
         }
 
-        public void Update(GameTime gameTime)
+        public virtual void Update(GameTime gameTime)
         {
             
             // Update the elapsed time
@@ -183,7 +186,7 @@ namespace RunAndGun
         {
             Draw(spriteBatch, dir, depth, new Vector2(0, 0));
         }
-        public void Draw(SpriteBatch spriteBatch, Player.PlayerDirection dir, float depth, Vector2 offset)
+        public virtual void Draw(SpriteBatch spriteBatch, Player.PlayerDirection dir, float depth, Vector2 offset)
         {
             var drawRect = new Rectangle((int)(destinationRect.X + offset.X), (int)(destinationRect.Y + offset.Y), destinationRect.Width, destinationRect.Height);
             // Only draw the animation when we are active

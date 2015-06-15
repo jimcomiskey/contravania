@@ -5,16 +5,21 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
 using RunAndGun.Actors;
-
+using System.Collections.Generic;
+using RunAndGun.Animations;
 
 namespace RunAndGun.GameObjects
 {
-    class Projectile
+    public class Projectile
     {
         // Image representing the Projectile
         //public Texture2D Texture;
-        public Animation Image = null;
-        private Texture2D ImageTexture = null;
+        private Animation _image = null;                
+        
+        public virtual Animation Image()
+        {
+            return _image;            
+        }
         private SoundEffect soundProjectileHit;
         private Stage currentStage;
 
@@ -37,51 +42,46 @@ namespace RunAndGun.GameObjects
         
         public int Width()
         {
-            if (Image != null)
-                return Image.FrameWidth;
-            else
-                return ImageTexture.Width;
+            return Image().FrameWidth;
+            
         }
 
         public int Height()
         {
-            if (Image != null)
-                return Image.FrameHeight;
-            else
-                return ImageTexture.Height;
+            return Image().FrameHeight;            
         }
 
 
-        public void Initialize(Texture2D texture, SoundEffect hitsound, Vector2 position, int angle, Stage stage, float p_projectileSpeed)
-        {
+        //public void Initialize(Texture2D texture, SoundEffect hitsound, Vector2 position, int angle, Stage stage, float p_projectileSpeed)
+        //{
 
-            double radians = (Math.PI / 180) * angle;
+        //    double radians = (Math.PI / 180) * angle;
 
             
-            //Image = new Animation();
+        //    //Image = new Animation();
 
-            //Texture = texture;
-            ImageTexture = texture;
-            soundProjectileHit = hitsound;
-            currentStage = stage;
-            WorldPosition = position;
+        //    //Texture = texture;
+        //    ImageTexture = texture;
+        //    soundProjectileHit = hitsound;
+        //    currentStage = stage;
+        //    WorldPosition = position;
 
-            //Image.Initialize(texture, position, 3, 10, Color.White, 1, true, currentStage);
+        //    //Image.Initialize(texture, position, 3, 10, Color.White, 1, true, currentStage);
 
-            Velocity = new Vector2((float)Math.Sin(radians), -(float)Math.Cos(radians)) * p_projectileSpeed;
-            projectileSpeed = p_projectileSpeed;
+        //    Velocity = new Vector2((float)Math.Sin(radians), -(float)Math.Cos(radians)) * p_projectileSpeed;
+        //    projectileSpeed = p_projectileSpeed;
 
-            Active = true;
+        //    Active = true;
 
-            Damage = 2;
-        }
+        //    Damage = 2;
+        //}
         public void Initialize(Animation animation, SoundEffect hitsound, Vector2 position, int angle, Stage stage, float p_projectileSpeed)
         {
 
             double radians = (Math.PI / 180) * angle;
 
 
-            Image = animation;
+            _image = animation;
             soundProjectileHit = hitsound;
             currentStage = stage;
             WorldPosition = position;            
@@ -144,11 +144,8 @@ namespace RunAndGun.GameObjects
         {
             WorldPosition += Velocity;
 
-            if (Image != null)
-            {
-                Image.Update(gameTime);
-                Image.WorldPosition = WorldPosition;
-            }
+            Image().Update(gameTime);
+            Image().WorldPosition = WorldPosition;
             //if (Direction == Player.GunDirection.Right)
             //    Position.X += projectileMoveSpeed;
             //else if (Direction == Player.GunDirection.Left)
@@ -162,10 +159,7 @@ namespace RunAndGun.GameObjects
 
         public void Draw(SpriteBatch spriteBatch, Vector2 cameraPosition)
         {
-            if (Image != null)
-                Image.Draw(spriteBatch, Player.PlayerDirection.Right, 1);
-            else
-                spriteBatch.Draw(ImageTexture, new Vector2(ScreenPosition.X, ScreenPosition.Y), null, Color.White, 0f, new Vector2(Width() / 2, Height() / 2), 1f, SpriteEffects.None, 0f);
+            Image().Draw(spriteBatch, Player.PlayerDirection.Right, 1);            
         }
     }
 }

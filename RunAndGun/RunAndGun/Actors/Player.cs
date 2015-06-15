@@ -10,10 +10,11 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Audio;
 using System.Xml;
 using RunAndGun.GameObjects;
+using RunAndGun.Animations;
 
 namespace RunAndGun.Actors
 {
-    class Player : Actors.Actor
+    public class Player : Actors.Actor
     {
 
         public int ID;
@@ -43,12 +44,11 @@ namespace RunAndGun.Actors
         private Animation jumpingAnimation;
 
         private SoundEffect soundPlayerLand;
-        private SoundEffect soundGunshot;
+        
         private SoundEffect soundDeath;
         private PlayerSpriteCollection playermiscsprites;        
 
-        Texture2D projectileTexture;
-        private SoundEffect soundProjectileHit;
+        
         #endregion
 
         
@@ -122,7 +122,9 @@ namespace RunAndGun.Actors
             // X, Y - Y velocity is 0.0 by default, and increases/decreases depending on if player is jumping or falling.
             Velocity = new Vector2(0.0f, 0.0f);
 
-            this.Gun = new Gun();
+            Gun = new Gun();
+            Gun.Initialize(game.Content, GunType.Standard);
+            
         }
         public bool IsVulnerable()
         {
@@ -183,11 +185,10 @@ namespace RunAndGun.Actors
             deathAnimation.Initialize(swapColor(content.Load<Texture2D>("Sprites/billrizerdying")), position, 6, 200, Color.White, 1f, false, currentStage);
             deathAnimation.Active = false; 
 
-            projectileTexture = content.Load<Texture2D>("Sprites/basicbulletanimated");
-            soundProjectileHit = content.Load<SoundEffect>("Sounds/projectilehit");
+            
 
             soundPlayerLand = content.Load<SoundEffect>("Sounds/jumpland");
-            soundGunshot = content.Load<SoundEffect>("Sounds/gunshot3");
+            
             soundDeath = content.Load<SoundEffect>("Sounds/deathsound");
             
             // Set the starting position of the player around the middle of the screen and to the back            
@@ -260,7 +261,6 @@ namespace RunAndGun.Actors
                         this.Spawn();
                     }
 
-
                     if (this.SpawnTimeRemaining > 0)
                     {
                         this.UpdateSpawnFlicker(gameTime);
@@ -289,6 +289,7 @@ namespace RunAndGun.Actors
             Velocity = new Vector2(0f, 0f);
             IsDying = false;
             SpawnTimeRemaining = SpawnTime;
+            
         }
         private void UpdateSpawnFlicker(GameTime gameTime)
         {
@@ -634,13 +635,11 @@ namespace RunAndGun.Actors
                 {
                     if (this.Gun.RecoilTimeRemaining <= 0)
                     {
-                        this.Gun.Fire();
                         if (this.playerDirection == Player.PlayerDirection.Right)
-                            AddProjectile(new Vector2(this.WorldPosition.X + this.Width - 4, this.WorldPosition.Y + 18));
+                            FireGun(new Vector2(this.WorldPosition.X + this.Width - 4, this.WorldPosition.Y + 18), Gun);
                         else
-                            AddProjectile(new Vector2(this.WorldPosition.X + 4, this.WorldPosition.Y + 18));
-
-                        soundGunshot.Play();
+                            FireGun(new Vector2(this.WorldPosition.X + 4, this.WorldPosition.Y + 18), Gun);
+                        
                     }
                 }
                 #endregion
@@ -1134,13 +1133,18 @@ namespace RunAndGun.Actors
             {
                 CurrentInputState.Movement = 1.0f;
                 Velocity.X = MaxGroundVelocity;
-            }            
-        }
-        private void AddProjectile(Vector2 position)
-        {
-            Projectile projectile = new Projectile();
-            Vector2 gunBarrelLocation;
+            }
 
+            // player loses special gun if they die.
+            if (Gun.GunType != GunType.Standard)
+            {
+                Gun = new Gun();
+                Gun.Initialize(game.Content, GunType.Standard);
+            }
+        }
+        private void FireGun(Vector2 position, Gun gun)
+        {
+            
             float fHorizontalOffset = 0.0f;
             float fVerticalOffset = 0.0f;
 
@@ -1197,14 +1201,13 @@ namespace RunAndGun.Actors
             {
                 gunAngle = 360 - gunAngle;
             }
-            
+
+            Vector2 gunBarrelLocation;
+
             gunBarrelLocation = new Vector2(position.X + fHorizontalOffset, position.Y + fVerticalOffset);
-            
-            //projectile.Initialize(projectileTexture, gunBarrelLocation, this, currentStage);
-            Animation projectileAnimation = new Animation();
-            projectileAnimation.Initialize(projectileTexture, gunBarrelLocation, 3, 10, Color.White, 1f, true, currentStage);
-            projectile.Initialize(projectileAnimation, soundProjectileHit, gunBarrelLocation, gunAngle, currentStage, 3f);
-            currentStage.Projectiles.Add(projectile);
+
+            var projectiles = gun.Fire(gunBarrelLocation, gunAngle, currentStage);            
+            currentStage.Projectiles.AddRange(projectiles);
         }
 
         public override void Draw(SpriteBatch spriteBatch)

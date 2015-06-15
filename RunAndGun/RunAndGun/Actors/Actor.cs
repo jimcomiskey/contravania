@@ -9,11 +9,11 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Audio;
 using RunAndGun.GameObjects;
-
+using RunAndGun.Animations;
 
 namespace RunAndGun.Actors
 {
-    abstract class Actor
+    public abstract class Actor
     {
 
         public string Name;  // I only use this for debugging purposes at this point.

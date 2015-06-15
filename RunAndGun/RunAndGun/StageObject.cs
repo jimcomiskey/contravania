@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace RunAndGun
 {
-    class StageObject
+    public class StageObject
     {
         protected Stage currentStage;
         protected Texture2D texture;

@@ -11,7 +11,7 @@ using System.Xml;
 
 namespace RunAndGun.Actors
 {
-    abstract class Enemy : Actors.Actor
+    public abstract class Enemy : Actors.Actor
     {
         
         protected RunAndGun.Actors.Player.PlayerDirection direction;
@@ -21,7 +21,8 @@ namespace RunAndGun.Actors
         public int Health;
 
         public bool Active;
-        public bool CollisionIsHazardous;        
+        public bool CollisionIsHazardous;
+        public bool VulnerableToBullets;
 
         public Enemy(ContentManager content, Vector2 position, Stage stage, string enemytype)
         {
@@ -29,6 +30,7 @@ namespace RunAndGun.Actors
             Active = true;
             Health = 1;
             CollisionIsHazardous = true;
+            VulnerableToBullets = true;
             direction = Player.PlayerDirection.Left;
             EnemyMoveSpeed = 0.0f;
 

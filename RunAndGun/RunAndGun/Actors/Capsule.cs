@@ -14,16 +14,18 @@ namespace RunAndGun.Actors
     class Capsule : Enemy
     {
         private Texture2D imageTexture;
-        private SoundEffect soundDestroyed;
+        //private SoundEffect soundDestroyed;
         
-        public CapsuleDirection CapsuleDirection = CapsuleDirection.Down;
-
         private float startingVerticalPosition;
         private const float swingRange = 20f;
+        private Vector2 startPosition;
+        private ContentManager contentManager;
         
         public Capsule(ContentManager content, Vector2 position, Stage stage, string enemytype) : base (content, position, stage, enemytype)
         {
-            EnemyMoveSpeed = 1.0f;
+            contentManager = content;
+            startPosition = position;
+            EnemyMoveSpeed = 2.0f;
 
             imageTexture = content.Load<Texture2D>("Sprites/Capsule");
 
@@ -50,7 +52,7 @@ namespace RunAndGun.Actors
         public void Initialize(ContentManager content, Texture2D texture, SoundEffect hitsound, Vector2 position, Stage stage)
         {
             imageTexture = texture;
-            soundDestroyed = hitsound;
+            //soundDestroyed = hitsound;
             currentStage = stage;
             WorldPosition = position;            
         }
@@ -58,20 +60,18 @@ namespace RunAndGun.Actors
         public override void Move(Microsoft.Xna.Framework.GameTime gameTime)
         {
             // TODO: create "wave" movement pattern by manipulating velocity
-            Velocity.X = EnemyMoveSpeed;
-            Velocity.Y = EnemyMoveSpeed * (float)CapsuleDirection; 
+            Velocity.X = EnemyMoveSpeed;            
         }
         public override void ApplyPhysics(GameTime gameTime)
         {
-            WorldPosition += Velocity;
-            if (CapsuleDirection == CapsuleDirection.Up && WorldPosition.Y < startingVerticalPosition - swingRange)
-            {
-                CapsuleDirection = CapsuleDirection.Down;
-            }
-            else if (CapsuleDirection == CapsuleDirection.Down && WorldPosition.Y > startingVerticalPosition + swingRange)
-            {
-                CapsuleDirection = CapsuleDirection.Up;
-            }
+            WorldPosition.X += EnemyMoveSpeed;
+            WorldPosition.Y = startPosition.Y + (-(float)Math.Cos(WorldPosition.X / 20) * 20);            
+        }
+        public override void Die(GameTime gameTime)
+        {
+            ExplosionSound.Play();
+            currentStage.ActiveEnemies.Add(new PlayerItem(contentManager, WorldPosition, currentStage, "SpreadGun"));
+            base.Die(gameTime);
         }
 
         protected override void UpdateAnimations(GameTime gametime)

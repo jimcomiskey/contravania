@@ -38,12 +38,12 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <UpdateUrl>http://jimcomiskey.github.io/contravania-publish/publish/</UpdateUrl>
+    <UpdateUrl>http://jimcomiskey.github.io/projects/publish/</UpdateUrl>
     <ProductName>Contravania</ProductName>
     <PublisherName>Jim Comiskey</PublisherName>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>18</ApplicationRevision>
+    <ApplicationRevision>32</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -77,10 +77,10 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>3CA85E400646E8FF3281903D9DF21F3EF642E5E6</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>F6FD4DC704DE8125DE4B84C8AE4CB264C2BD412B</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>RunAndGun_4_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>RunAndGun_2_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -95,7 +95,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>ContraVania.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>Contravania.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
@@ -159,13 +159,15 @@
     <Compile Include="Actors\ActorAction.cs" />
     <Compile Include="Actors\FootSoldier.cs" />
     <Compile Include="Actors\Level1BossPanel.cs" />
+    <Compile Include="Actors\PlayerItem.cs" />
     <Compile Include="Actors\Sniper.cs" />
     <Compile Include="Actors\Turret.cs" />
     <Compile Include="Actors\Zombie.cs" />
-    <Compile Include="Animation.cs" />
+    <Compile Include="Animations\Animation.cs" />
     <Compile Include="Actors\Enemy.cs" />
     <Compile Include="Actors\Player.cs" />
     <Compile Include="Actors\Capsule.cs" />
+    <Compile Include="Animations\SpreadBulletAnimation.cs" />
     <Compile Include="GameObjects\Gun.cs" />
     <Compile Include="InputState.cs" />
     <Compile Include="GameObjects\Platform.cs" />
@@ -223,9 +225,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config">
-      <SubType>Designer</SubType>
-    </None>
     <Content Include="LevelMaps\Castlevania1-1-1.tmx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -235,8 +234,11 @@
     <Content Include="LevelMaps\Contra1-1Jungle.tmx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="ContraVania.pfx" />
+    <None Include="Contravania.pfx" />
     <None Include="Properties\app.manifest" />
+    <None Include="RunAndGun_1_TemporaryKey.pfx" />
+    <None Include="RunAndGun_2_TemporaryKey.pfx" />
+    <None Include="RunAndGun_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -245,12 +247,4 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <!--
-      To modify your build process, add your task inside one of the targets below and uncomment it. 
-      Other similar extension points exist, see Microsoft.Common.targets.
-      <Target Name="BeforeBuild">
-      </Target>
-      <Target Name="AfterBuild">
-      </Target>
-    -->
 </Project>

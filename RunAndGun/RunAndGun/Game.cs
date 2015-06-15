@@ -12,7 +12,8 @@ namespace RunAndGun
 {
     // Command Line Arguments:
     // 
-    // StartupGame
+    // [/StartupGame:TitleScreen||Contra||ContraVania]
+    // [/PlayerStartingPosition:[X]
     // WindowedMode
     // StartupStage
     // DoNotSpawnEnemies - when setting is present, do not spawn enemies

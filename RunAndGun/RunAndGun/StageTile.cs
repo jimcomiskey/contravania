@@ -5,7 +5,7 @@ using System.Text;
 
 namespace RunAndGun
 {
-    class StageTile
+    public class StageTile
     {
         // coordinates of tile on map
         public int X = 0;

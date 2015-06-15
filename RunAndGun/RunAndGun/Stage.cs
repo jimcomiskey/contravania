@@ -1,6 +1,7 @@
 ﻿// ParallaxingBackground.cs
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -11,10 +12,11 @@ using System.Xml;
 using System.IO;
 using RunAndGun.Actors;
 using RunAndGun.GameObjects;
+using RunAndGun.Animations;
 
 namespace RunAndGun
 {
-    class Stage
+    public class Stage
     {
         public Game game;
         public string StageID;
@@ -780,16 +782,18 @@ namespace RunAndGun
                 rectangle1 = new Rectangle((int)Projectiles[i].WorldPosition.X -
                     Projectiles[i].Width() / 2, (int)Projectiles[i].WorldPosition.Y -
                     Projectiles[i].Height() / 2, Projectiles[i].Width(), Projectiles[i].Height());
-                for (int j = 0; j < ActiveEnemies.Count; j++)
+                foreach (var enemy in ActiveEnemies.Where(e => e.VulnerableToBullets))
+                //for (int j = 0; j < ActiveEnemies.Count; j++)
                 {
+
                     // Create the rectangles we need to determine if we collided with each other
-                    rectangle2 = ActiveEnemies[j].BoundingBox();
+                    rectangle2 = enemy.BoundingBox();
 
                     // Determine if the two objects collided with each other
                     if (rectangle1.Intersects(rectangle2))
                     {
-                        ActiveEnemies[j].Health -= Projectiles[i].Damage;
-                        if (ActiveEnemies[j].Health > 0)
+                        enemy.Health -= Projectiles[i].Damage;
+                        if (enemy.Health > 0)
                             Projectiles[i].PlayHitSound();
                         Projectiles[i].Active = false;
                     }
@@ -797,53 +801,56 @@ namespace RunAndGun
             }
 
             // player Collision: enemies, portals
-            foreach (Player player in players)
+            foreach (Player player in players.Where(p => p.IsVulnerable()))
             {
-                if (player.IsVulnerable())
+                //playerBoundingBox = player.BoundingBox();
+                playerBoundingBox = player.HurtBox();
+                for (int i = 0; i < EnemyProjectiles.Count; i++)
                 {
-                    //playerBoundingBox = player.BoundingBox();
-                    playerBoundingBox = player.HurtBox();
-                    for (int i = 0; i < EnemyProjectiles.Count; i++)
+                    rectangle1 = new Rectangle((int)EnemyProjectiles[i].WorldPosition.X -
+                        EnemyProjectiles[i].Width() / 2, (int)EnemyProjectiles[i].WorldPosition.Y -
+                        EnemyProjectiles[i].Height() / 2, EnemyProjectiles[i].Width(), EnemyProjectiles[i].Height());
+                    if (rectangle1.Intersects(playerBoundingBox))
                     {
-                        rectangle1 = new Rectangle((int)EnemyProjectiles[i].WorldPosition.X -
-                            EnemyProjectiles[i].Width() / 2, (int)EnemyProjectiles[i].WorldPosition.Y -
-                            EnemyProjectiles[i].Height() / 2, EnemyProjectiles[i].Width(), EnemyProjectiles[i].Height());
-                        if (rectangle1.Intersects(playerBoundingBox))
+                        player.Die(gameTime);
+                        EnemyProjectiles[i].Active = false;
+                    }
+                }
+
+                for (int i = 0; i < ActiveEnemies.Count; i++)
+                {
+                    if (ActiveEnemies[i].CollisionIsHazardous || ActiveEnemies[i].GetType() == typeof(PlayerItem))
+                    {
+                        rectangle1 = ActiveEnemies[i].BoundingBox();
+
+                        if (rectangle1.Intersects(playerBoundingBox) && ActiveEnemies[i].CollisionIsHazardous)
                         {
                             player.Die(gameTime);
-                            EnemyProjectiles[i].Active = false;
                         }
-                    }
-
-                    for (int i = 0; i < ActiveEnemies.Count; i++)
-                    {
-                        if (ActiveEnemies[i].CollisionIsHazardous)
+                        if (rectangle1.Intersects(playerBoundingBox) && ActiveEnemies[i].GetType() == typeof(PlayerItem))
                         {
-                            rectangle1 = ActiveEnemies[i].BoundingBox();
-
-
-                            if (rectangle1.Intersects(playerBoundingBox))
+                            // if item acquired is a Gun, equip it to the player.
+                            if (((PlayerItem)ActiveEnemies[i]).Gun != null)
                             {
-                                player.Die(gameTime);
+                                player.Gun = ((PlayerItem)ActiveEnemies[i]).Gun;
                             }
+                            ActiveEnemies[i].Die(gameTime);
                         }
                     }
+                }
 
-                    for (int i = 0; i < StageTiles.Count; i++)
+                for (int i = 0; i < StageTiles.Count; i++)
+                {
+                    if (StageTiles[i].PortalID != null)
                     {
-                        if (StageTiles[i].PortalID != null)
+                        rectangle1 = getTileBoundsByGridPosition(StageTiles[i].X, StageTiles[i].Y);
+                        if (playerBoundingBox.Intersects(rectangle1))
                         {
-                            rectangle1 = getTileBoundsByGridPosition(StageTiles[i].X, StageTiles[i].Y);
-                            if (playerBoundingBox.Intersects(rectangle1))
-                            {
-                                player.currentStage = (Stage)this.portals[StageTiles[i].PortalID];
-                                player.WorldPosition.X = 0;
-                                player.Update(gameTime);
-                            }
+                            player.currentStage = (Stage)this.portals[StageTiles[i].PortalID];
+                            player.WorldPosition.X = 0;
+                            player.Update(gameTime);
                         }
                     }
-
-
                 }
             }
         }
@@ -877,34 +884,37 @@ namespace RunAndGun
         }
         public void SpawnEnemies(GameTime gameTime)
         {
-            // randomly spawwn foot soldiers
-            
-            if (gameTime.TotalGameTime - previousSpawnTime > enemySpawnTime && ActiveEnemies.Count <= 3)
+            if (!game.LaunchParameters.ContainsKey("DoNotSpawnRandomEnemies"))
             {
-                previousSpawnTime = gameTime.TotalGameTime;
+                // randomly spawwn foot soldiers
 
-                float fVerticalSpawnLocation = 0;
-                float fHorizontalSpawnLocation = CameraPosition.X + Game.iScreenModelWidth;
-                if (CameraPosition.X + Game.iScreenModelWidth < this.MapWidth * this.iTileWidth)
+                if (gameTime.TotalGameTime - previousSpawnTime > enemySpawnTime && ActiveEnemies.Count <= 3)
                 {
-                    int iYTile = 0;
-                    for (iYTile = 0; iYTile < MapHeight; iYTile++)
-                    {
+                    previousSpawnTime = gameTime.TotalGameTime;
 
-                        if (this.getStageTileByGridPosition((int)fHorizontalSpawnLocation / iTileWidth, iYTile).IsPlatform())
+                    float fVerticalSpawnLocation = 0;
+                    float fHorizontalSpawnLocation = CameraPosition.X + Game.iScreenModelWidth;
+                    if (CameraPosition.X + Game.iScreenModelWidth < this.MapWidth * this.iTileWidth)
+                    {
+                        int iYTile = 0;
+                        for (iYTile = 0; iYTile < MapHeight; iYTile++)
                         {
-                            fVerticalSpawnLocation = iYTile * iTileHeight;
-                            break;
+
+                            if (this.getStageTileByGridPosition((int)fHorizontalSpawnLocation / iTileWidth, iYTile).IsPlatform())
+                            {
+                                fVerticalSpawnLocation = iYTile * iTileHeight;
+                                break;
+                            }
                         }
                     }
+
+                    Vector2 enemySpawnPosition = new Vector2(CameraPosition.X + Game.iScreenModelWidth, fVerticalSpawnLocation);
+
+                    AddEnemy(enemySpawnPosition);
+
+                    Random r = new Random();
+                    enemySpawnTime = TimeSpan.FromMilliseconds(r.Next(200, 1500));
                 }
-
-                Vector2 enemySpawnPosition = new Vector2(CameraPosition.X + Game.iScreenModelWidth, fVerticalSpawnLocation);
-
-                AddEnemy(enemySpawnPosition);
-                
-                Random r = new Random(); 
-                enemySpawnTime = TimeSpan.FromMilliseconds(r.Next(200, 1500));
             }
 
             for (int i = waitingEnemies.Count-1; i >= 0; i--)
@@ -917,7 +927,7 @@ namespace RunAndGun
                 }
             }
 
-        }
+        }        
         public void UpdateEnemies(GameTime gameTime)
         {
             // Update the Enemies

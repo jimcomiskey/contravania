@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
 using RunAndGun.GameObjects;
+using RunAndGun.Animations;
 
 namespace RunAndGun.Actors
 {
@@ -69,7 +70,7 @@ namespace RunAndGun.Actors
             //G 140 68   28
             //B 124 52   12
 
-            projectileTexture = content.Load<Texture2D>("Sprites/basicbullet");
+            projectileTexture = content.Load<Texture2D>("Sprites/Projectiles/basicbullet");
 
             ExplosionAnimation.Initialize(content.Load<Texture2D>("Sprites/Explosion2"), WorldPosition, 5, 150, Color.White, 1f, false, this.currentStage);
             ExplosionSound = content.Load<SoundEffect>("Sounds/Explosion2");
@@ -120,8 +121,7 @@ namespace RunAndGun.Actors
 
             float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             TimeSinceLastMove += elapsedTime;
-
-                
+    
             // do nothing 
             Player nearestPlayer = null;
             foreach (Player player in currentStage.Players)
@@ -195,8 +195,12 @@ namespace RunAndGun.Actors
             gunBarrelLocation = new Vector2(position.X + fHorizontalOffset, position.Y + fVerticalOffset);
 
             Rectangle bb = this.BoundingBox();
-            
-            projectile.Initialize(projectileTexture, null, new Vector2(bb.Center.X, bb.Center.Y), iCurrentPosition * 30, currentStage, 2f);
+
+            Vector2 initPosition = new Vector2(bb.Center.X, bb.Center.Y);
+
+            var projectileAnimation = new Animation();
+            projectileAnimation.Initialize(projectileTexture, initPosition, 1, 0, Color.White, 1f, true, currentStage);            
+            projectile.Initialize(projectileAnimation, null, initPosition, iCurrentPosition * 30, currentStage, 2f);
             currentStage.EnemyProjectiles.Add(projectile);
         }
         
