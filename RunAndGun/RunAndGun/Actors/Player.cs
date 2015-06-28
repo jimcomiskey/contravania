@@ -18,7 +18,7 @@ namespace RunAndGun.Actors
     {
 
         public int ID;
-        private Game _game;
+        private Game game;
 #region "Declarations"
 
         public enum PlayerDirection { Left = -1, Right = 1};
@@ -34,39 +34,39 @@ namespace RunAndGun.Actors
 
         #region Content Objects
 
-        private Animation _idle;
-        private Animation _idlelegs;
-        private Animation _dropping;
-        private Animation _prone;
-        private Animation _deathAnimation;        
-        private Animation _runningTorsoAnimation;
-        private Animation _runningLegsAnimation;
-        private Animation _jumpingAnimation;
+        private Animation idle;
+        private Animation idlelegs;
+        private Animation dropping;
+        private Animation prone;
+        private Animation deathAnimation;        
+        private Animation runningTorsoAnimation;
+        private Animation runningLegsAnimation;
+        private Animation jumpingAnimation;
 
-        private SoundEffect _soundPlayerLand;
+        private SoundEffect soundPlayerLand;
         
-        private SoundEffect _soundDeath;
-        private PlayerSpriteCollection _playermiscsprites;        
+        private SoundEffect soundDeath;
+        private PlayerSpriteCollection playermiscsprites;        
 
         
         #endregion
 
         
-        private bool _dropInProgress;        
-        private bool _isProne;   // is player ducking
+        private bool DropInProgress;        
+        private bool IsProne;   // is player ducking
 
-        private bool _isInWater; // set to true when user is on a water platform (wading, jungle stage 1)
-        public bool _isOnStairsLeft;
-        public bool _isOnStairsRight;
-        public bool IsOnStairs { get { if (_isOnStairsLeft || _isOnStairsRight) return true; else return false; } }
-        private bool _ignoreNextPlatform;
+        private bool IsInWater; // set to true when user is on a water platform (wading, jungle stage 1)
+        public bool IsOnStairsLeft;
+        public bool IsOnStairsRight;
+        public bool IsOnStairs { get { if (IsOnStairsLeft || IsOnStairsRight) return true; else return false; } }
+        private bool IgnoreNextPlatform;
 
         
         // Amount of lives the player has, including the current one.
         public int LifeCount;
-        private float _spawnTimeRemaining;
-        private const float _spawnTime = 3.0f;
-        private int _spawnAnimationElapsedTime; // control flicker of player while spawning.
+        private float SpawnTimeRemaining;
+        private const float SpawnTime = 3.0f;
+        private int spawnAnimationElapsedTime; // control flicker of player while spawning.
         public bool Visible;
 
         public InputState CurrentInputState;
@@ -84,8 +84,8 @@ namespace RunAndGun.Actors
 
         public bool MovingUpStairs;
         public bool MovingDownStairs;
-        private float _lastStairtopHeight;     // when moving up or down stairs, keep track of 
-        private const float _stairHeight = 8f; // to the player, stairs are 8 pixels in height.
+        private float lastStairtopHeight;     // when moving up or down stairs, keep track of 
+        private const float StairHeight = 8f; // to the player, stairs are 8 pixels in height.
         public bool SecuringStairStep;
 
         public bool MovingTowardsStairs;
@@ -94,7 +94,7 @@ namespace RunAndGun.Actors
 
         public override int Width
         {
-            get { return _idle.FrameWidth; }
+            get { return idle.FrameWidth; }
         }
         
         public Player(int playerID, Game game)
@@ -102,20 +102,20 @@ namespace RunAndGun.Actors
             //PlayerMoveSpeed = 1.5f;
             //MaxGroundVelocity = 1f;
 
-            _runningTorsoAnimation = new Animation();
-            _runningLegsAnimation = new Animation();
-            _jumpingAnimation = new Animation();
-            _playermiscsprites = new PlayerSpriteCollection();
-            _idle = new Animation();
-            _idlelegs = new Animation();
-            _dropping = new Animation();
-            _prone = new Animation();
-            _deathAnimation = new Animation();
+            runningTorsoAnimation = new Animation();
+            runningLegsAnimation = new Animation();
+            jumpingAnimation = new Animation();
+            playermiscsprites = new PlayerSpriteCollection();
+            idle = new Animation();
+            idlelegs = new Animation();
+            dropping = new Animation();
+            prone = new Animation();
+            deathAnimation = new Animation();
             
-            this._game = game;
+            this.game = game;
             Name = "Player" + playerID.ToString();
             ID = playerID;
-            _spawnTimeRemaining = _spawnTime;
+            SpawnTimeRemaining = SpawnTime;
             JumpInProgress = true;
             MaxGroundVelocity = 1.0f;
 
@@ -128,7 +128,7 @@ namespace RunAndGun.Actors
         }
         public bool IsVulnerable()
         {
-            if (_spawnTimeRemaining > 0 || IsDying)
+            if (SpawnTimeRemaining > 0 || IsDying)
                 return false;
             else
                 return true;
@@ -145,14 +145,14 @@ namespace RunAndGun.Actors
             {
                 base.currentStage = value;
 
-                _runningTorsoAnimation.currentStage = currentStage;
-                _runningLegsAnimation.currentStage = currentStage;                
-                _jumpingAnimation.currentStage = currentStage;                
-                _idle.currentStage = currentStage;                
-                _idlelegs.currentStage = currentStage;                
-                _prone.currentStage = currentStage;                
-                _dropping.currentStage = currentStage;
-                _deathAnimation.currentStage = currentStage;
+                runningTorsoAnimation.currentStage = currentStage;
+                runningLegsAnimation.currentStage = currentStage;                
+                jumpingAnimation.currentStage = currentStage;                
+                idle.currentStage = currentStage;                
+                idlelegs.currentStage = currentStage;                
+                prone.currentStage = currentStage;                
+                dropping.currentStage = currentStage;
+                deathAnimation.currentStage = currentStage;
 
             }
         }
@@ -172,24 +172,24 @@ namespace RunAndGun.Actors
             playerDirection = PlayerDirection.Right;
             
             // 32wx32h sprite, 6 frames of animation, 350 frame timee (miliseconds?)
-            _runningTorsoAnimation.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizerrunningtorso")), Vector2.Zero, 32, 32, 6, 150, Color.White, 1f, true, false, currentStage);
+            runningTorsoAnimation.Initialize(swapColor(content.Load<Texture2D>("Sprites/billrizerrunningtorso")), Vector2.Zero, 32, 32, 6, 150, Color.White, 1f, true, false, currentStage);
             // 32wx24h sprite, 3 frames of animation, , 350 frame timee (miliseconds?)
-            _runningLegsAnimation.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizerrunninglegs")), Vector2.Zero, 32, 24, 3, 150, Color.White, 1f, true, false, currentStage);
+            runningLegsAnimation.Initialize(swapColor(content.Load<Texture2D>("Sprites/billrizerrunninglegs")), Vector2.Zero, 32, 24, 3, 150, Color.White, 1f, true, false, currentStage);
             // 32x32 sprite, 4 frames animation, 350 frame time (miliseconds?)
-            _jumpingAnimation.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizerjumping")), Vector2.Zero, 32, 32, 4, 150, Color.White, 1f, true, false, currentStage);
-            _playermiscsprites.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizermiscsprites")), Vector2.Zero, 6, Color.White, 1);
-            _idle.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizeridle")), position, 1, 1, Color.White, 1f, true, currentStage);
-            _idlelegs.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizeridlelegs")), position, 1, 1, Color.White, 1f, true, currentStage);            
-            _dropping.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizerdropping")), position, 1, 1, Color.White, 1f, true, currentStage);
-            _prone.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizerprone")), position, 1, 1, Color.White, 1f, true, currentStage);
-            _deathAnimation.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizerdying")), position, 6, 200, Color.White, 1f, false, currentStage);
-            _deathAnimation.Active = false; 
+            jumpingAnimation.Initialize(swapColor(content.Load<Texture2D>("Sprites/billrizerjumping")), Vector2.Zero, 32, 32, 4, 150, Color.White, 1f, true, false, currentStage);
+            playermiscsprites.Initialize(swapColor(content.Load<Texture2D>("Sprites/billrizermiscsprites")), Vector2.Zero, 6, Color.White, 1);
+            idle.Initialize(swapColor(content.Load<Texture2D>("Sprites/billrizeridle")), position, 1, 1, Color.White, 1f, true, currentStage);
+            idlelegs.Initialize(swapColor(content.Load<Texture2D>("Sprites/billrizeridlelegs")), position, 1, 1, Color.White, 1f, true, currentStage);            
+            dropping.Initialize(swapColor(content.Load<Texture2D>("Sprites/billrizerdropping")), position, 1, 1, Color.White, 1f, true, currentStage);
+            prone.Initialize(swapColor(content.Load<Texture2D>("Sprites/billrizerprone")), position, 1, 1, Color.White, 1f, true, currentStage);
+            deathAnimation.Initialize(swapColor(content.Load<Texture2D>("Sprites/billrizerdying")), position, 6, 200, Color.White, 1f, false, currentStage);
+            deathAnimation.Active = false; 
 
             
 
-            _soundPlayerLand = content.Load<SoundEffect>("Sounds/jumpland");
+            soundPlayerLand = content.Load<SoundEffect>("Sounds/jumpland");
             
-            _soundDeath = content.Load<SoundEffect>("Sounds/deathsound");
+            soundDeath = content.Load<SoundEffect>("Sounds/deathsound");
             
             // Set the starting position of the player around the middle of the screen and to the back            
             WorldPosition = position; 
@@ -197,7 +197,7 @@ namespace RunAndGun.Actors
             
         }
         // Switch player color to denote player 1 (blue default), player 2 (red), player 3 etc...
-        private Texture2D SwapColor(Texture2D thisTexture)
+        private Texture2D swapColor(Texture2D thisTexture)
         {
             if (this.ID == 1)
                 // no color swap for player 1
@@ -238,14 +238,14 @@ namespace RunAndGun.Actors
             this.GetInput();
 
             if (!PreviousInputState.StartButtonPressed && CurrentInputState.StartButtonPressed)
-                _game.TogglePause();                
+                game.TogglePause();                
 
-            if (!_game.GamePaused)
+            if (!game.GamePaused)
             {
                 this.Gun.Update(gameTime);
 
-                if (_spawnTimeRemaining > 0)
-                    _spawnTimeRemaining -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+                if (SpawnTimeRemaining > 0)
+                    SpawnTimeRemaining -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                 this.UpdateAnimations(gameTime);
 
@@ -255,13 +255,13 @@ namespace RunAndGun.Actors
 
                 if (this.LifeCount > 0)
                 {
-                    if (IsDying && _deathAnimation.Active == false)
+                    if (IsDying && deathAnimation.Active == false)
                     {
                         // dead player's death animation has completed, re-spawn player.
                         this.Spawn();
                     }
 
-                    if (this._spawnTimeRemaining > 0)
+                    if (this.SpawnTimeRemaining > 0)
                     {
                         this.UpdateSpawnFlicker(gameTime);
                     }
@@ -288,18 +288,18 @@ namespace RunAndGun.Actors
             WorldPosition.Y = 0;
             Velocity = new Vector2(0f, 0f);
             IsDying = false;
-            _spawnTimeRemaining = _spawnTime;
+            SpawnTimeRemaining = SpawnTime;
             
         }
         private void UpdateSpawnFlicker(GameTime gameTime)
         {
-            _spawnAnimationElapsedTime += (int)gameTime.ElapsedGameTime.TotalMilliseconds;
+            spawnAnimationElapsedTime += (int)gameTime.ElapsedGameTime.TotalMilliseconds;
             const int spawnFlickerTime = 15;
-            if (_spawnAnimationElapsedTime >= spawnFlickerTime)
+            if (spawnAnimationElapsedTime >= spawnFlickerTime)
             {
                 // toggle visibility to create flicker effect.
                 Visible = !Visible;
-                _spawnAnimationElapsedTime = 0;
+                spawnAnimationElapsedTime = 0;
             }
         }
         
@@ -315,28 +315,28 @@ namespace RunAndGun.Actors
                 legsPosition = new Vector2(WorldPosition.X, WorldPosition.Y + 21);                
             }
 
-            _runningTorsoAnimation.WorldPosition = WorldPosition;
-            _runningLegsAnimation.WorldPosition = legsPosition;
-            _jumpingAnimation.WorldPosition = WorldPosition;
-            _idle.WorldPosition = WorldPosition;
-            _idlelegs.WorldPosition = legsPosition;
-            _prone.WorldPosition = new Vector2(WorldPosition.X, WorldPosition.Y + iProneVerticalOffset);
-            _dropping.WorldPosition = WorldPosition;
-            _deathAnimation.WorldPosition = WorldPosition;
+            runningTorsoAnimation.WorldPosition = WorldPosition;
+            runningLegsAnimation.WorldPosition = legsPosition;
+            jumpingAnimation.WorldPosition = WorldPosition;
+            idle.WorldPosition = WorldPosition;
+            idlelegs.WorldPosition = legsPosition;
+            prone.WorldPosition = new Vector2(WorldPosition.X, WorldPosition.Y + iProneVerticalOffset);
+            dropping.WorldPosition = WorldPosition;
+            deathAnimation.WorldPosition = WorldPosition;
 
-            _playermiscsprites.ScreenPosition = ScreenPosition;            
+            playermiscsprites.ScreenPosition = ScreenPosition;            
 
-            _runningTorsoAnimation.Update(gameTime);
-            _runningLegsAnimation.Update(gameTime);
-            _jumpingAnimation.Update(gameTime);
-            _idle.Update(gameTime);
-            _idlelegs.Update(gameTime);
-            _prone.Update(gameTime);
-            _dropping.Update(gameTime);
+            runningTorsoAnimation.Update(gameTime);
+            runningLegsAnimation.Update(gameTime);
+            jumpingAnimation.Update(gameTime);
+            idle.Update(gameTime);
+            idlelegs.Update(gameTime);
+            prone.Update(gameTime);
+            dropping.Update(gameTime);
 
-            if (_deathAnimation.Active)
+            if (deathAnimation.Active)
             {                
-                _deathAnimation.Update(gameTime);                
+                deathAnimation.Update(gameTime);                
             }
     
         }
@@ -377,7 +377,7 @@ namespace RunAndGun.Actors
             if ((currentGamePadState.IsButtonDown(Buttons.Start)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.Enter)))
                 CurrentInputState.StartButtonPressed = true;
 
-            if (!IsDying && !_game.GamePaused)
+            if (!IsDying && !game.GamePaused)
             {
                 DetermineAnalogHorizontalMovement(currentGamePadState, currentKeyboardState);                
             }
@@ -467,7 +467,7 @@ namespace RunAndGun.Actors
                 if (!this.IsOnStairs)
                 {
                     // player only stays prone as long as he is pressing down.
-                    this._isProne = false;
+                    this.IsProne = false;
                     if (CurrentInputState.DirectionDown)
                     {
                         if (this.FindNearbyStairtop().HasValue)
@@ -500,7 +500,7 @@ namespace RunAndGun.Actors
                         }
                         else if (this.Velocity.X == 0 && this.IsOnGround == true)
                         {
-                            this._isProne = true;
+                            this.IsProne = true;
                         }
                     }
                 }
@@ -552,13 +552,13 @@ namespace RunAndGun.Actors
                 if (!this.PreviousInputState.JumpButtonPressed && this.CurrentInputState.JumpButtonPressed && this.IsOnGround && !this.MovingUpStairs && !this.MovingDownStairs && !this.MovingTowardsStairs)
                 {
                     // cancel prone status if it's activated.
-                    this._isProne = false;
+                    this.IsProne = false;
                     if (CurrentInputState.DirectionDown && 
-                        ((this.BoundingBox().Bottom / currentStage.TileHeight) < currentStage.MapHeight-1))
+                        ((this.BoundingBox().Bottom / currentStage.iTileHeight) < currentStage.MapHeight-1))
                     {
                         // player is dropping down                    
-                        this._dropInProgress = true;
-                        this._ignoreNextPlatform = true;
+                        this.DropInProgress = true;
+                        this.IgnoreNextPlatform = true;
                     }
                     else
                     {
@@ -573,14 +573,14 @@ namespace RunAndGun.Actors
                 #region Move Up Stairs if on stairs and pressing up
                 if (this.IsOnStairs && 
                     (CurrentInputState.DirectionUp ||
-                    (CurrentInputState.DirectionRight && this._isOnStairsRight) || 
-                    (CurrentInputState.DirectionLeft && this._isOnStairsLeft)) && 
+                    (CurrentInputState.DirectionRight && this.IsOnStairsRight) || 
+                    (CurrentInputState.DirectionLeft && this.IsOnStairsLeft)) && 
                     !this.MovingDownStairs && !this.MovingUpStairs && 
                     !this.StandingOnStairTop())
                 {
                     MovingUpStairs = true;
-                    _lastStairtopHeight = this.BoundingBox().Bottom;
-                    if (this._isOnStairsLeft)
+                    lastStairtopHeight = this.BoundingBox().Bottom;
+                    if (this.IsOnStairsLeft)
                         playerDirection = PlayerDirection.Left;
                     else
                         playerDirection = PlayerDirection.Right;
@@ -591,13 +591,13 @@ namespace RunAndGun.Actors
                 #region Move Down Stairs if on stairs and pressing down
                 if (this.IsOnStairs && 
                     (CurrentInputState.DirectionDown ||
-                    (CurrentInputState.DirectionRight && this._isOnStairsLeft) || 
-                    (CurrentInputState.DirectionLeft && this._isOnStairsRight)) &&
+                    (CurrentInputState.DirectionRight && this.IsOnStairsLeft) || 
+                    (CurrentInputState.DirectionLeft && this.IsOnStairsRight)) &&
                     !this.MovingDownStairs && !this.MovingUpStairs)
                 {
                     MovingDownStairs = true;
-                    _lastStairtopHeight = this.BoundingBox().Bottom;
-                    if (this._isOnStairsLeft)
+                    lastStairtopHeight = this.BoundingBox().Bottom;
+                    if (this.IsOnStairsLeft)
                         playerDirection = PlayerDirection.Right;
                     else
                         playerDirection = PlayerDirection.Left;
@@ -631,7 +631,7 @@ namespace RunAndGun.Actors
 
                 if ((!PreviousInputState.WeaponButtonPressed && CurrentInputState.WeaponButtonPressed) &&
                     // firing gun (note: player cannot fire gun while underwater)
-                    !(this._isInWater && this._isProne))
+                    !(this.IsInWater && this.IsProne))
                 {
                     if (this.Gun.RecoilTimeRemaining <= 0)
                     {
@@ -675,34 +675,34 @@ namespace RunAndGun.Actors
                     {
                         this.MovingUpStairs = true;
                         st = currentStage.getStageTileByWorldPosition(playerbounds.Center.X, playerbounds.Bottom);
-                        this._isOnStairsLeft = st.CollisionType == StageTile.TileCollisionType.StairsBottomLeft;
-                        this._isOnStairsRight = st.CollisionType == StageTile.TileCollisionType.StairsBottomRight;
+                        this.IsOnStairsLeft = st.CollisionType == StageTile.TileCollisionType.StairsBottomLeft;
+                        this.IsOnStairsRight = st.CollisionType == StageTile.TileCollisionType.StairsBottomRight;
                     }
                     else
                     {
                         this.MovingDownStairs = true;
                         st = currentStage.getStageTileByWorldPosition(playerbounds.Center.X, playerbounds.Bottom + 1);
-                        this._isOnStairsLeft = st.CollisionType == StageTile.TileCollisionType.StairsLeft;
-                        this._isOnStairsRight = st.CollisionType == StageTile.TileCollisionType.StairsRight;
+                        this.IsOnStairsLeft = st.CollisionType == StageTile.TileCollisionType.StairsLeft;
+                        this.IsOnStairsRight = st.CollisionType == StageTile.TileCollisionType.StairsRight;
                     }
                     
 
-                    _lastStairtopHeight = this.BoundingBox().Bottom;
+                    lastStairtopHeight = this.BoundingBox().Bottom;
                 }                
             }
             if (this.MovingUpStairs)
             {
-                if (this._isOnStairsRight)
+                if (this.IsOnStairsRight)
                 {
                     this.WorldPosition.X += 1;
                     this.WorldPosition.Y -= 1;                    
                 }
-                else if (this._isOnStairsLeft)
+                else if (this.IsOnStairsLeft)
                 {
                     this.WorldPosition.X -= 1;
                     this.WorldPosition.Y -= 1;                    
                 }
-                if (this.BoundingBox().Bottom <= _lastStairtopHeight - _stairHeight)
+                if (this.BoundingBox().Bottom <= lastStairtopHeight - StairHeight)
                 {
                     this.SecuringStairStep = true;
                     this.MovingDownStairs = false;
@@ -712,14 +712,14 @@ namespace RunAndGun.Actors
             }
             else if (this.MovingDownStairs)
             {
-                if (this.BoundingBox().Bottom + 1 <= _lastStairtopHeight + _stairHeight)
+                if (this.BoundingBox().Bottom + 1 <= lastStairtopHeight + StairHeight)
                 {
-                    if (this._isOnStairsRight)
+                    if (this.IsOnStairsRight)
                     {
                         this.WorldPosition.X -= 1;
                         this.WorldPosition.Y += 1;
                     }
-                    else if (this._isOnStairsLeft)
+                    else if (this.IsOnStairsLeft)
                     {
                         this.WorldPosition.X += 1;
                         this.WorldPosition.Y += 1;
@@ -752,9 +752,9 @@ namespace RunAndGun.Actors
                 if (this.WorldPosition.X > this.currentStage.CameraPosition.X + Game.iScreenModelWidth - (this.Width * 3))
                     currentStage.CameraPosition.X += this.WorldPosition.X - (this.currentStage.CameraPosition.X + Game.iScreenModelWidth - (this.Width * 3));
 
-                if (this.WorldPosition.X > (this.currentStage.MapWidth * currentStage.TileWidth - Game.iScreenModelWidth ))
+                if (this.WorldPosition.X > (this.currentStage.MapWidth * currentStage.iTileWidth - Game.iScreenModelWidth ))
                 {
-                    if (currentStage.Game.CurrentGame == Game.GameType.Contra)
+                    if (currentStage.game.currentGame == Game.GameType.Contra)
                         currentStage.AutoScroll = true;
                 }
             }
@@ -765,15 +765,15 @@ namespace RunAndGun.Actors
         }
         public Vector2? FindNearbyStairbase()
         {
-            int searchRange = currentStage.TileWidth;
+            int searchRange = currentStage.iTileWidth;
 
             Rectangle playerbounds = this.BoundingBox(new Vector2(0f, 1f));
             Rectangle playerSearchbounds = new Rectangle(playerbounds.Left - searchRange , playerbounds.Top, playerbounds.Width + searchRange, playerbounds.Height);
             
-            int leftTile = (int)Math.Floor((float)(playerSearchbounds.Left) / currentStage.TileWidth);
+            int leftTile = (int)Math.Floor((float)(playerSearchbounds.Left) / currentStage.iTileWidth);
             leftTile = leftTile < 0 ? 0 : leftTile;
-            int rightTile = (int)Math.Ceiling(((float)(playerSearchbounds.Right) / currentStage.TileWidth)) - 1;
-            int bottomTile = (int)Math.Ceiling(((float)playerSearchbounds.Bottom / currentStage.TileHeight)) - 1;
+            int rightTile = (int)Math.Ceiling(((float)(playerSearchbounds.Right) / currentStage.iTileWidth)) - 1;
+            int bottomTile = (int)Math.Ceiling(((float)playerSearchbounds.Bottom / currentStage.iTileHeight)) - 1;
 
             for (int x = leftTile; x <= rightTile; ++x)
             {
@@ -791,15 +791,15 @@ namespace RunAndGun.Actors
         }
         public Vector2? FindNearbyStairtop()
         {
-            int searchRange = currentStage.TileWidth;
+            int searchRange = currentStage.iTileWidth;
 
             Rectangle playerbounds = this.BoundingBox(new Vector2(0f, 1f));
             Rectangle playerSearchbounds = new Rectangle(playerbounds.Left - searchRange, playerbounds.Top, playerbounds.Width + searchRange, playerbounds.Height);
 
-            int leftTile = (int)Math.Floor((float)(playerSearchbounds.Left) / currentStage.TileWidth);
+            int leftTile = (int)Math.Floor((float)(playerSearchbounds.Left) / currentStage.iTileWidth);
             leftTile = leftTile < 0 ? 0 : leftTile;
-            int rightTile = (int)Math.Ceiling(((float)(playerSearchbounds.Right) / currentStage.TileWidth)) - 1;
-            int bottomTile = (int)Math.Ceiling(((float)playerSearchbounds.Bottom / currentStage.TileHeight)) - 1;
+            int rightTile = (int)Math.Ceiling(((float)(playerSearchbounds.Right) / currentStage.iTileWidth)) - 1;
+            int bottomTile = (int)Math.Ceiling(((float)playerSearchbounds.Bottom / currentStage.iTileHeight)) - 1;
 
             for (int x = leftTile; x <= rightTile; ++x)
             {
@@ -836,13 +836,13 @@ namespace RunAndGun.Actors
 
             // get nearest tile below player.
             this.IsOnGround = false;
-            this._isOnStairsLeft = false;
-            this._isOnStairsRight = false;
+            this.IsOnStairsLeft = false;
+            this.IsOnStairsRight = false;
             
-            int leftTile = (int)Math.Floor((float)playerbounds.Left / currentStage.TileWidth);
-            int rightTile = (int)Math.Ceiling(((float)playerbounds.Right / currentStage.TileWidth)) - 1;
-            int topTile = (int)Math.Floor((float)playerbounds.Top / currentStage.TileHeight);
-            int bottomTile = (int)Math.Ceiling(((float)playerbounds.Bottom / currentStage.TileHeight)) - 1;
+            int leftTile = (int)Math.Floor((float)playerbounds.Left / currentStage.iTileWidth);
+            int rightTile = (int)Math.Ceiling(((float)playerbounds.Right / currentStage.iTileWidth)) - 1;
+            int topTile = (int)Math.Floor((float)playerbounds.Top / currentStage.iTileHeight);
+            int bottomTile = (int)Math.Ceiling(((float)playerbounds.Bottom / currentStage.iTileHeight)) - 1;
 
             // For each potentially colliding platform tile,
             for (int y = topTile; y <= bottomTile; ++y)
@@ -877,10 +877,10 @@ namespace RunAndGun.Actors
                                     if (this.PreviousBottom <= tileBounds.Top && Velocity.Y >= 0 && playerbounds.Intersects(tileBounds))
                                     //if (Velocity.Y >= 0 && (depth.Y < 0)) // || this.IgnoreNextPlatform))
                                     {
-                                        if (this._ignoreNextPlatform == false)
+                                        if (this.IgnoreNextPlatform == false)
                                         {
                                             this.JumpInProgress = false;
-                                            this._dropInProgress = false;
+                                            this.DropInProgress = false;
                                             this.IsOnGround = true;
                                             this.SecuringStairStep = false;
 
@@ -889,13 +889,13 @@ namespace RunAndGun.Actors
 
                                             if (stageTile.CollisionType == StageTile.TileCollisionType.StairsLeft)
                                             {
-                                                this._isOnStairsLeft = true;
+                                                this.IsOnStairsLeft = true;
                                                 if (!this.StandingOnStairTop())
                                                     this.WorldPosition.X += tileBounds.Left - this.BoundingBox().Left;
                                             }
                                             else
                                             {
-                                                this._isOnStairsRight = true;
+                                                this.IsOnStairsRight = true;
                                                 if (!this.StandingOnStairTop())
                                                     this.WorldPosition.X += tileBounds.Right - (this.BoundingBox().Right);
                                             }
@@ -924,16 +924,16 @@ namespace RunAndGun.Actors
                                 if (this.PreviousBottom <= tilebounds.Top && Velocity.Y >= 0 && playerbounds.Intersects(tilebounds))
                                 //if (Velocity.Y >= 0 && (depth.Y < 0)) // || this.IgnoreNextPlatform))
                                 {
-                                    if (this._ignoreNextPlatform == false)
+                                    if (this.IgnoreNextPlatform == false)
                                     {
                                         this.JumpInProgress = false;
-                                        this._dropInProgress = false;
+                                        this.DropInProgress = false;
                                         this.IsOnGround = true;
                                         this.SecuringStairStep = false;
                                         if (stageTile.IsWaterPlatform())
-                                            this._isInWater = true;
+                                            this.IsInWater = true;
                                         else
-                                            this._isInWater = false;
+                                            this.IsInWater = false;
 
                                         this.WorldPosition.Y += depth.Y;
                                         // perform further collisions with the new bounds
@@ -953,12 +953,12 @@ namespace RunAndGun.Actors
             
 
             if (droppedthroughplatform)
-                this._ignoreNextPlatform = false;
+                this.IgnoreNextPlatform = false;
 
             if (this.IsOnGround && !playerwasonground)
             {
                 //Debug.WriteLine("Player Hit Ground " + gameTime.ElapsedGameTime.Seconds.ToString());
-                _soundPlayerLand.Play();
+                soundPlayerLand.Play();
             }
 
             this.DebugInfo += this.IsOnStairs;
@@ -1003,7 +1003,7 @@ namespace RunAndGun.Actors
             int iFootWidth = 8;
             int iSpriteOffsetTop;
             int iSpriteOffsetBottom;
-            if (_isProne)
+            if (IsProne)
             {
                 iSpriteOffsetTop = 27;
                 iSpriteOffsetBottom = 35;
@@ -1021,7 +1021,7 @@ namespace RunAndGun.Actors
                 iSpriteOffsetX = 11;
 
 
-            return new Rectangle((int)position.X + iSpriteOffsetX, (int)position.Y + iSpriteOffsetTop, iFootWidth, _idle.FrameHeight - iSpriteOffsetBottom);
+            return new Rectangle((int)position.X + iSpriteOffsetX, (int)position.Y + iSpriteOffsetTop, iFootWidth, idle.FrameHeight - iSpriteOffsetBottom);
         }
         public Rectangle HurtBox()
         {
@@ -1032,7 +1032,7 @@ namespace RunAndGun.Actors
                 int iSpriteOffsetX = 8;                
                 Vector2 position = this.WorldPosition;
 
-                return new Rectangle((int)position.X + iSpriteOffsetX, (int)position.Y + iSpriteOffsetTop, this.Width - (iSpriteOffsetX * 2), _idle.FrameHeight - iSpriteOffsetBottom);
+                return new Rectangle((int)position.X + iSpriteOffsetX, (int)position.Y + iSpriteOffsetTop, this.Width - (iSpriteOffsetX * 2), idle.FrameHeight - iSpriteOffsetBottom);
             }
             else
             {
@@ -1044,9 +1044,9 @@ namespace RunAndGun.Actors
             Rectangle playerbounds = this.BoundingBox(new Vector2(0f, 1f));
             List<StageTile> tiles = new List<StageTile>();
 
-            int leftTile = (int)Math.Floor((float)playerbounds.Left / currentStage.TileWidth);
-            int rightTile = (int)Math.Ceiling(((float)playerbounds.Right / currentStage.TileWidth)) - 1;            
-            int bottomTile = (int)Math.Ceiling(((float)playerbounds.Bottom / currentStage.TileHeight)) - 1;
+            int leftTile = (int)Math.Floor((float)playerbounds.Left / currentStage.iTileWidth);
+            int rightTile = (int)Math.Ceiling(((float)playerbounds.Right / currentStage.iTileWidth)) - 1;            
+            int bottomTile = (int)Math.Ceiling(((float)playerbounds.Bottom / currentStage.iTileHeight)) - 1;
 
             bool bReturnValue = false;
             
@@ -1112,8 +1112,8 @@ namespace RunAndGun.Actors
         }
         public override void Die(GameTime gameTime)
         {
-            _soundDeath.Play();
-            _deathAnimation.Play();
+            soundDeath.Play();
+            deathAnimation.Play();
             
             if (LifeCount > 0)
                 LifeCount--;
@@ -1139,7 +1139,7 @@ namespace RunAndGun.Actors
             if (Gun.GunType != GunType.Standard)
             {
                 Gun = new Gun();
-                Gun.Initialize(_game.Content, GunType.Standard);
+                Gun.Initialize(game.Content, GunType.Standard);
             }
         }
         private void FireGun(Vector2 position, Gun gun)
@@ -1166,7 +1166,7 @@ namespace RunAndGun.Actors
             const int iLowVerticalOffset = 6;
             int gunAngle = 90;
 
-            if (this._isProne)
+            if (this.IsProne)
             {
                 fHorizontalOffset = iProneHorizontalOffset * iDirection;
                 fVerticalOffset = iProneVerticalOffset;
@@ -1221,50 +1221,50 @@ namespace RunAndGun.Actors
             {
                 torsoOffset = new Vector2(0, 0);
             }
-            if (_deathAnimation.Active)
+            if (deathAnimation.Active)
             {
-                _deathAnimation.Draw(spriteBatch, playerDirection, 1f);
+                deathAnimation.Draw(spriteBatch, playerDirection, 1f);
             }
             else if (JumpInProgress == true)
             {
-                _jumpingAnimation.Draw(spriteBatch, playerDirection, 1f);
+                jumpingAnimation.Draw(spriteBatch, playerDirection, 1f);
             }
-            else if (_dropInProgress == true)
+            else if (DropInProgress == true)
             {
-                _dropping.Draw(spriteBatch, playerDirection, 1f);
+                dropping.Draw(spriteBatch, playerDirection, 1f);
             }
-            else if (_isProne == true)
+            else if (IsProne == true)
             {
-                if (_isInWater)
-                    _playermiscsprites.Draw(spriteBatch, playerDirection, 1f, PlayerSpriteCollection.PlayerSpriteTypes.Underwater);
+                if (IsInWater)
+                    playermiscsprites.Draw(spriteBatch, playerDirection, 1f, PlayerSpriteCollection.PlayerSpriteTypes.Underwater);
                 else
-                    _prone.Draw(spriteBatch, playerDirection, 1f, torsoOffset);
+                    prone.Draw(spriteBatch, playerDirection, 1f, torsoOffset);
             }
-            else if (_isInWater)
+            else if (IsInWater)
             {
-                _playermiscsprites.Draw(spriteBatch, playerDirection, 1f, PlayerSpriteCollection.PlayerSpriteTypes.Wading, torsoOffset);
+                playermiscsprites.Draw(spriteBatch, playerDirection, 1f, PlayerSpriteCollection.PlayerSpriteTypes.Wading, torsoOffset);
             }
             else
             {
                 if (Math.Abs(Velocity.X) > 0)
                 {
-                    _runningLegsAnimation.Draw(spriteBatch, playerDirection, 0.9f);
+                    runningLegsAnimation.Draw(spriteBatch, playerDirection, 0.9f);
                     switch (gunDirection)
                     {
                         case GunDirection.High:
-                            _playermiscsprites.Draw(spriteBatch, playerDirection, 1f, PlayerSpriteCollection.PlayerSpriteTypes.GunHigh, torsoOffset);
+                            playermiscsprites.Draw(spriteBatch, playerDirection, 1f, PlayerSpriteCollection.PlayerSpriteTypes.GunHigh, torsoOffset);
                             break;
                         case GunDirection.Low:
-                            _playermiscsprites.Draw(spriteBatch, playerDirection, 1f, PlayerSpriteCollection.PlayerSpriteTypes.GunLow, torsoOffset);
+                            playermiscsprites.Draw(spriteBatch, playerDirection, 1f, PlayerSpriteCollection.PlayerSpriteTypes.GunLow, torsoOffset);
                             break;
                         default:
                             if (this.Gun.RecoilTimeRemaining > 0)
                             {
-                                _playermiscsprites.Draw(spriteBatch, playerDirection, 1.0f, PlayerSpriteCollection.PlayerSpriteTypes.GunNeutral, torsoOffset);
+                                playermiscsprites.Draw(spriteBatch, playerDirection, 1.0f, PlayerSpriteCollection.PlayerSpriteTypes.GunNeutral, torsoOffset);
                             }
                             else
                             {
-                                _runningTorsoAnimation.Draw(spriteBatch, playerDirection, 1f, torsoOffset);                                
+                                runningTorsoAnimation.Draw(spriteBatch, playerDirection, 1f, torsoOffset);                                
                             }
                             break;
                     }
@@ -1273,13 +1273,13 @@ namespace RunAndGun.Actors
                 {
                     if (gunDirection == GunDirection.StraightUp)
                     {
-                        _idlelegs.Draw(spriteBatch, playerDirection, 0.9f);
-                        _playermiscsprites.Draw(spriteBatch, playerDirection, 1.0f, PlayerSpriteCollection.PlayerSpriteTypes.GunStraightUp, torsoOffset);
+                        idlelegs.Draw(spriteBatch, playerDirection, 0.9f);
+                        playermiscsprites.Draw(spriteBatch, playerDirection, 1.0f, PlayerSpriteCollection.PlayerSpriteTypes.GunStraightUp, torsoOffset);
                     }
                     else
                     {
-                        _idlelegs.Draw(spriteBatch, playerDirection, 0.9f);
-                        _playermiscsprites.Draw(spriteBatch, playerDirection, 1.0f, PlayerSpriteCollection.PlayerSpriteTypes.GunNeutral, torsoOffset);
+                        idlelegs.Draw(spriteBatch, playerDirection, 0.9f);
+                        playermiscsprites.Draw(spriteBatch, playerDirection, 1.0f, PlayerSpriteCollection.PlayerSpriteTypes.GunNeutral, torsoOffset);
                         //idle.Draw(spriteBatch, playerDirection, 1f);
                     }
                 }

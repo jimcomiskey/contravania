@@ -16,7 +16,7 @@ namespace RunAndGun.Actors
 
         public float AngleBetweenTurretAndPlayer;
 
-        private int _currentPosition;
+        private int iCurrentPosition;
         public enum TurretDirection
         { Clockwise = 1, CounterClockWise = -1, TargetFound = 0 };
         public TurretDirection TurretTurnDirection;
@@ -24,10 +24,10 @@ namespace RunAndGun.Actors
         public float TimeTargetLocked;
         private const float TurretMoveDelay = 0.5f;
         private const float TurretFireDelay = 1.0f;
-        private const int FrameTime = 100;
-        private int _elapsedTime;
-        private bool _animatingforward;
-        private int _currentFrame;
+        private const int frameTime = 100;
+        private int elapsedTime;
+        private bool animatingforward;
+        private int currentFrame;
         
 
         List<PlayerSpriteCollection> spritecollectionlist;
@@ -45,11 +45,11 @@ namespace RunAndGun.Actors
             turrettileset = content.Load<Texture2D>("Sprites/Enemies/Turret");
 
             spritecollection = new PlayerSpriteCollection();
-            spritecollection.Initialize(SwapColor(turrettileset, new Color(192, 32, 0), new Color(184, 28, 12)), position, 12, Color.White, 1f);
+            spritecollection.Initialize(swapColor(turrettileset, new Color(192, 32, 0), new Color(184, 28, 12)), position, 12, Color.White, 1f);
             spritecollectionlist.Add(spritecollection);
 
             spritecollection = new PlayerSpriteCollection();
-            spritecollection.Initialize(SwapColor(turrettileset, new Color(192, 32, 0), new Color(228, 68, 52)), position, 12, Color.White, 1f);
+            spritecollection.Initialize(swapColor(turrettileset, new Color(192, 32, 0), new Color(228, 68, 52)), position, 12, Color.White, 1f);
             spritecollectionlist.Add(spritecollection);            
 
             spritecollection = new PlayerSpriteCollection();
@@ -59,11 +59,11 @@ namespace RunAndGun.Actors
             CollisionIsHazardous = false;
 
             Health = 15;
-            _currentPosition = 3;
+            iCurrentPosition = 3;
             TimeTargetLocked = 0.0f;
-            _elapsedTime = 0;
-            _currentFrame = 0;
-            _animatingforward = true;
+            elapsedTime = 0;
+            currentFrame = 0;
+            animatingforward = true;
 
             // RGB colors for blinking animations of turret.
             //R 255 228  184 
@@ -77,7 +77,7 @@ namespace RunAndGun.Actors
 
         }
 
-        private Texture2D SwapColor(Texture2D thisTexture, Color searchColor, Color replaceColor)
+        private Texture2D swapColor(Texture2D thisTexture, Color searchColor, Color replaceColor)
         {
             Texture2D newTexture = new Texture2D(thisTexture.GraphicsDevice, thisTexture.Width, thisTexture.Height);
 
@@ -140,7 +140,7 @@ namespace RunAndGun.Actors
 
             AngleBetweenTurretAndPlayer = (float)Math.Round(AngleBetweenTurretAndPlayer / 30);
 
-            if (AngleBetweenTurretAndPlayer != _currentPosition)
+            if (AngleBetweenTurretAndPlayer != iCurrentPosition)
             {
                 if (TimeSinceLastMove > TurretMoveDelay)
                 {
@@ -148,21 +148,21 @@ namespace RunAndGun.Actors
             
                     //float currentTurretAngle = iCurrentPosition * 30;
                     int iCounterDistance = 0;
-                    if (_currentPosition < AngleBetweenTurretAndPlayer)
-                        iCounterDistance = 12 - (int)AngleBetweenTurretAndPlayer + _currentPosition;
+                    if (iCurrentPosition < AngleBetweenTurretAndPlayer)
+                        iCounterDistance = 12 - (int)AngleBetweenTurretAndPlayer + iCurrentPosition;
                     else
-                        iCounterDistance = _currentPosition - (int)AngleBetweenTurretAndPlayer;
+                        iCounterDistance = iCurrentPosition - (int)AngleBetweenTurretAndPlayer;
 
                     if (iCounterDistance < 6)
                         TurretTurnDirection = TurretDirection.CounterClockWise;
                     else
                         TurretTurnDirection = TurretDirection.Clockwise;
 
-                    _currentPosition += (int)TurretTurnDirection;
-                    if (_currentPosition == 12)
-                        _currentPosition = 0;
-                    else if (_currentPosition == -1)
-                        _currentPosition = 11;
+                    iCurrentPosition += (int)TurretTurnDirection;
+                    if (iCurrentPosition == 12)
+                        iCurrentPosition = 0;
+                    else if (iCurrentPosition == -1)
+                        iCurrentPosition = 11;
                 }
 
             }
@@ -200,7 +200,7 @@ namespace RunAndGun.Actors
 
             var projectileAnimation = new Animation();
             projectileAnimation.Initialize(projectileTexture, initPosition, 1, 0, Color.White, 1f, true, currentStage);            
-            projectile.Initialize(projectileAnimation, null, initPosition, _currentPosition * 30, currentStage, 2f);
+            projectile.Initialize(projectileAnimation, null, initPosition, iCurrentPosition * 30, currentStage, 2f);
             currentStage.EnemyProjectiles.Add(projectile);
         }
         
@@ -212,36 +212,36 @@ namespace RunAndGun.Actors
         protected override void UpdateAnimations(GameTime gameTime)
         {
 
-            _elapsedTime += (int)gameTime.ElapsedGameTime.TotalMilliseconds;
+            elapsedTime += (int)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-            if (_elapsedTime > FrameTime)
+            if (elapsedTime > frameTime)
             {
                 // Move to the next frame
-                if (_animatingforward)
+                if (animatingforward)
                 {
-                    _currentFrame++;
-                    if (_currentFrame == spritecollectionlist.Count)
+                    currentFrame++;
+                    if (currentFrame == spritecollectionlist.Count)
                     {
-                        _currentFrame = spritecollectionlist.Count - 1;
-                        _animatingforward = false;
+                        currentFrame = spritecollectionlist.Count - 1;
+                        animatingforward = false;
                         
                     }
                 }
                 else
                 {
-                    _currentFrame--;
-                    if (_currentFrame == 0)
+                    currentFrame--;
+                    if (currentFrame == 0)
                     {
 
-                        _animatingforward = true;
+                        animatingforward = true;
 
-                        _currentFrame = 0;
+                        currentFrame = 0;
 
                     }
                 }
 
                 // Reset the elapsed time to zero
-                _elapsedTime = 0;
+                elapsedTime = 0;
             }
 
             foreach(PlayerSpriteCollection psc in spritecollectionlist)
@@ -251,12 +251,12 @@ namespace RunAndGun.Actors
         public override void Draw(SpriteBatch spriteBatch)
         {
             int iCurrentFrame = 0;
-            if (_currentPosition < 0)
-                iCurrentFrame = 12 + _currentPosition;
+            if (iCurrentPosition < 0)
+                iCurrentFrame = 12 + iCurrentPosition;
             else
-                iCurrentFrame = _currentPosition;
+                iCurrentFrame = iCurrentPosition;
 
-            spritecollectionlist[_currentFrame].Draw(spriteBatch, this.direction, 1f, iCurrentFrame);
+            spritecollectionlist[currentFrame].Draw(spriteBatch, this.direction, 1f, iCurrentFrame);
             base.Draw(spriteBatch);
 
         }

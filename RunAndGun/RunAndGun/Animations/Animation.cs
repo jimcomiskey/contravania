@@ -52,7 +52,7 @@ namespace RunAndGun.Animations
         // Determines if the animation will keep playing or deactivate after one run
         public bool Looping;
         public bool Loopingbackandforth;
-        private bool _animatingforward;
+        private bool animatingforward;
 
         
         public Vector2 WorldPosition;
@@ -74,7 +74,7 @@ namespace RunAndGun.Animations
             Looping = looping;
             this.frameCount = frameCount;
             Active = true;
-            _animatingforward = true;
+            animatingforward = true;
             elapsedTime = 0;
             currentFrame = 0;
             this.frameTime = frametime;
@@ -90,7 +90,7 @@ namespace RunAndGun.Animations
             this.frameTime = frametime;
             this.scale = scale;
 
-            this._animatingforward = true;
+            this.animatingforward = true;
 
             Loopingbackandforth = loopingbackandforth;
             Looping = looping;
@@ -127,7 +127,7 @@ namespace RunAndGun.Animations
             if (elapsedTime > frameTime)
             {
                 // Move to the next frame
-                if (_animatingforward)
+                if (animatingforward)
                 {
                     currentFrame++;
                     // If the currentFrame is equal to frameCount reset currentFrame to zero
@@ -136,7 +136,7 @@ namespace RunAndGun.Animations
                         if (Loopingbackandforth)
                         {
                             currentFrame = frameCount - 1;
-                            _animatingforward = false;
+                            animatingforward = false;
                         }
                         else
                             currentFrame = 0;
@@ -153,7 +153,7 @@ namespace RunAndGun.Animations
                     {
 
                         if (Loopingbackandforth)
-                            _animatingforward = true;
+                            animatingforward = true;
                         
                         currentFrame = 0;
 

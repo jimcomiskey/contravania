@@ -14,21 +14,21 @@ namespace RunAndGun.GameObjects
     public class Gun
     {        
         public GunType GunType { get; set; }
-        private double _recoilTimeRemaining;
+        private double recoilTimeRemaining;
 
-        Texture2D _projectileTexture;
-        private SoundEffect _soundProjectileHit;
-        private SoundEffect _soundGunshot;
-        private ContentManager _contentManager;
+        Texture2D projectileTexture;
+        private SoundEffect soundProjectileHit;
+        private SoundEffect soundGunshot;
+        private ContentManager contentManager;
 
         public Gun()
         {
             GunType = GunType.Standard;
-            _recoilTimeRemaining = 0;
+            recoilTimeRemaining = 0;
         }
         public void Initialize(ContentManager content, GunType gunType)
         {
-            _contentManager = content;
+            contentManager = content;
             GunType = gunType;
             string projectileTextureName = string.Empty;
             string projectileHitSoundName = string.Empty;
@@ -47,28 +47,28 @@ namespace RunAndGun.GameObjects
                     break;
             }
 
-            _projectileTexture = content.Load<Texture2D>(projectileTextureName);
-            _soundProjectileHit = content.Load<SoundEffect>(projectileHitSoundName);
-            _soundGunshot = content.Load<SoundEffect>(gunshotSoundName);
+            projectileTexture = content.Load<Texture2D>(projectileTextureName);
+            soundProjectileHit = content.Load<SoundEffect>(projectileHitSoundName);
+            soundGunshot = content.Load<SoundEffect>(gunshotSoundName);
         }
         public double RecoilTimeRemaining
         {
-            get { return _recoilTimeRemaining; }
-            set { _recoilTimeRemaining = value; }
+            get { return recoilTimeRemaining; }
+            set { recoilTimeRemaining = value; }
         }
         public List<Projectile> Fire(Vector2 gunBarrelLocation, int gunAngle, Stage currentStage)
         {
-            if (_recoilTimeRemaining <= 0)
+            if (recoilTimeRemaining <= 0)
             {
                 switch (GunType)
                 {
                     default:
-                        _recoilTimeRemaining = 0.15;
+                        recoilTimeRemaining = 0.15;
                         break;
                 }
             }
 
-            _soundGunshot.Play();
+            soundGunshot.Play();
 
             var projectiles = new List<Projectile>();
             Projectile projectile;
@@ -79,17 +79,17 @@ namespace RunAndGun.GameObjects
                 case GunType.Standard:            
                     projectile = new Projectile();
                     projectileAnimation = new Animation();
-                    projectileAnimation.Initialize(_projectileTexture, gunBarrelLocation, 3, 10, Color.White, 1f, true, currentStage);
-                    projectile.Initialize(projectileAnimation, _soundProjectileHit, gunBarrelLocation, gunAngle, currentStage, 3f);
+                    projectileAnimation.Initialize(projectileTexture, gunBarrelLocation, 3, 10, Color.White, 1f, true, currentStage);
+                    projectile.Initialize(projectileAnimation, soundProjectileHit, gunBarrelLocation, gunAngle, currentStage, 3f);
                     projectiles.Add(projectile);
                     break;
                 case GunType.Spread:
                     int spreadAngle = 15;
                     var bulletTextures = new List<Texture2D>()
                     {
-                        _contentManager.Load<Texture2D>("Sprites/Projectiles/redbullet_small"),
-                        _contentManager.Load<Texture2D>("Sprites/Projectiles/redbullet_medium"),
-                        _contentManager.Load<Texture2D>("Sprites/Projectiles/redbullet_large")
+                        contentManager.Load<Texture2D>("Sprites/Projectiles/redbullet_small"),
+                        contentManager.Load<Texture2D>("Sprites/Projectiles/redbullet_medium"),
+                        contentManager.Load<Texture2D>("Sprites/Projectiles/redbullet_large")
                     };
                     int spreadGunFrameCount = 3;
                     int spreadGunFlickerSpeed = 100;
@@ -97,20 +97,20 @@ namespace RunAndGun.GameObjects
 
                     projectile = new Projectile();
                     projectileAnimation = new SpreadBulletAnimation(bulletTextures, flickerTime);
-                    projectileAnimation.Initialize(_projectileTexture, gunBarrelLocation, spreadGunFrameCount, spreadGunFlickerSpeed, Color.White, 1f, true, currentStage);
-                    projectile.Initialize(projectileAnimation, _soundProjectileHit, gunBarrelLocation, gunAngle, currentStage, 3f);
+                    projectileAnimation.Initialize(projectileTexture, gunBarrelLocation, spreadGunFrameCount, spreadGunFlickerSpeed, Color.White, 1f, true, currentStage);
+                    projectile.Initialize(projectileAnimation, soundProjectileHit, gunBarrelLocation, gunAngle, currentStage, 3f);
                     projectiles.Add(projectile);
 
                     projectile = new Projectile();
                     projectileAnimation = new SpreadBulletAnimation(bulletTextures, flickerTime);
-                    projectileAnimation.Initialize(_projectileTexture, gunBarrelLocation, spreadGunFrameCount, spreadGunFlickerSpeed, Color.White, 1f, true, currentStage);
-                    projectile.Initialize(projectileAnimation, _soundProjectileHit, gunBarrelLocation, gunAngle - spreadAngle < 0 ? 360 + gunAngle - spreadAngle : gunAngle - spreadAngle, currentStage, 3f);
+                    projectileAnimation.Initialize(projectileTexture, gunBarrelLocation, spreadGunFrameCount, spreadGunFlickerSpeed, Color.White, 1f, true, currentStage);
+                    projectile.Initialize(projectileAnimation, soundProjectileHit, gunBarrelLocation, gunAngle - spreadAngle < 0 ? 360 + gunAngle - spreadAngle : gunAngle - spreadAngle, currentStage, 3f);
                     projectiles.Add(projectile);
 
                     projectile = new Projectile();
                     projectileAnimation = new SpreadBulletAnimation(bulletTextures, flickerTime);
-                    projectileAnimation.Initialize(_projectileTexture, gunBarrelLocation, spreadGunFrameCount, spreadGunFlickerSpeed, Color.White, 1f, true, currentStage);
-                    projectile.Initialize(projectileAnimation, _soundProjectileHit, gunBarrelLocation, gunAngle + spreadAngle > 360 ? gunAngle + spreadAngle - 360 : gunAngle + spreadAngle, currentStage, 3f);
+                    projectileAnimation.Initialize(projectileTexture, gunBarrelLocation, spreadGunFrameCount, spreadGunFlickerSpeed, Color.White, 1f, true, currentStage);
+                    projectile.Initialize(projectileAnimation, soundProjectileHit, gunBarrelLocation, gunAngle + spreadAngle > 360 ? gunAngle + spreadAngle - 360 : gunAngle + spreadAngle, currentStage, 3f);
                     projectiles.Add(projectile);
 
                     break;
@@ -120,12 +120,12 @@ namespace RunAndGun.GameObjects
         }
         public void Update(GameTime gameTime)
         {
-            if (_recoilTimeRemaining > 0)
+            if (recoilTimeRemaining > 0)
             {
-                _recoilTimeRemaining -= (float)gameTime.ElapsedGameTime.TotalSeconds;
-                if (_recoilTimeRemaining < 0)
+                recoilTimeRemaining -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+                if (recoilTimeRemaining < 0)
                 {
-                    _recoilTimeRemaining = 0;
+                    recoilTimeRemaining = 0;
                 }
             }
         }

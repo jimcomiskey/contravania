@@ -12,14 +12,14 @@ namespace RunAndGun.Actors
 {
     class PlayerItem : Enemy
     {
-        private Texture2D _imageTexture;
+        private Texture2D imageTexture;
         //private SoundEffect soundDestroyed;
 
         public Gun Gun { get; }
 
         public PlayerItem(ContentManager content, Vector2 position, Stage stage, string itemType) : base(content, position, stage, itemType)
         {
-            _imageTexture = content.Load<Texture2D>(string.Format("Sprites/PlayerItem{0}", itemType));
+            imageTexture = content.Load<Texture2D>(string.Format("Sprites/PlayerItem{0}", itemType));
             ExplosionSound = content.Load<SoundEffect>("Sounds/playeritem");
             ExplosionAnimation.Initialize(content.Load<Texture2D>("Sprites/Explosion1"), this.WorldPosition, 36, 36, 3, 150, Color.White, 1f, false, false, this.currentStage);
             CollisionIsHazardous = false;
@@ -32,15 +32,10 @@ namespace RunAndGun.Actors
                     Gun.Initialize(content, GunType.Spread);
                     break;
             }
-
-            Velocity.X = 0.5f;
-            IsOnGround = true;
-            JumpInProgress = true;
-            IsJumping = true;
         }
         public override Rectangle BoundingBox(Vector2 proposedPosition)
         {
-            return new Rectangle((int)WorldPosition.X, (int)WorldPosition.Y, _imageTexture.Width, _imageTexture.Height);
+            return new Rectangle((int)WorldPosition.X, (int)WorldPosition.Y, imageTexture.Width, imageTexture.Height);
         }        
 
         public override void Move(GameTime gameTime)
@@ -49,7 +44,7 @@ namespace RunAndGun.Actors
         }
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_imageTexture, new Rectangle((int)ScreenPosition.X, (int)ScreenPosition.Y, _imageTexture.Width, _imageTexture.Height), Color.White);
+            spriteBatch.Draw(imageTexture, new Rectangle((int)ScreenPosition.X, (int)ScreenPosition.Y, imageTexture.Width, imageTexture.Height), Color.White);
             base.Draw(spriteBatch);
         }
 
@@ -61,11 +56,7 @@ namespace RunAndGun.Actors
         {
             //soundDestroyed.Play();
             ExplosionSound.Play();
-            
             base.Die(gameTime);
-
-            
-
         }
     }
 }

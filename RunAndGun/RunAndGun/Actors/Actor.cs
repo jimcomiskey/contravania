@@ -35,8 +35,8 @@ namespace RunAndGun.Actors
         public Vector2 Velocity;
 
         protected float JumpTime;
-        public bool IsJumping; // set to true when user hits jump button and is eligible to jump. goes back to false after jump initiated.
-        public bool JumpInProgress; // set to true when user hits jump button, and goes to false once the player lands.
+        protected bool IsJumping; // set to true when user hits jump button and is eligible to jump. goes back to false after jump initiated.
+        protected bool JumpInProgress; // set to true when user hits jump button, and goes to false once the player lands.
         protected bool WasJumping;
 
         public abstract Rectangle BoundingBox();
@@ -65,9 +65,9 @@ namespace RunAndGun.Actors
                 Rectangle actorbounds = this.BoundingBox();
 
                 //TODO: borrowing code from HandleCollisions, possible consolidation?
-                int leftTile = (int)Math.Floor((float)actorbounds.Left / currentStage.TileWidth);
-                int rightTile = (int)Math.Ceiling(((float)actorbounds.Right / currentStage.TileWidth)) - 1;
-                int bottomTile = (int)Math.Ceiling(((float)actorbounds.Bottom / currentStage.TileHeight)) - 1;
+                int leftTile = (int)Math.Floor((float)actorbounds.Left / currentStage.iTileWidth);
+                int rightTile = (int)Math.Ceiling(((float)actorbounds.Right / currentStage.iTileWidth)) - 1;
+                int bottomTile = (int)Math.Ceiling(((float)actorbounds.Bottom / currentStage.iTileHeight)) - 1;
 
                 for (int iIndex = leftTile; iIndex <= rightTile; iIndex++)
                     currentPlatformTiles.Add(currentStage.getStageTileByGridPosition(iIndex, bottomTile));
@@ -129,10 +129,10 @@ namespace RunAndGun.Actors
             // get nearest tile below player.
             this.IsOnGround = false;
             
-            int leftTile = (int)Math.Floor((float)actorbounds.Left / currentStage.TileWidth);
-            int rightTile = (int)Math.Ceiling(((float)actorbounds.Right / currentStage.TileWidth)) - 1;
-            int topTile = (int)Math.Floor((float)actorbounds.Top / currentStage.TileHeight);
-            int bottomTile = (int)Math.Ceiling(((float)actorbounds.Bottom / currentStage.TileHeight)) - 1;
+            int leftTile = (int)Math.Floor((float)actorbounds.Left / currentStage.iTileWidth);
+            int rightTile = (int)Math.Ceiling(((float)actorbounds.Right / currentStage.iTileWidth)) - 1;
+            int topTile = (int)Math.Floor((float)actorbounds.Top / currentStage.iTileHeight);
+            int bottomTile = (int)Math.Ceiling(((float)actorbounds.Bottom / currentStage.iTileHeight)) - 1;
 
             // For each potentially colliding platform tile,
             for (int y = topTile; y <= bottomTile; ++y)
@@ -168,8 +168,6 @@ namespace RunAndGun.Actors
                                 {
 
                                     this.IsOnGround = true;
-                                    this.JumpInProgress = false;
-                                    this.Velocity.X = 0f;
 
                                     this.WorldPosition.Y += depth.Y;
                                     // perform further collisions with the new bounds

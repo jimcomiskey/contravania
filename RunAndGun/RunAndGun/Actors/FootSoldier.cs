@@ -14,14 +14,14 @@ namespace RunAndGun.Actors
     class FootSoldier : Enemy
     {
 
-        private Animation _runningAnimation;
+        private Animation runningAnimation;
 
         public FootSoldier(ContentManager content, Vector2 position, Stage stage, string enemytype)
             : base(content, position, stage, enemytype)
         {
             EnemyMoveSpeed = 1.2f;
-            _runningAnimation = new Animation();            
-            _runningAnimation.Initialize(content.Load<Texture2D>("Sprites/EnemyFootSoldierRunning"), this.WorldPosition, 32, 48, 6, 150, Color.White, 1, true, false, currentStage);
+            runningAnimation = new Animation();            
+            runningAnimation.Initialize(content.Load<Texture2D>("Sprites/EnemyFootSoldierRunning"), this.WorldPosition, 32, 48, 6, 150, Color.White, 1, true, false, currentStage);
 
             ExplosionAnimation.Initialize(content.Load<Texture2D>("Sprites/Explosion1"), this.WorldPosition, 36, 36, 3, 150, Color.White, 1f, false, false, this.currentStage);
             ExplosionSound = content.Load<SoundEffect>("Sounds/Explosion1");
@@ -46,10 +46,10 @@ namespace RunAndGun.Actors
 
             bool bWouldBeOnGround = false;
 
-            int leftTile = (int)Math.Floor((float)proposedbounds.Left / currentStage.TileWidth);
-            int rightTile = (int)Math.Ceiling(((float)proposedbounds.Right / currentStage.TileWidth)) - 1;
-            int topTile = (int)Math.Floor((float)proposedbounds.Top / currentStage.TileHeight);
-            int bottomTile = (int)Math.Ceiling(((float)proposedbounds.Bottom / currentStage.TileHeight)) - 1;
+            int leftTile = (int)Math.Floor((float)proposedbounds.Left / currentStage.iTileWidth);
+            int rightTile = (int)Math.Ceiling(((float)proposedbounds.Right / currentStage.iTileWidth)) - 1;
+            int topTile = (int)Math.Floor((float)proposedbounds.Top / currentStage.iTileHeight);
+            int bottomTile = (int)Math.Ceiling(((float)proposedbounds.Bottom / currentStage.iTileHeight)) - 1;
 
             // For each potentially colliding platform tile,
             for (int y = topTile; y <= bottomTile; ++y)
@@ -115,9 +115,9 @@ namespace RunAndGun.Actors
 
         protected override void UpdateAnimations(GameTime gameTime)
         {
-            _runningAnimation.WorldPosition = this.WorldPosition;
+            runningAnimation.WorldPosition = this.WorldPosition;
             ExplosionAnimation.WorldPosition = this.WorldPosition;
-            _runningAnimation.Update(gameTime);
+            runningAnimation.Update(gameTime);
 
         }
 
@@ -133,11 +133,11 @@ namespace RunAndGun.Actors
             iBoundingBoxLeftOffset = 7;
             iBoundingBoxRightOffset = 12;
 
-            return new Rectangle((int)proposedPosition.X + iBoundingBoxLeftOffset, (int)proposedPosition.Y + iBoundingBoxTopOffset, _runningAnimation.FrameWidth - iBoundingBoxRightOffset, _runningAnimation.FrameHeight - iBoundingBoxBottomOffset);            
+            return new Rectangle((int)proposedPosition.X + iBoundingBoxLeftOffset, (int)proposedPosition.Y + iBoundingBoxTopOffset, runningAnimation.FrameWidth - iBoundingBoxRightOffset, runningAnimation.FrameHeight - iBoundingBoxBottomOffset);            
         }
         public override void Draw(SpriteBatch spriteBatch)
         {
-            _runningAnimation.Draw(spriteBatch, direction, 1f);
+            runningAnimation.Draw(spriteBatch, direction, 1f);
          
             base.Draw(spriteBatch);
             

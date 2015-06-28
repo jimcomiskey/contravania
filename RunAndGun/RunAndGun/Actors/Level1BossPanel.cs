@@ -13,16 +13,16 @@ namespace RunAndGun.Actors
     class Level1BossPanel : Enemy
     {
 
-        private Animation _animation;
+        private Animation animation;
 
 
         public Level1BossPanel(ContentManager content, Vector2 position, Stage stage, string enemytype)
             : base(content, position, stage, enemytype)
         {
 
-            _animation = new Animation();            
+            animation = new Animation();            
             //TODO: animation.initialize
-            _animation.Initialize(content.Load<Texture2D>("Sprites/Bosses/Boss1Panel"), position, 26, 32, 3, 100, Color.White, 1f, true, true, currentStage);
+            animation.Initialize(content.Load<Texture2D>("Sprites/Bosses/Boss1Panel"), position, 26, 32, 3, 100, Color.White, 1f, true, true, currentStage);
 
             ExplosionAnimation.Initialize(content.Load<Texture2D>("Sprites/Explosion2"), position, 32, 32, 5, 150, Color.White, 1f, false, false, currentStage);
             ExplosionSound = content.Load<SoundEffect>("Sounds/Explosion3");
@@ -46,7 +46,7 @@ namespace RunAndGun.Actors
 
             EnemyMoveSpeed = 0.0f;
 
-            return new Rectangle((int)proposedPosition.X + iBoundingBoxLeftOffset, (int)proposedPosition.Y + iBoundingBoxTopOffset, _animation.FrameWidth - iBoundingBoxRightOffset - iBoundingBoxLeftOffset, _animation.FrameHeight - iBoundingBoxBottomOffset - iBoundingBoxTopOffset);
+            return new Rectangle((int)proposedPosition.X + iBoundingBoxLeftOffset, (int)proposedPosition.Y + iBoundingBoxTopOffset, animation.FrameWidth - iBoundingBoxRightOffset - iBoundingBoxLeftOffset, animation.FrameHeight - iBoundingBoxBottomOffset - iBoundingBoxTopOffset);
         }
 
         public override void Move(GameTime gameTime)
@@ -69,14 +69,14 @@ namespace RunAndGun.Actors
         protected override void UpdateAnimations(GameTime gameTime)
         {
 
-            _animation.Update(gameTime);
-            _animation.WorldPosition = this.WorldPosition;
+            animation.Update(gameTime);
+            animation.WorldPosition = this.WorldPosition;
             
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            _animation.Draw(spriteBatch, Player.PlayerDirection.Right, 1f);
+            animation.Draw(spriteBatch, Player.PlayerDirection.Right, 1f);
 
             base.Draw(spriteBatch);
 

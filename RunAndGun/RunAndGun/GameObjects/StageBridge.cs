@@ -13,23 +13,23 @@ namespace RunAndGun.GameObjects
     class StageBridge : StageObject
     {
         private List<StageTile> bridgepieces = new List<StageTile>();
-        private SoundEffect _explosionSound;
-        private SoundEffectInstance _explosionSoundInstance;
-        private Texture2D _explosionAnimationStrip;
+        private SoundEffect explosionSound;
+        private SoundEffectInstance explosionSoundInstance;
+        private Texture2D explosionAnimationStrip;
         public bool Exploding;
-        private int _explosionPlayCount = 0;
+        private int explosionPlayCount = 0;
         
         public void InitializeBridge(ContentManager content, Point coordinates, int BridgeLength)
         {
-            StageTile bridgestart = CurrentStage.getStageTileByWorldPosition(coordinates.X, coordinates.Y);
+            StageTile bridgestart = currentStage.getStageTileByWorldPosition(coordinates.X, coordinates.Y);
             //for (int i = 0; i < currentStage.; i++)            
             for (int i = 0; i < BridgeLength; i++)
             {
-                bridgepieces.Add(CurrentStage.getStageTileByGridPosition(bridgestart.X + i, bridgestart.Y));
+                bridgepieces.Add(currentStage.getStageTileByGridPosition(bridgestart.X + i, bridgestart.Y));
             }
 
-            _explosionSound = content.Load<SoundEffect>("Sounds/Explosion2");
-            _explosionAnimationStrip = content.Load<Texture2D>("Sprites/Explosion2");
+            explosionSound = content.Load<SoundEffect>("Sounds/Explosion2");
+            explosionAnimationStrip = content.Load<Texture2D>("Sprites/Explosion2");
 
         }
 
@@ -39,7 +39,7 @@ namespace RunAndGun.GameObjects
 
             // as soon as a player moves past the bridge horizontally, have the bridge explode. 
             // occurs even if player is not standing on the bridge.
-            foreach (Actors.Player player in CurrentStage.Players)
+            foreach (Actors.Player player in currentStage.Players)
             {
                 if (this.WorldPosition.X < player.WorldPosition.X && Exploding == false)
                     Explode();
@@ -47,12 +47,12 @@ namespace RunAndGun.GameObjects
 
             if (Exploding)
             {
-                if (_explosionSoundInstance.State == SoundState.Stopped)
+                if (explosionSoundInstance.State == SoundState.Stopped)
                 {
-                    _explosionPlayCount++;
-                    if (_explosionPlayCount < 4)
+                    explosionPlayCount++;
+                    if (explosionPlayCount < 4)
                     {
-                        ExplodeBridgePiece(_explosionPlayCount);
+                        ExplodeBridgePiece(explosionPlayCount);
                     }
                     else
                     {
@@ -80,12 +80,12 @@ namespace RunAndGun.GameObjects
             bridgepieces[iPiece].CollisionType = StageTile.TileCollisionType.None;
 
             Animation explosion = new Animation();
-            Vector2 explosionLocation = new Vector2(this.WorldPosition.X + (iPiece * CurrentStage.TileWidth), this.WorldPosition.Y );
-            explosion.Initialize(_explosionAnimationStrip, explosionLocation, 32, 32, 5, 150, Color.White, 1f, false, false, CurrentStage);
-            CurrentStage.AddExplosion(explosionLocation, explosion, _explosionSound);
+            Vector2 explosionLocation = new Vector2(this.WorldPosition.X + (iPiece * currentStage.iTileWidth), this.WorldPosition.Y );
+            explosion.Initialize(explosionAnimationStrip, explosionLocation, 32, 32, 5, 150, Color.White, 1f, false, false, currentStage);
+            currentStage.AddExplosion(explosionLocation, explosion, explosionSound);
 
-            _explosionSoundInstance = _explosionSound.CreateInstance();
-            _explosionSoundInstance.Play();
+            explosionSoundInstance = explosionSound.CreateInstance();
+            explosionSoundInstance.Play();
             
         }
     }
