@@ -12,22 +12,22 @@ namespace RunAndGun
 {
     public class StageObject
     {
-        protected Stage currentStage;
-        protected Texture2D texture;
+        protected Stage CurrentStage;
+        protected Texture2D Texture;
         public bool Active;
         public Vector2 WorldPosition;
-        public Vector2 ScreenPosition { get { return WorldPosition - currentStage.CameraPosition; } }
+        public Vector2 ScreenPosition { get { return WorldPosition - CurrentStage.CameraPosition; } }
         public int Height;
         public int Width;
 
         public void Initialize(Texture2D p_texture, Stage p_stage, Vector2 p_worldPosition)
         {
             Active = true;
-            currentStage = p_stage;            
+            CurrentStage = p_stage;            
             WorldPosition = p_worldPosition;
             if (p_texture != null)
             {
-                texture = p_texture;
+                Texture = p_texture;
                 Height = p_texture.Height;
                 Width = p_texture.Width;
             }
@@ -47,8 +47,8 @@ namespace RunAndGun
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            if (Active == true && texture != null)
-                spriteBatch.Draw(texture, new Rectangle((int)ScreenPosition.X, (int)ScreenPosition.Y, (int)texture.Width, (int)texture.Height), Color.White);
+            if (Active == true && Texture != null)
+                spriteBatch.Draw(Texture, new Rectangle((int)ScreenPosition.X, (int)ScreenPosition.Y, (int)Texture.Width, (int)Texture.Height), Color.White);
         }
         public virtual Rectangle? CollisionBox()
         {

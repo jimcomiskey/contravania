@@ -29,46 +29,46 @@ namespace RunAndGun
         public enum GameState { TitleScreen, Initializing, Playing };
         public GameState CurrentGameState;
 
-        public GameType currentGame;
+        public GameType CurrentGame;
         
-        GraphicsDeviceManager graphics;
-        ContentManager worldContent;
+        private GraphicsDeviceManager _graphics;
+        private ContentManager _worldContent;
 
-        SpriteBatch spriteBatch;
-        Matrix SpriteScale;
+        private SpriteBatch _spriteBatch;
+        private Matrix _spriteScale;
 
         //Player player1;
-        List<Player> players;        
-        Stage currentStage;        
-        SoundEffect soundGamePause;        
+        private List<Player> _players;        
+        private Stage _currentStage;        
+        private SoundEffect _soundGamePause;        
 
         // The font used to display UI elements
-        SpriteFont font;
+        private SpriteFont _font;
         //private Texture2D titleScreen;
-        private TitleScreen titleScreen;
+        private TitleScreen _titleScreen;
 
-        private bool bGamePaused;
-        public bool GamePaused { get { return bGamePaused; } }
+        private bool gamePaused;
+        public bool GamePaused { get { return gamePaused; } }
         //TextWriterTraceListener tr1 = new TextWriterTraceListener(System.IO.File.CreateText("Trace.txt"));
 
         public Game()
         {
             CurrentGameState = GameState.TitleScreen;
                         
-            graphics = new GraphicsDeviceManager(this);
+            _graphics = new GraphicsDeviceManager(this);
             
             // Non-World-Specific Game Content: Player sprite, Generic sound effects, etc.
             Content.RootDirectory = "Content";
 
-            graphics.PreferredBackBufferWidth = 768;
-            graphics.PreferredBackBufferHeight = 720;
+            _graphics.PreferredBackBufferWidth = 768;
+            _graphics.PreferredBackBufferHeight = 720;
             Window.AllowUserResizing = true;
 
         }
 
         protected override void Initialize()
         {
-            bGamePaused = false;
+            gamePaused = false;
 
             InitializeGameLaunchParameters();
 
@@ -82,11 +82,11 @@ namespace RunAndGun
                 string startupGame = this.LaunchParameters["StartupGame"];
                 if (startupGame == "Contra")
                 {
-                    currentGame = GameType.Contra;
+                    CurrentGame = GameType.Contra;
                 }
                 else if (startupGame == "ContraVania")
                 {
-                    currentGame = GameType.ContraVania;
+                    CurrentGame = GameType.ContraVania;
                 }
                 else
                 {
@@ -104,26 +104,26 @@ namespace RunAndGun
         protected override void LoadContent()
         {
 
-            players = new List<Player>();
+            _players = new List<Player>();
             
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             float screenscaleWidth =
-                (float)graphics.GraphicsDevice.Viewport.Width / (float)Game.iScreenModelWidth;
+                (float)_graphics.GraphicsDevice.Viewport.Width / (float)Game.iScreenModelWidth;
 
             float screenscaleHeight =
-                (float)graphics.GraphicsDevice.Viewport.Height / (float)Game.iScreenModelHeight;
+                (float)_graphics.GraphicsDevice.Viewport.Height / (float)Game.iScreenModelHeight;
             
             // Create the scale transform for Draw. 
             // Do not scale the sprite depth (Z=1).
             //SpriteScale = Matrix.CreateScale(screenscale, screenscale, 1);
-            SpriteScale = Matrix.CreateScale(screenscaleWidth, screenscaleHeight, 1);
+            _spriteScale = Matrix.CreateScale(screenscaleWidth, screenscaleHeight, 1);
 
-            soundGamePause = Content.Load<SoundEffect>("Sounds/gamepause");            
-            font = Content.Load<SpriteFont>("spriteFont1");
+            _soundGamePause = Content.Load<SoundEffect>("Sounds/gamepause");            
+            _font = Content.Load<SpriteFont>("spriteFont1");
 
-            titleScreen = new TitleScreen();
-            titleScreen.Initialize(Content, font);
+            _titleScreen = new TitleScreen();
+            _titleScreen.Initialize(Content, _font);
             
 
         }
@@ -141,7 +141,7 @@ namespace RunAndGun
             {
                 case GameState.TitleScreen:
                     {
-                        if (titleScreen.Update(gameTime, this) == GameState.Playing)
+                        if (_titleScreen.Update(gameTime, this) == GameState.Playing)
                         {
                             CurrentGameState = GameState.Initializing;
                         }
@@ -153,20 +153,20 @@ namespace RunAndGun
                     {
                         // if playing ContraVania, load world content from ContraVania folder.
                         // otherwise, assume we are playing Contra, which loads from Content folder, same as Core Game Content.
-                        if (currentGame == GameType.ContraVania)
+                        if (CurrentGame == GameType.ContraVania)
                         {
-                            worldContent = new ContentManager(this.Services);
-                            worldContent.RootDirectory = "ContraVania";
+                            _worldContent = new ContentManager(this.Services);
+                            _worldContent.RootDirectory = "ContraVania";
                         }
                         else
                         {
-                            worldContent = Content;
+                            _worldContent = Content;
                         }
 
-                        currentStage = new Stage(worldContent);
+                        _currentStage = new Stage(_worldContent);
 
-                        for (int iPlayerID = 1; iPlayerID <= titleScreen.NumPlayers; iPlayerID ++)
-                            players.Add(new Player(iPlayerID, this));
+                        for (int iPlayerID = 1; iPlayerID <= _titleScreen.NumPlayers; iPlayerID ++)
+                            _players.Add(new Player(iPlayerID, this));
                         //players.Add(new Player(2, this));
 
                         int playerStartingPosition = 0;
@@ -182,7 +182,7 @@ namespace RunAndGun
                         }
                         else
                         {
-                            if (currentGame == GameType.Contra)
+                            if (CurrentGame == GameType.Contra)
                             {
                                 initialStage = "Contra1-1Jungle";
                             }
@@ -192,24 +192,24 @@ namespace RunAndGun
                             }
                         }
 
-                        foreach (Player player in players)
+                        foreach (Player player in _players)
                             player.Initialize(Content,
                                             new Vector2(
-                                            GraphicsDevice.Viewport.TitleSafeArea.X + ((player.ID - 1) * currentStage.iTileWidth) + playerStartingPosition, 
+                                            GraphicsDevice.Viewport.TitleSafeArea.X + ((player.ID - 1) * _currentStage.TileWidth) + playerStartingPosition, 
                                             GraphicsDevice.Viewport.TitleSafeArea.Y),
-                                            currentStage);
+                                            _currentStage);
 
                         
-                        if (currentGame == GameType.Contra)
+                        if (CurrentGame == GameType.Contra)
                         {
 
-                            currentStage.Initialize(this, worldContent, initialStage, 32, 32);
+                            _currentStage.Initialize(this, _worldContent, initialStage, 32, 32);
                         }
                         else
                         {
-                            currentStage.Initialize(this, worldContent, initialStage, 16, 16);
+                            _currentStage.Initialize(this, _worldContent, initialStage, 16, 16);
                         }
-                        currentStage.Players = players;
+                        _currentStage.Players = _players;
 
                         this.ResetElapsedTime();
                         CurrentGameState = GameState.Playing;
@@ -220,12 +220,12 @@ namespace RunAndGun
                 case GameState.Playing:
                     {
 
-                        if (currentStage.bStageIsComplete)
+                        if (_currentStage.StageIsComplete)
                             this.Exit();
 
                         // as part of Player update, get total life count between the two players.
                         int iLifeCount = 0;
-                        foreach (Player player in players)
+                        foreach (Player player in _players)
                         {
                             player.Update(gameTime);
                             iLifeCount += player.LifeCount;
@@ -235,19 +235,19 @@ namespace RunAndGun
                         if (iLifeCount <= 0)
                             this.Exit();
 
-                        if (!bGamePaused)
+                        if (!gamePaused)
                         {
-                            UpdateProjectiles(gameTime, currentStage.Projectiles);
-                            UpdateProjectiles(gameTime, currentStage.EnemyProjectiles);
+                            UpdateProjectiles(gameTime, _currentStage.Projectiles);
+                            UpdateProjectiles(gameTime, _currentStage.EnemyProjectiles);
 
-                            currentStage.Update(gameTime, players);
+                            _currentStage.Update(gameTime, _players);
 
                         }
 
                         // TODO: update code so that currentStage doesn't advance until all players advance. 
                         // (already-advanced players will be inactive until game stage advances. //
-                        if (players[0].currentStage.StageID != currentStage.StageID)
-                            currentStage = players[0].currentStage;
+                        if (_players[0].currentStage.StageID != _currentStage.StageID)
+                            _currentStage = _players[0].currentStage;
 
                         break;
                     }
@@ -258,15 +258,15 @@ namespace RunAndGun
 
         public void TogglePause()
         {
-            bGamePaused = !bGamePaused;
-            if (bGamePaused)
+            gamePaused = !gamePaused;
+            if (gamePaused)
             {
-                soundGamePause.Play();
-                currentStage.PauseMusic();
+                _soundGamePause.Play();
+                _currentStage.PauseMusic();
             }
             else
             {
-                currentStage.PlayMusic();
+                _currentStage.PlayMusic();
             }
         }
         
@@ -277,7 +277,7 @@ namespace RunAndGun
             for (int i = lstProjectiles.Count - 1; i >= 0; i--)
             {
 
-                lstProjectiles[i].Update(gameTime, currentStage.CameraPosition);
+                lstProjectiles[i].Update(gameTime, _currentStage.CameraPosition);
 
                 if (lstProjectiles[i].Active == false)
                 {
@@ -295,13 +295,13 @@ namespace RunAndGun
         {
             //GraphicsDevice.Clear(Color.CornflowerBlue);
             GraphicsDevice.Clear(Color.Black);
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, SpriteScale);
+            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, _spriteScale);
 
             switch(CurrentGameState)
             {
                 case GameState.TitleScreen:
                     {
-                        titleScreen.Draw(spriteBatch);                        
+                        _titleScreen.Draw(_spriteBatch);                        
                         break;
                     }
 
@@ -310,34 +310,34 @@ namespace RunAndGun
                     
                     //spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
-                    currentStage.Draw(spriteBatch, currentStage.CameraPosition);
+                    _currentStage.Draw(_spriteBatch, _currentStage.CameraPosition);
 
-                    foreach (Player player in players)
+                    foreach (Player player in _players)
                     {
                         if (player.Visible)
-                            player.Draw(spriteBatch);
+                            player.Draw(_spriteBatch);
                     }
 
                     // Draw the Player Projectiles
-                    for (int i = 0; i < currentStage.Projectiles.Count; i++)
+                    for (int i = 0; i < _currentStage.Projectiles.Count; i++)
                     {
-                        currentStage.Projectiles[i].Draw(spriteBatch, currentStage.CameraPosition);
+                        _currentStage.Projectiles[i].Draw(_spriteBatch, _currentStage.CameraPosition);
                     }
 
-                    for (int i = 0; i < currentStage.EnemyProjectiles.Count; i++)
+                    for (int i = 0; i < _currentStage.EnemyProjectiles.Count; i++)
                     {
-                        currentStage.EnemyProjectiles[i].Draw(spriteBatch, currentStage.CameraPosition);
+                        _currentStage.EnemyProjectiles[i].Draw(_spriteBatch, _currentStage.CameraPosition);
                     }
 
 
                         //spriteBatch.DrawString(font, players[0].IsOnStairs.ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y ), Color.Red);
                         if (this.LaunchParameters.ContainsKey("DisplayDebugInfo"))
                         {
-                            spriteBatch.DrawString(font, players[0].WorldPosition.X.ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y), Color.Red);
+                            _spriteBatch.DrawString(_font, _players[0].WorldPosition.X.ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y), Color.Red);
                             //spriteBatch.DrawString(font, players[0].WorldPosition.Y.ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + 20), Color.Red);
-                            spriteBatch.DrawString(font, (players[0].BoundingBox().Bottom / currentStage.iTileHeight).ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + 20), Color.Red);
+                            _spriteBatch.DrawString(_font, (_players[0].BoundingBox().Bottom / _currentStage.TileHeight).ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + 20), Color.Red);
 
-                            spriteBatch.DrawString(font, string.Format("IsOnGround: {0}", players[0].IsOnGround), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + 40), Color.Blue);
+                            _spriteBatch.DrawString(_font, string.Format("IsOnGround: {0}", _players[0].IsOnGround), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + 40), Color.Blue);
                             //spriteBatch.DrawString(font, players[0].IsOnStairsRight.ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + 60), Color.Red);
                         }
                         
@@ -347,7 +347,7 @@ namespace RunAndGun
 
             //spriteBatch.DrawString(font, "gameTime: " + gameTime.ElapsedGameTime.ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y ), Color.Red);
 
-            spriteBatch.End();
+            _spriteBatch.End();
 
 
             base.Draw(gameTime);

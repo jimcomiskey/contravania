@@ -20,14 +20,14 @@ namespace RunAndGun.GameObjects
         {
             return _image;            
         }
-        private SoundEffect soundProjectileHit;
-        private Stage currentStage;
+        private SoundEffect _soundProjectileHit;
+        private Stage _currentStage;
 
         // Position of the Projectile relative to the upper left side of the screen
         public Vector2 WorldPosition;
         public Vector2 ScreenPosition
         {
-            get { return WorldPosition - currentStage.CameraPosition; }
+            get { return WorldPosition - _currentStage.CameraPosition; }
         }
 
         // State of the Projectile
@@ -37,7 +37,7 @@ namespace RunAndGun.GameObjects
         public int Damage;
 
         public Vector2 Velocity;
-        private float projectileSpeed = 3.5f;
+        private float _projectileSpeed = 3.5f;
 
         
         public int Width()
@@ -82,12 +82,12 @@ namespace RunAndGun.GameObjects
 
 
             _image = animation;
-            soundProjectileHit = hitsound;
-            currentStage = stage;
+            _soundProjectileHit = hitsound;
+            _currentStage = stage;
             WorldPosition = position;            
 
             Velocity = new Vector2((float)Math.Sin(radians), -(float)Math.Cos(radians)) * p_projectileSpeed;
-            projectileSpeed = p_projectileSpeed;
+            _projectileSpeed = p_projectileSpeed;
 
             Active = true;
 
@@ -95,7 +95,7 @@ namespace RunAndGun.GameObjects
         }
         public void PlayHitSound()
         {
-            soundProjectileHit.Play();
+            _soundProjectileHit.Play();
         }
         //public void Initialize(Texture2D texture, Vector2 position, Player player, Stage stage)
         //{

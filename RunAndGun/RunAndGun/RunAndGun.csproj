@@ -156,7 +156,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actors\Actor.cs" />
-    <Compile Include="Actors\ActorAction.cs" />
     <Compile Include="Actors\FootSoldier.cs" />
     <Compile Include="Actors\Level1BossPanel.cs" />
     <Compile Include="Actors\PlayerItem.cs" />

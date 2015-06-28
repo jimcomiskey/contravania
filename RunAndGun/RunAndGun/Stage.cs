@@ -18,26 +18,26 @@ namespace RunAndGun
 {
     public class Stage
     {
-        public Game game;
+        public Game Game;
         public string StageID;
-        private ContentManager worldContent;
+        private ContentManager _worldContent;
         //private TiledSharp.TmxMap tmx;
         public int MapHeight;
         public int MapWidth;
-        int iScreenTileWidth;
+        private int _screenTileWidth;
         //public TiledSharp.TmxMap Map
         //{
         //    get { return tmx; }
         //}
         public List<StageTile> StageTiles = new List<StageTile>();
-        private List<Texture2D> tilesource = new List<Texture2D>();
-        private int tileSourceCurrentFrame = 0;
-        private int elapsedTime;
-        private int frameTime = 180;
+        private List<Texture2D> _tilesource = new List<Texture2D>();
+        private int _tileSourceCurrentFrame = 0;
+        private int _elapsedTime;
+        private int _frameTime = 180;
 
         //private Dictionary<string, Stage> portals;
         
-        private System.Collections.Specialized.OrderedDictionary portals = new System.Collections.Specialized.OrderedDictionary();
+        private System.Collections.Specialized.OrderedDictionary _portals = new System.Collections.Specialized.OrderedDictionary();
         
         //public enum TileLayers { Display = 0, Collisions = 1 };
 
@@ -48,14 +48,14 @@ namespace RunAndGun
             {
                 // in Contra, player is slightly inset into the platform tile.
                 // in Castlevania, player is directly on top of the tile, they do not intersect with it.
-                if (game.currentGame == Game.GameType.Contra)
+                if (Game.CurrentGame == Game.GameType.Contra)
                     return 4;
                 else
                     return 0;
             }
         }
-        public int iTileWidth = 32;
-        public int iTileHeight = 32;
+        public int TileWidth = 32;
+        public int TileHeight = 32;
         public Vector2 CameraPosition;
 
         public List<Player> Players;
@@ -65,45 +65,45 @@ namespace RunAndGun
 
         // enemies who are on the map, waiting for the player to arrive.
         // enemy is removed from this list and added to the activeEnemies collection when the enemy becomes visible on-screen.
-        private const string waitingEnemiesObjectGroupName = "WaitingEnemies";
+        private const string WaitingEnemiesObjectGroupName = "WaitingEnemies";
         public List<Actors.Enemy> waitingEnemies = new List<Actors.Enemy>();
 
-        private const string specialStageBackgroundObjectsGroupName = "BackgroundObjects";        
+        private const string SpecialStageBackgroundObjectsGroupName = "BackgroundObjects";        
         public List<StageObject> uniqueBackgroundObjects = new List<StageObject>();
-        private const string specialStageForegroundObjectsGroupName = "ForegroundObjects";
+        private const string SpecialStageForegroundObjectsGroupName = "ForegroundObjects";
         public List<StageObject> uniqueForegroundObjects = new List<StageObject>();
 
-        private const string gameObjectsGroupName = "GameObjects";
+        private const string GameObjectsGroupName = "GameObjects";
         public List<StageObject> gameObjects = new List<StageObject>();
 
-        List<Animation> explosions;
-        List<SoundEffectInstance> explosionsounds;
+        private List<Animation> _explosions;
+        private List<SoundEffectInstance> _explosionsounds;
 
-        public bool bProgresstoNextLevel;
-        public bool bStageIsComplete;
-        private float fMomentOfSilence = 0.5f;
-        private bool bFanfarePlaying;
+        public bool ProgresstoNextLevel;
+        public bool StageIsComplete;
+        private float momentOfSilence = 0.5f; // amount of time to wait before playing stage complete tune, for dramatic effect
+        private bool fanfarePlaying;
         
         // The music played during gameplay
-        Song gameplayMusic;
-        Song fanfare;
-        SoundEffect redalertSound;
+        private Song _gameplayMusic;
+        private Song _fanfare;
+        private SoundEffect _redalertSound;
 
         // The rate at which the enemies appear
-        TimeSpan enemySpawnTime;
-        TimeSpan previousSpawnTime;
+        private TimeSpan _enemySpawnTime;
+        private TimeSpan _previousSpawnTime;
 
-        private bool bAutoScroll;
+        private bool _autoScroll;
         public bool AutoScroll 
         { 
             get 
             { 
-                return bAutoScroll; 
+                return _autoScroll; 
             } 
             set 
             { 
-                bAutoScroll = value;
-                redalertSound.Play();
+                _autoScroll = value;
+                _redalertSound.Play();
             } 
         }
 
@@ -111,40 +111,40 @@ namespace RunAndGun
         public Stage(ContentManager content)
         {
             CameraPosition = new Vector2(0, 0);
-            worldContent = content;
+            _worldContent = content;
             Projectiles = new List<Projectile>();
             ActiveEnemies = new List<Enemy>();
             EnemyProjectiles = new List<Projectile>();
-            explosions = new List<Animation>();
-            explosionsounds = new List<SoundEffectInstance>();
+            _explosions = new List<Animation>();
+            _explosionsounds = new List<SoundEffectInstance>();
 
-            bFanfarePlaying = false;
-            bStageIsComplete = false;
-            bProgresstoNextLevel = false;
+            fanfarePlaying = false;
+            StageIsComplete = false;
+            ProgresstoNextLevel = false;
         }
 
         public void Initialize(Game game, ContentManager worldcontent, string stageid, int tilewidth, int tileheight)
         {
             StageID = stageid;
-            this.game = game;
-            iTileHeight = tileheight;
-            iTileWidth = tilewidth;
+            this.Game = game;
+            TileHeight = tileheight;
+            TileWidth = tilewidth;
             
-            worldContent = worldcontent;
+            _worldContent = worldcontent;
 
             TiledSharp.TmxMap tmx;
             string appDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
-            if (game.currentGame == Game.GameType.Contra)
+            if (game.CurrentGame == Game.GameType.Contra)
             {
-                tilesource.Add(worldcontent.Load<Texture2D>("StageData/Level1Tileset"));
-                tilesource.Add(worldcontent.Load<Texture2D>("StageData/Level1TilesetALT"));
+                _tilesource.Add(worldcontent.Load<Texture2D>("StageData/Level1Tileset"));
+                _tilesource.Add(worldcontent.Load<Texture2D>("StageData/Level1TilesetALT"));
                 //explosionTexture = content.Load<Texture2D>("Sprites/Explosion1");
                 //explosionSound = content.Load<SoundEffect>("Sounds/Explosion1");
-                redalertSound = game.Content.Load<SoundEffect>("Sounds/redalert");
+                _redalertSound = game.Content.Load<SoundEffect>("Sounds/redalert");
 
-                gameplayMusic = worldcontent.Load<Song>("Music/Contra - Jungle Theme");
-                fanfare = worldcontent.Load<Song>("Music/fanfare");
+                _gameplayMusic = worldcontent.Load<Song>("Music/Contra - Jungle Theme");
+                _fanfare = worldcontent.Load<Song>("Music/fanfare");
 
                 PlayMusic();
 
@@ -160,7 +160,7 @@ namespace RunAndGun
                 {
                     throw new FileNotFoundException(string.Format("Cannot load file: {0}", tmxFile));
                 }
-                iScreenTileWidth = 8;
+                _screenTileWidth = 8;
                 
             }
             else
@@ -170,24 +170,24 @@ namespace RunAndGun
                 {
                     case "Castlevania1-1-1":
                         {
-                            gameplayMusic = worldcontent.Load<Song>("Music/Level1VampireKiller");
+                            _gameplayMusic = worldcontent.Load<Song>("Music/Level1VampireKiller");
                             PlayMusic();
-                            tilesource.Add(worldcontent.Load<Texture2D>("StageData/Level1A"));
+                            _tilesource.Add(worldcontent.Load<Texture2D>("StageData/Level1A"));
                             tmx = new TiledSharp.TmxMap(appDirectory + "\\LevelMaps\\" + stageid + ".tmx");
                             
-                            iScreenTileWidth = 16;
+                            _screenTileWidth = 16;
 
                             Stage nextSection = new Stage(worldcontent);
-                            nextSection.Initialize(this.game, worldcontent, "Castlevania1-1-2", this.iTileWidth, this.iTileHeight);
+                            nextSection.Initialize(this.Game, worldcontent, "Castlevania1-1-2", this.TileWidth, this.TileHeight);
                             
-                            portals.Add("Castlevania1-1-2", nextSection);
+                            _portals.Add("Castlevania1-1-2", nextSection);
                             break;
                         }
                     case "Castlevania1-1-2":
                         {
-                            tilesource.Add(worldcontent.Load<Texture2D>("StageData/Level1B"));
+                            _tilesource.Add(worldcontent.Load<Texture2D>("StageData/Level1B"));
                             tmx = new TiledSharp.TmxMap(appDirectory + "\\LevelMaps\\" + stageid + ".tmx");
-                            iScreenTileWidth = 16;
+                            _screenTileWidth = 16;
                             break;
                         }
                     default:
@@ -200,18 +200,18 @@ namespace RunAndGun
             // Initialize StageTiles
             InitializeStageTiles(tmx);
 
-            if (game.currentGame == Game.GameType.Contra)
+            if (game.CurrentGame == Game.GameType.Contra)
             {
                 InitializeWaitingEnemies(worldcontent, tmx);
-                InitializeSpecialStageObjects(worldcontent, tmx, tmx.ObjectGroups[specialStageBackgroundObjectsGroupName].Objects);
-                InitializeSpecialStageObjects(worldcontent, tmx, tmx.ObjectGroups[specialStageForegroundObjectsGroupName].Objects);                
+                InitializeSpecialStageObjects(worldcontent, tmx, tmx.ObjectGroups[SpecialStageBackgroundObjectsGroupName].Objects);
+                InitializeSpecialStageObjects(worldcontent, tmx, tmx.ObjectGroups[SpecialStageForegroundObjectsGroupName].Objects);                
             }
 
             // Set the time keepers to zero
-            previousSpawnTime = TimeSpan.Zero;
+            _previousSpawnTime = TimeSpan.Zero;
 
             Random r = new Random();
-            enemySpawnTime = TimeSpan.FromMilliseconds(r.Next(500, 3000));
+            _enemySpawnTime = TimeSpan.FromMilliseconds(r.Next(500, 3000));
             
             // Used to determine how fast enemy respawns
             //enemySpawnTime = TimeSpan.FromSeconds(3.0f); 
@@ -228,7 +228,7 @@ namespace RunAndGun
                 st.X = tmx.Layers[0].Tiles[i].X;
                 st.Y = tmx.Layers[0].Tiles[i].Y;
                 st.BackgroundGID = tmx.Layers["Background"].Tiles[i].Gid;
-                if (game.currentGame == Game.GameType.Contra)
+                if (Game.CurrentGame == Game.GameType.Contra)
                 {
                     st.DestructionLayer1GID = tmx.Layers["Destruction1"].Tiles[i].Gid;
                     st.DestructionLayer1GID = tmx.Layers["Destruction2"].Tiles[i].Gid;
@@ -302,7 +302,7 @@ namespace RunAndGun
         }
         private void InitializeWaitingEnemies(ContentManager content, TiledSharp.TmxMap tmx)
         {
-            foreach (TiledSharp.TmxObjectGroup.TmxObject tmxObject in tmx.ObjectGroups[waitingEnemiesObjectGroupName].Objects)
+            foreach (TiledSharp.TmxObjectGroup.TmxObject tmxObject in tmx.ObjectGroups[WaitingEnemiesObjectGroupName].Objects)
             {
                 // object's Y-coordinate is oriented to the bottom of the placement of the object, and we need top.
                 // so, we get the tile and look at its height and subtract that from the object's Y-coordinate to detemrine placement of object.
@@ -386,20 +386,23 @@ namespace RunAndGun
 
         public void PlayMusic()
         {
-            // Due to the way the MediaPlayer plays music,
-            // we have to catch the exception. Music will play when the game is not tethered
-            try
+            if (!Game.LaunchParameters.ContainsKey("DoNotPlayMusic"))
             {
-                // Play the music
-                if (MediaPlayer.State == MediaState.Paused)
-                    MediaPlayer.Resume();
-                else
-                    MediaPlayer.Play(gameplayMusic);
+                // Due to the way the MediaPlayer plays music,
+                // we have to catch the exception. Music will play when the game is not tethered
+                try
+                {
+                    // Play the music
+                    if (MediaPlayer.State == MediaState.Paused)
+                        MediaPlayer.Resume();
+                    else
+                        MediaPlayer.Play(_gameplayMusic);
 
-                // Loop the currently playing song
-                MediaPlayer.IsRepeating = true;
+                    // Loop the currently playing song
+                    MediaPlayer.IsRepeating = true;
+                }
+                catch { }
             }
-            catch { }
         }
         public void PauseMusic()
         {
@@ -408,8 +411,8 @@ namespace RunAndGun
 
         public StageTile getStageTileByWorldPosition(int x, int y)
         {
-            int xTile = x / iTileWidth;
-            int yTile = y / iTileHeight;
+            int xTile = x / TileWidth;
+            int yTile = y / TileHeight;
 
             for (int i = 0; i < StageTiles.Count; i++)
             {
@@ -431,8 +434,8 @@ namespace RunAndGun
         }
         public int getTileIDByPosition(int x, int y, string layer)
         {
-            int xTile = x / iTileWidth;
-            int yTile = y / iTileHeight;
+            int xTile = x / TileWidth;
+            int yTile = y / TileHeight;
 
             return getTileIDByGridPosition(xTile, yTile, layer);
             
@@ -455,11 +458,11 @@ namespace RunAndGun
 
         public Rectangle getTileBoundsByGridPosition(int x, int y)
         {
-            return new Rectangle(x * iTileWidth, (y * iTileHeight) + iTilePlatformDropOffset, iTileWidth, iTileHeight);
+            return new Rectangle(x * TileWidth, (y * TileHeight) + iTilePlatformDropOffset, TileWidth, TileHeight);
         }
         public Rectangle getTileBoundsByWorldPosition(int x, int y)
         {
-            return new Rectangle((x / iTileWidth) * iTileWidth, (y / iTileHeight) * iTileHeight, iTileWidth, iTileHeight);
+            return new Rectangle((x / TileWidth) * TileWidth, (y / TileHeight) * TileHeight, TileWidth, TileHeight);
         }
         public List<Platform> getTilePlatformBoundsByGridPosition(int x, int y)
         {
@@ -489,9 +492,9 @@ namespace RunAndGun
                 {
                     returnValue.Add(
                         new Platform(
-                            new Rectangle(x * iTileWidth, 
-                            (y * iTileHeight) + (iTileHeight / 2) + iTilePlatformDropOffset, 
-                            iTileWidth, 
+                            new Rectangle(x * TileWidth, 
+                            (y * TileHeight) + (TileHeight / 2) + iTilePlatformDropOffset, 
+                            TileWidth, 
                             1), 
                             Platform.PlatformTypes.Normal));
                 }
@@ -500,32 +503,32 @@ namespace RunAndGun
                     returnValue.Add(
                         new Platform(
                             new Rectangle(
-                                x * iTileWidth,
-                                (y * iTileHeight) + iTilePlatformDropOffset,
-                                iTileWidth / 2,
+                                x * TileWidth,
+                                (y * TileHeight) + iTilePlatformDropOffset,
+                                TileWidth / 2,
                                 4), 
                             Platform.PlatformTypes.StairsBottom)
                             );
 
                     returnValue.Add(new Platform(new Rectangle(
-                        x * iTileWidth,
-                        (y * iTileHeight) + iTilePlatformDropOffset,
-                        iTileWidth, 1), Platform.PlatformTypes.Normal));
+                        x * TileWidth,
+                        (y * TileHeight) + iTilePlatformDropOffset,
+                        TileWidth, 1), Platform.PlatformTypes.Normal));
                 }
                 else if (stageTile.CollisionType == StageTile.TileCollisionType.StairsBottomRight)
                 {
                     returnValue.Add(
                         new Platform(
                         new Rectangle(
-                        (x * iTileWidth) + (iTileWidth / 2),
-                        (y * iTileHeight) + iTilePlatformDropOffset,
-                        iTileWidth / 2,
+                        (x * TileWidth) + (TileWidth / 2),
+                        (y * TileHeight) + iTilePlatformDropOffset,
+                        TileWidth / 2,
                         4), Platform.PlatformTypes.StairsBottom));
 
                     returnValue.Add(new Platform(new Rectangle(
-                        x * iTileWidth,
-                        (y * iTileHeight) + iTilePlatformDropOffset,
-                        iTileWidth, 1), Platform.PlatformTypes.Normal));
+                        x * TileWidth,
+                        (y * TileHeight) + iTilePlatformDropOffset,
+                        TileWidth, 1), Platform.PlatformTypes.Normal));
 
                 }
                 else if (stageTile.CollisionType == StageTile.TileCollisionType.StairsLeft)
@@ -533,15 +536,15 @@ namespace RunAndGun
                     // stairs going up to the left
                     // upper left
                     returnValue.Add(new Platform(new Rectangle(
-                        x * iTileWidth, 
-                        (y * iTileHeight) + iTilePlatformDropOffset, 
-                        iTileWidth / 2, 
+                        x * TileWidth, 
+                        (y * TileHeight) + iTilePlatformDropOffset, 
+                        TileWidth / 2, 
                         4), Platform.PlatformTypes.Stairs));
                     // bottom right
                     returnValue.Add(new Platform(new Rectangle(
-                        (x * iTileWidth) + (iTileWidth / 2), 
-                        (y * iTileHeight) + iTilePlatformDropOffset + (iTileHeight / 2), 
-                        iTileWidth / 2, 
+                        (x * TileWidth) + (TileWidth / 2), 
+                        (y * TileHeight) + iTilePlatformDropOffset + (TileHeight / 2), 
+                        TileWidth / 2, 
                         4), Platform.PlatformTypes.Stairs));
                 }
                 else if (stageTile.CollisionType == StageTile.TileCollisionType.StairsRight)
@@ -549,23 +552,23 @@ namespace RunAndGun
                     // stairs going up to the right
                     // bottom left
                     returnValue.Add(new Platform(new Rectangle(
-                        x * iTileWidth, 
-                        (y * iTileHeight) + iTilePlatformDropOffset + (iTileHeight / 2), 
-                        iTileWidth / 2, 
+                        x * TileWidth, 
+                        (y * TileHeight) + iTilePlatformDropOffset + (TileHeight / 2), 
+                        TileWidth / 2, 
                         4), Platform.PlatformTypes.Stairs));
                     // upper right
                     returnValue.Add(new Platform(new Rectangle(
-                        (x * iTileWidth) + (iTileWidth / 2), 
-                        (y * iTileHeight) + iTilePlatformDropOffset, 
-                        iTileWidth / 2, 
+                        (x * TileWidth) + (TileWidth / 2), 
+                        (y * TileHeight) + iTilePlatformDropOffset, 
+                        TileWidth / 2, 
                         4), Platform.PlatformTypes.Stairs));
                 }
                 else
                 {
                     returnValue.Add(new Platform(new Rectangle(
-                        x * iTileWidth, 
-                        (y * iTileHeight) + iTilePlatformDropOffset, 
-                        iTileWidth, 1), Platform.PlatformTypes.Normal));
+                        x * TileWidth, 
+                        (y * TileHeight) + iTilePlatformDropOffset, 
+                        TileWidth, 1), Platform.PlatformTypes.Normal));
                 }
             }
 
@@ -585,12 +588,12 @@ namespace RunAndGun
                 if (stageTile.CollisionType == StageTile.TileCollisionType.StairsLeft)
                 {
                     // stairs going up to the left
-                    returnValue = new Rectangle(x * iTileWidth, (y * iTileHeight) + iTilePlatformDropOffset, iTileWidth / 2, 4); 
+                    returnValue = new Rectangle(x * TileWidth, (y * TileHeight) + iTilePlatformDropOffset, TileWidth / 2, 4); 
                 }
                 else if (stageTile.CollisionType == StageTile.TileCollisionType.StairsRight)
                 {
                     // stairs going up to the right                    
-                    returnValue  = new Rectangle((x * iTileWidth) + (iTileWidth / 2), (y * iTileHeight) + iTilePlatformDropOffset, iTileWidth / 2, 4);
+                    returnValue  = new Rectangle((x * TileWidth) + (TileWidth / 2), (y * TileHeight) + iTilePlatformDropOffset, TileWidth / 2, 4);
                 }
             }
 
@@ -663,12 +666,12 @@ namespace RunAndGun
             {
                 StageTile t = StageTiles[i];                
 
-                if (t.X >= ((int)cameraPosition.X / iTileWidth) && (t.X <= ((int)cameraPosition.X / iTileWidth) + iScreenTileWidth))
+                if (t.X >= ((int)cameraPosition.X / TileWidth) && (t.X <= ((int)cameraPosition.X / TileWidth) + _screenTileWidth))
                 {
-                    int x = (((int)(t.BackgroundGID) - 1) * iTileWidth) % tilesource[0].Width;
-                    int y = ((((int)(t.BackgroundGID) - 1) * iTileWidth) / tilesource[0].Width) * iTileHeight;
+                    int x = (((int)(t.BackgroundGID) - 1) * TileWidth) % _tilesource[0].Width;
+                    int y = ((((int)(t.BackgroundGID) - 1) * TileWidth) / _tilesource[0].Width) * TileHeight;
 
-                    spriteBatch.Draw(tilesource[tileSourceCurrentFrame], new Rectangle((t.X * iTileWidth) - (int) cameraPosition.X, t.Y * iTileHeight, iTileHeight, iTileWidth), new Rectangle(x, y, iTileWidth, iTileHeight), Color.White);
+                    spriteBatch.Draw(_tilesource[_tileSourceCurrentFrame], new Rectangle((t.X * TileWidth) - (int) cameraPosition.X, t.Y * TileHeight, TileHeight, TileWidth), new Rectangle(x, y, TileWidth, TileHeight), Color.White);
 
 
                 }
@@ -691,9 +694,9 @@ namespace RunAndGun
 
 
             // Draw the explosions
-            for (int i = 0; i < explosions.Count; i++)
+            for (int i = 0; i < _explosions.Count; i++)
             {
-                explosions[i].Draw(spriteBatch, Player.PlayerDirection.Right, 1f);
+                _explosions[i].Draw(spriteBatch, Player.PlayerDirection.Right, 1f);
             }
 
         }
@@ -701,40 +704,40 @@ namespace RunAndGun
         public void Update(GameTime gameTime, List<Player> players)
         {
 
-            elapsedTime += (int)gameTime.ElapsedGameTime.TotalMilliseconds;
+            _elapsedTime += (int)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-            if (elapsedTime > frameTime)
+            if (_elapsedTime > _frameTime)
             {
-                tileSourceCurrentFrame++;
-                elapsedTime = 0;
-                if (tileSourceCurrentFrame == tilesource.Count)
-                    tileSourceCurrentFrame = 0;
+                _tileSourceCurrentFrame++;
+                _elapsedTime = 0;
+                if (_tileSourceCurrentFrame == _tilesource.Count)
+                    _tileSourceCurrentFrame = 0;
             }
 
 
-            if (bProgresstoNextLevel)
+            if (ProgresstoNextLevel)
             {
 
                 UpdateExplosions(gameTime);
                 
                 UpdateEnemies(gameTime);
 
-                if (explosions.Count == 0 && ActiveEnemies.Count == 0 && explosionsounds.Count == 0)
+                if (_explosions.Count == 0 && ActiveEnemies.Count == 0 && _explosionsounds.Count == 0)
                 {
-                    if (fMomentOfSilence > 0.0f)
+                    if (momentOfSilence > 0.0f)
                     {
                         // do nothing- wait for enemies to die (they should), explosions to finish.     
-                        fMomentOfSilence = MathHelper.Clamp(fMomentOfSilence - (float)gameTime.ElapsedGameTime.TotalSeconds, 0.0f, 5.0f);
+                        momentOfSilence = MathHelper.Clamp(momentOfSilence - (float)gameTime.ElapsedGameTime.TotalSeconds, 0.0f, 5.0f);
                     }
-                    else if (!bFanfarePlaying)
+                    else if (!fanfarePlaying)
                     {
-                        bFanfarePlaying = true;
-                        MediaPlayer.Play(fanfare);
+                        fanfarePlaying = true;
+                        MediaPlayer.Play(_fanfare);
                         MediaPlayer.IsRepeating = false;
                     }
                     else if (MediaPlayer.State == MediaState.Stopped)
                     {
-                        bStageIsComplete = true;
+                        StageIsComplete = true;
                     }
 
                         
@@ -746,11 +749,11 @@ namespace RunAndGun
 
                 if (AutoScroll)
                 {
-                    if (CameraPosition.X + Game.iScreenModelWidth < iTileWidth * (MapWidth - 1))
+                    if (CameraPosition.X + Game.iScreenModelWidth < TileWidth * (MapWidth - 1))
                         CameraPosition.X += 1.2f;
                 }
 
-                if (!game.LaunchParameters.ContainsKey("DoNotSpawnEnemies"))
+                if (!Game.LaunchParameters.ContainsKey("DoNotSpawnEnemies"))
                 {
                     SpawnEnemies(gameTime);
                 }
@@ -846,7 +849,7 @@ namespace RunAndGun
                         rectangle1 = getTileBoundsByGridPosition(StageTiles[i].X, StageTiles[i].Y);
                         if (playerBoundingBox.Intersects(rectangle1))
                         {
-                            player.currentStage = (Stage)this.portals[StageTiles[i].PortalID];
+                            player.currentStage = (Stage)this._portals[StageTiles[i].PortalID];
                             player.WorldPosition.X = 0;
                             player.Update(gameTime);
                         }
@@ -859,15 +862,15 @@ namespace RunAndGun
         {
             
             //Enemies.Add(new Enemy(worldPosition,       
-            if (this.game.currentGame == Game.GameType.Contra)
+            if (this.Game.CurrentGame == Game.GameType.Contra)
             {                
-                Enemy e = new Actors.FootSoldier(worldContent, spawnPosition, this, "EnemyFootSoldier");
+                Enemy e = new Actors.FootSoldier(_worldContent, spawnPosition, this, "EnemyFootSoldier");
                 e.WorldPosition = new Vector2(spawnPosition.X, spawnPosition.Y - e.BoundingBox().Height);
                 ActiveEnemies.Add(e);
             }
             else
             {
-                Enemy e = new Actors.Zombie(worldContent, spawnPosition, this, "Zombie");
+                Enemy e = new Actors.Zombie(_worldContent, spawnPosition, this, "Zombie");
                 e.WorldPosition = new Vector2(spawnPosition.X, spawnPosition.Y - e.BoundingBox().Height);
                 ActiveEnemies.Add(e);
             }
@@ -876,33 +879,33 @@ namespace RunAndGun
         {   
             //explosion.Initialize(explosionTexture, position, 36, 36, 3, 150, Color.White, 1f, false, false, this);
             explosion.WorldPosition = position;
-            explosions.Add(explosion);
+            _explosions.Add(explosion);
 
             SoundEffectInstance e = explosionSound.CreateInstance();
             e.Play();
-            explosionsounds.Add(e);            
+            _explosionsounds.Add(e);            
         }
         public void SpawnEnemies(GameTime gameTime)
         {
-            if (!game.LaunchParameters.ContainsKey("DoNotSpawnRandomEnemies"))
+            if (!Game.LaunchParameters.ContainsKey("DoNotSpawnRandomEnemies"))
             {
                 // randomly spawwn foot soldiers
 
-                if (gameTime.TotalGameTime - previousSpawnTime > enemySpawnTime && ActiveEnemies.Count <= 3)
+                if (gameTime.TotalGameTime - _previousSpawnTime > _enemySpawnTime && ActiveEnemies.Count <= 3)
                 {
-                    previousSpawnTime = gameTime.TotalGameTime;
+                    _previousSpawnTime = gameTime.TotalGameTime;
 
                     float fVerticalSpawnLocation = 0;
                     float fHorizontalSpawnLocation = CameraPosition.X + Game.iScreenModelWidth;
-                    if (CameraPosition.X + Game.iScreenModelWidth < this.MapWidth * this.iTileWidth)
+                    if (CameraPosition.X + Game.iScreenModelWidth < this.MapWidth * this.TileWidth)
                     {
                         int iYTile = 0;
                         for (iYTile = 0; iYTile < MapHeight; iYTile++)
                         {
 
-                            if (this.getStageTileByGridPosition((int)fHorizontalSpawnLocation / iTileWidth, iYTile).IsPlatform())
+                            if (this.getStageTileByGridPosition((int)fHorizontalSpawnLocation / TileWidth, iYTile).IsPlatform())
                             {
-                                fVerticalSpawnLocation = iYTile * iTileHeight;
+                                fVerticalSpawnLocation = iYTile * TileHeight;
                                 break;
                             }
                         }
@@ -913,7 +916,7 @@ namespace RunAndGun
                     AddEnemy(enemySpawnPosition);
 
                     Random r = new Random();
-                    enemySpawnTime = TimeSpan.FromMilliseconds(r.Next(200, 1500));
+                    _enemySpawnTime = TimeSpan.FromMilliseconds(r.Next(200, 1500));
                 }
             }
 
@@ -957,19 +960,19 @@ namespace RunAndGun
 
         private void UpdateExplosions(GameTime gameTime)
         {
-            for (int i = explosions.Count - 1; i >= 0; i--)
+            for (int i = _explosions.Count - 1; i >= 0; i--)
             {   
-                explosions[i].Update(gameTime);
-                if (explosions[i].Active == false)
+                _explosions[i].Update(gameTime);
+                if (_explosions[i].Active == false)
                 {
-                    explosions.RemoveAt(i);
+                    _explosions.RemoveAt(i);
                 }
             }
 
-            for (int i = explosionsounds.Count - 1; i >= 0; i--)
+            for (int i = _explosionsounds.Count - 1; i >= 0; i--)
             {
-                if (explosionsounds[i].State == SoundState.Stopped)
-                    explosionsounds.RemoveAt(i);
+                if (_explosionsounds[i].State == SoundState.Stopped)
+                    _explosionsounds.RemoveAt(i);
             }
         }
         private void UpdateStageObjects(GameTime gameTime, List<StageObject> lStageObjects)
@@ -992,7 +995,7 @@ namespace RunAndGun
 
             MediaPlayer.Stop();
 
-            bProgresstoNextLevel = true;
+            ProgresstoNextLevel = true;
 
             // from here, the Update method will wait until explosions are done, pause for a moment of silence of the awesomeness that just occurred, and then play the fanfare song.
             // then, the update method will wait for that song to be finished, and game will end.
