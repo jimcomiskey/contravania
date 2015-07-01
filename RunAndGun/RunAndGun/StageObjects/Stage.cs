@@ -13,6 +13,7 @@ using System.IO;
 using RunAndGun.Actors;
 using RunAndGun.GameObjects;
 using RunAndGun.Animations;
+using RunAndGun.StageObjects;
 
 namespace RunAndGun
 {
@@ -235,12 +236,7 @@ namespace RunAndGun
                 }
                 
                 st.MetaGID = tmx.Layers["Meta"].Tiles[i].Gid;
-                //if (tmx.Layers["Meta"].Tiles[i].Gid > 0)
-                //    // at minimum, it is a platform.
-                //    st.CollisionType = StageTile.TileCollisionType.Platform;
-
-                //TiledSharp.TmxLayerTile t = tmx.Layers["Meta"].Tiles[i];
-
+                
                 TiledSharp.TmxTilesetTile t = tmx.GetTmxTilesetTileByGID(tmx.Layers["Meta"].Tiles[i].Gid);
 
                 if (t != null)
@@ -320,18 +316,18 @@ namespace RunAndGun
                 var enemyLocation = new Vector2((float)tmxObject.X, (float)tmxObject.Y - fObjectHeight);
                 switch (tmxObject.Type)
                 {
+                    case "FootSoldier":
+                        e = new Actors.FootSoldier(content, enemyLocation, this, tmxObject.Type);
+                        break;
                     case "Sniper":
                         e = new Actors.Sniper(content, enemyLocation, this, tmxObject.Type);
                         break;
-
                     case "Turret":
                         e = new Actors.Turret(content, enemyLocation, this, tmxObject.Type);
                         break;
-
                     case "Level1BossPanel":
                         e = new Actors.Level1BossPanel(content, enemyLocation, this, tmxObject.Type);
                         break;
-
                     case "Capsule":
                         e = new Actors.Capsule(content, enemyLocation, this, tmxObject.Type);
                         break;
@@ -353,30 +349,43 @@ namespace RunAndGun
                 float fObjectHeight = 0;
 
                 StageObject s = null;
-                if (tmxObject.Type == "Bridge")
+                switch(tmxObject.Type)
                 {
-                    StageBridge sb = new StageBridge();
+                    case "Bridge":
+                    case "EnemySpawnLocation":
+                        switch (tmxObject.Type)
+                        {
+                            case "Bridge":
+                                s = new StageBridge();
+                                break;
+                            case "EnemySpawnLocation":
+                                s = new EnemySpawnLocation("EnemyFootSoldier");
+                                break;
+                            default:
+                                throw new InvalidDataException(string.Format("Unexpected background object type: {0}", tmxObject.Type));
+                        }
 
-                    sb.Initialize(null, this, new Vector2((float)tmxObject.X, (float)tmxObject.Y - fObjectHeight));
-                    sb.InitializeBridge(content, new Point(tmxObject.X, tmxObject.Y), 4);
-                    sb.Height = tmxObject.Height;
-                    sb.Width = tmxObject.Width;
+                        s.Initialize(null, this, new Vector2((float)tmxObject.X, (float)tmxObject.Y - fObjectHeight));
+                        if (s is StageBridge)
+                        {
+                            ((StageBridge)s).InitializeBridge(content, new Point(tmxObject.X, tmxObject.Y), 4);
+                        }
+                        s.Height = tmxObject.Height;
+                        s.Width = tmxObject.Width;
+                        break;
 
-                    s = sb;
-                    
-                }
-                else
-                {
-                    int gid = tmxObject.Tile.Gid;
-                    for (int i = 0; i < StageTiles.Count; i++)
-                    {
-                        fObjectHeight = (float)tmx.Tilesets[i].TileHeight;
-                        if (gid <= tmx.Tilesets[i].FirstGid)
-                            break;
-                    }
+                    default:
+                        int gid = tmxObject.Tile.Gid;
+                        for (int i = 0; i < StageTiles.Count; i++)
+                        {
+                            fObjectHeight = (float)tmx.Tilesets[i].TileHeight;
+                            if (gid <= tmx.Tilesets[i].FirstGid)
+                                break;
+                        }
 
-                    s = new StageObject();
-                    s.Initialize(content.Load<Texture2D>(tmxObject.Type), this, new Vector2((float)tmxObject.X, (float)tmxObject.Y - fObjectHeight));
+                        s = new StageObject();
+                        s.Initialize(content.Load<Texture2D>(tmxObject.Type), this, new Vector2((float)tmxObject.X, (float)tmxObject.Y - fObjectHeight));
+                        break;
                 }
 
                 //e.Initialize(content, new Vector2((float)tmxObject.X, (float)tmxObject.Y), this, "Sniper");
@@ -858,22 +867,23 @@ namespace RunAndGun
             }
         }
 
-        public void AddEnemy(Vector2 spawnPosition)
+        public void AddEnemy(string enemyType, Vector2 spawnPosition)
         {
-            
+            Enemy e;
             //Enemies.Add(new Enemy(worldPosition,       
-            if (this.Game.CurrentGame == Game.GameType.Contra)
-            {                
-                Enemy e = new Actors.FootSoldier(_worldContent, spawnPosition, this, "EnemyFootSoldier");
-                e.WorldPosition = new Vector2(spawnPosition.X, spawnPosition.Y - e.BoundingBox().Height);
-                ActiveEnemies.Add(e);
-            }
-            else
+            switch (enemyType)
             {
-                Enemy e = new Actors.Zombie(_worldContent, spawnPosition, this, "Zombie");
-                e.WorldPosition = new Vector2(spawnPosition.X, spawnPosition.Y - e.BoundingBox().Height);
-                ActiveEnemies.Add(e);
-            }
+                case "EnemyFootSoldier":
+                    e = new Actors.FootSoldier(_worldContent, spawnPosition, this, "EnemyFootSoldier");
+                    e.WorldPosition = new Vector2(spawnPosition.X, spawnPosition.Y - e.BoundingBox().Height);
+                    ActiveEnemies.Add(e);
+                    break;
+                case "Zombie":
+                    e = new Actors.Zombie(_worldContent, spawnPosition, this, "Zombie");
+                    e.WorldPosition = new Vector2(spawnPosition.X, spawnPosition.Y - e.BoundingBox().Height);
+                    ActiveEnemies.Add(e);
+                    break;
+            }            
         }
         public void AddExplosion(Vector2 position, Animation explosion, SoundEffect explosionSound)
         {   
@@ -913,7 +923,15 @@ namespace RunAndGun
 
                     Vector2 enemySpawnPosition = new Vector2(CameraPosition.X + Game.iScreenModelWidth, fVerticalSpawnLocation);
 
-                    AddEnemy(enemySpawnPosition);
+                    if (this.Game.CurrentGame == Game.GameType.Contra)
+                    {
+                        AddEnemy("EnemyFootSoldier", enemySpawnPosition);
+                    }
+                    else
+                    {
+                        AddEnemy("Zombie", enemySpawnPosition);
+                    }
+                    
 
                     Random r = new Random();
                     _enemySpawnTime = TimeSpan.FromMilliseconds(r.Next(200, 1500));

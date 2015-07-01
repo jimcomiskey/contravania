@@ -47,6 +47,21 @@ namespace RunAndGun
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
+#if DEBUG
+            Rectangle boundingbox = this.CollisionBox().Value;
+            Texture2D txt = new Texture2D(spriteBatch.GraphicsDevice, boundingbox.Width, boundingbox.Height);
+
+            Color[] data = new Color[txt.Width * txt.Height];
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                data[i].B = 255;
+            }
+
+            txt.SetData(data);
+            spriteBatch.Draw(txt, new Vector2(boundingbox.X - CurrentStage.CameraPosition.X, boundingbox.Y - CurrentStage.CameraPosition.Y), Color.White);
+#endif 
+
             if (Active == true && Texture != null)
                 spriteBatch.Draw(Texture, new Rectangle((int)ScreenPosition.X, (int)ScreenPosition.Y, (int)Texture.Width, (int)Texture.Height), Color.White);
         }

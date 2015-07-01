@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using RunAndGun.Actors;
 
 
-namespace RunAndGun
+namespace RunAndGun.Animations
 {
     class PlayerSpriteCollection
     {
