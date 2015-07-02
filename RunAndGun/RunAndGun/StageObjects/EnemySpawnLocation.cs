@@ -27,25 +27,28 @@ namespace RunAndGun.StageObjects
                 r = new Random();
                 _enemySpawnTime = r.Next(200, 2000);
             }
-            if (_spawnedEnemy == null && CurrentStage.ScreenCoordinates().Intersects(VirtualBox()) && VirtualBox().Right > CurrentStage.ScreenCoordinates().Right)
+            if (!this.CurrentStage.Game.LaunchParameters.ContainsKey("DoNotSpawnEnemies"))
             {
-                _enemySpawnTime -= gameTime.ElapsedGameTime.TotalMilliseconds;
-
-                if (_enemySpawnTime < 0)
+                if (_spawnedEnemy == null && CurrentStage.ScreenCoordinates().Intersects(VirtualBox()) && VirtualBox().Right > CurrentStage.ScreenCoordinates().Right)
                 {
-                    Vector2 spawnLocation =
-                    new Vector2(this.VirtualBox().Left + (this.CurrentStage.ScreenCoordinates().Right - this.VirtualBox().Left),
-                    VirtualBox().Bottom);
+                    _enemySpawnTime -= gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                    CurrentStage.AddEnemy(_enemyType, spawnLocation);
+                    if (_enemySpawnTime < 0)
+                    {
+                        Vector2 spawnLocation =
+                        new Vector2(this.VirtualBox().Left + (this.CurrentStage.ScreenCoordinates().Right - this.VirtualBox().Left),
+                        VirtualBox().Bottom);
 
-                    r = new Random();
-                    // TODO: rework this so that enemies spawn more similarly to classic Contra
-                    _enemySpawnTime = Math.Sqrt(r.Next(50000, 4000000));
+                        CurrentStage.AddEnemy(_enemyType, spawnLocation);
 
+                        r = new Random();
+                        // TODO: rework this so that enemies spawn more similarly to classic Contra
+                        _enemySpawnTime = Math.Sqrt(r.Next(50000, 4000000));
+
+                    }
+
+                    base.Update(gameTime);
                 }
-                
-                base.Update(gameTime);
             }
         }
         public Rectangle VirtualBox()

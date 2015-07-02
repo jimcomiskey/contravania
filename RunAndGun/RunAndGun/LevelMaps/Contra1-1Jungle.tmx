@@ -91,6 +91,9 @@
   <object type="EnemySpawnLocation" x="2064" y="11" width="128" height="38"/>
   <object type="EnemySpawnLocation" x="2385" y="48" width="32" height="38"/>
   <object type="EnemySpawnLocation" x="2483" y="78" width="32" height="38"/>
+  <object type="EnemySpawnLocation" x="2598" y="55" width="32" height="38"/>
+  <object type="EnemySpawnLocation" x="2798" y="84" width="96" height="38"/>
+  <object type="EnemySpawnLocation" x="3154" y="54" width="96" height="38"/>
  </objectgroup>
  <objectgroup color="#aa55ff" name="WaitingEnemies" width="108" height="8">
   <object type="Sniper" gid="48" x="303" y="193"/>

@@ -60,10 +60,14 @@ namespace RunAndGun.Actors
         protected void ChangeDirection()
         {
             Velocity.X = -Velocity.X;
-            if (this.direction == Player.PlayerDirection.Right)
-                this.direction = Player.PlayerDirection.Left;
-            else
-                this.direction = Player.PlayerDirection.Right;
+
+            if (Math.Abs((int)Velocity.X) > 0)
+            {
+                if (this.direction == Player.PlayerDirection.Right)
+                    this.direction = Player.PlayerDirection.Left;
+                else
+                    this.direction = Player.PlayerDirection.Right;
+            }
         }
 
         public override Rectangle BoundingBox()

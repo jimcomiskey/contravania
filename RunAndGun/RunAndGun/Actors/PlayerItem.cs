@@ -41,11 +41,20 @@ namespace RunAndGun.Actors
         public override Rectangle BoundingBox(Vector2 proposedPosition)
         {
             return new Rectangle((int)WorldPosition.X, (int)WorldPosition.Y, _imageTexture.Width, _imageTexture.Height);
-        }        
+        }
 
+        public override void ApplyPhysics(GameTime gameTime)
+        {
+            base.ApplyPhysics(gameTime);
+
+            if (!this.IsJumping && this.IsOnGround)
+            {
+                this.Velocity.X = 0;
+            }
+        }
         public override void Move(GameTime gameTime)
         {
-            // aside from physics (gravity), capsules do not move
+            // aside from physics (gravity), capsules do not move            
         }
         public override void Draw(SpriteBatch spriteBatch)
         {

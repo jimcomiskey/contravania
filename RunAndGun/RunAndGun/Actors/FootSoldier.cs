@@ -61,6 +61,7 @@ namespace RunAndGun.Actors
                     {
                         if (stageTile.IsImpassable())
                         {
+                            // bump into wall- reverse direction
                             Rectangle tilebounds = currentStage.getTileBoundsByGridPosition(x, y);
                             if (proposedbounds.Intersects(tilebounds))
                             {
@@ -69,8 +70,7 @@ namespace RunAndGun.Actors
                         }
 
                         if (stageTile.IsPlatform() && y == bottomTile)
-                        {
-
+                        {                            
                             List<Platform> tileboundsList = currentStage.getTilePlatformBoundsByGridPosition(x, bottomTile);
 
                             foreach (Platform platformbounds in tileboundsList)

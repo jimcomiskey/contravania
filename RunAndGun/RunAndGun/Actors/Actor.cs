@@ -165,11 +165,10 @@ namespace RunAndGun.Actors
 
                                 if (this.PreviousBottom <= tilebounds.Top && Velocity.Y >= 0 && actorbounds.Intersects(tilebounds))
                                 //if (Velocity.Y >= 0 && (depth.Y < 0)) // || this.IgnoreNextPlatform))
-                                {
-
+                                {                                    
                                     this.IsOnGround = true;
                                     this.JumpInProgress = false;
-                                    this.Velocity.X = 0f;
+                                    //this.Velocity.X = 0f;
 
                                     this.WorldPosition.Y += depth.Y;
                                     // perform further collisions with the new bounds

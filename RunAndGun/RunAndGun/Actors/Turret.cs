@@ -23,7 +23,7 @@ namespace RunAndGun.Actors
         public float TimeSinceLastMove;
         public float TimeTargetLocked;
         private const float TurretMoveDelay = 0.5f;
-        private const float TurretFireDelay = 1.0f;
+        private const float TurretFireDelay = 1.7f;
         private const int FrameTime = 100;
         private int _elapsedTime;
         private bool _animatingforward;
@@ -144,7 +144,8 @@ namespace RunAndGun.Actors
             {
                 if (TimeSinceLastMove > TurretMoveDelay)
                 {
-                    TimeSinceLastMove -= TurretMoveDelay;
+                    //TimeSinceLastMove -= TurretMoveDelay;
+                    TimeSinceLastMove = 0;
             
                     //float currentTurretAngle = iCurrentPosition * 30;
                     int iCounterDistance = 0;

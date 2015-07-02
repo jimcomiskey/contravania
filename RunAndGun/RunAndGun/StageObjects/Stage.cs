@@ -897,46 +897,46 @@ namespace RunAndGun
         }
         public void SpawnEnemies(GameTime gameTime)
         {
-            if (!Game.LaunchParameters.ContainsKey("DoNotSpawnRandomEnemies"))
-            {
-                // randomly spawwn foot soldiers
+            //if (!Game.LaunchParameters.ContainsKey("DoNotSpawnRandomEnemies"))
+            //{
+            //    // randomly spawwn foot soldiers
 
-                if (gameTime.TotalGameTime - _previousSpawnTime > _enemySpawnTime && ActiveEnemies.Count <= 3)
-                {
-                    _previousSpawnTime = gameTime.TotalGameTime;
+            //    if (gameTime.TotalGameTime - _previousSpawnTime > _enemySpawnTime && ActiveEnemies.Count <= 3)
+            //    {
+            //        _previousSpawnTime = gameTime.TotalGameTime;
 
-                    float fVerticalSpawnLocation = 0;
-                    float fHorizontalSpawnLocation = CameraPosition.X + Game.iScreenModelWidth;
-                    if (CameraPosition.X + Game.iScreenModelWidth < this.MapWidth * this.TileWidth)
-                    {
-                        int iYTile = 0;
-                        for (iYTile = 0; iYTile < MapHeight; iYTile++)
-                        {
+            //        float fVerticalSpawnLocation = 0;
+            //        float fHorizontalSpawnLocation = CameraPosition.X + Game.iScreenModelWidth;
+            //        if (CameraPosition.X + Game.iScreenModelWidth < this.MapWidth * this.TileWidth)
+            //        {
+            //            int iYTile = 0;
+            //            for (iYTile = 0; iYTile < MapHeight; iYTile++)
+            //            {
 
-                            if (this.getStageTileByGridPosition((int)fHorizontalSpawnLocation / TileWidth, iYTile).IsPlatform())
-                            {
-                                fVerticalSpawnLocation = iYTile * TileHeight;
-                                break;
-                            }
-                        }
-                    }
+            //                if (this.getStageTileByGridPosition((int)fHorizontalSpawnLocation / TileWidth, iYTile).IsPlatform())
+            //                {
+            //                    fVerticalSpawnLocation = iYTile * TileHeight;
+            //                    break;
+            //                }
+            //            }
+            //        }
 
-                    Vector2 enemySpawnPosition = new Vector2(CameraPosition.X + Game.iScreenModelWidth, fVerticalSpawnLocation);
+            //        Vector2 enemySpawnPosition = new Vector2(CameraPosition.X + Game.iScreenModelWidth, fVerticalSpawnLocation);
 
-                    if (this.Game.CurrentGame == Game.GameType.Contra)
-                    {
-                        AddEnemy("EnemyFootSoldier", enemySpawnPosition);
-                    }
-                    else
-                    {
-                        AddEnemy("Zombie", enemySpawnPosition);
-                    }
+            //        if (this.Game.CurrentGame == Game.GameType.Contra)
+            //        {
+            //            AddEnemy("EnemyFootSoldier", enemySpawnPosition);
+            //        }
+            //        else
+            //        {
+            //            AddEnemy("Zombie", enemySpawnPosition);
+            //        }
                     
 
-                    Random r = new Random();
-                    _enemySpawnTime = TimeSpan.FromMilliseconds(r.Next(200, 1500));
-                }
-            }
+            //        Random r = new Random();
+            //        _enemySpawnTime = TimeSpan.FromMilliseconds(r.Next(200, 1500));
+            //    }
+            //}
 
             for (int i = waitingEnemies.Count-1; i >= 0; i--)
             {
