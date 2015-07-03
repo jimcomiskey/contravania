@@ -17,6 +17,7 @@ namespace RunAndGun
     // WindowedMode
     // StartupStage
     // DoNotSpawnEnemies - when setting is present, do not spawn enemies
+    // DoNotSpawnRandomEnemies
     // 
 
     public class Game : Microsoft.Xna.Framework.Game
@@ -246,8 +247,8 @@ namespace RunAndGun
 
                         // TODO: update code so that currentStage doesn't advance until all players advance. 
                         // (already-advanced players will be inactive until game stage advances. //
-                        if (_players[0].currentStage.StageID != _currentStage.StageID)
-                            _currentStage = _players[0].currentStage;
+                        if (_players[0].CurrentStage.StageID != _currentStage.StageID)
+                            _currentStage = _players[0].CurrentStage;
 
                         break;
                     }

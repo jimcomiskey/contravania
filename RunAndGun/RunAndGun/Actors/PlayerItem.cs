@@ -19,24 +19,37 @@ namespace RunAndGun.Actors
 
         public PlayerItem(ContentManager content, Vector2 position, Stage stage, string itemType) : base(content, position, stage, itemType)
         {
-            _imageTexture = content.Load<Texture2D>(string.Format("Sprites/PlayerItem{0}", itemType));
+            _imageTexture = content.Load<Texture2D>(string.Format("Sprites/Enemies/PlayerItem{0}", itemType));
             ExplosionSound = content.Load<SoundEffect>("Sounds/playeritem");
-            ExplosionAnimation.Initialize(content.Load<Texture2D>("Sprites/Explosion1"), this.WorldPosition, 36, 36, 3, 150, Color.White, 1f, false, false, this.currentStage);
+            ExplosionAnimation.Initialize(content.Load<Texture2D>("Sprites/Explosion1"), this.WorldPosition, 36, 36, 3, 150, Color.White, 1f, false, false, this.CurrentStage);
             CollisionIsHazardous = false;
             VulnerableToBullets = false;
 
             switch(itemType)
-            {
+            {                
+                case "MachineGun":
+                    Gun = new Gun();
+                    Gun.Initialize(content, GunType.MachineGun);
+                    break;
+                case "RapidGun":
+                    Gun = new Gun();
+                    Gun.GunType = GunType.Rapid;                    
+                    break;
                 case "SpreadGun":
                     Gun = new Gun();
                     Gun.Initialize(content, GunType.Spread);
                     break;
             }
 
-            Velocity.X = 0.5f;
+            Velocity.X = 0.7f;
             IsOnGround = true;
             JumpInProgress = true;
             IsJumping = true;
+
+            JumpLaunchVelocity = -1200f;
+            GravityAcceleration = 300f;
+            MaxJumpTime = 0.6f;
+
         }
         public override Rectangle BoundingBox(Vector2 proposedPosition)
         {

@@ -43,7 +43,7 @@
     <PublisherName>Jim Comiskey</PublisherName>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>34</ApplicationRevision>
+    <ApplicationRevision>35</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -158,6 +158,7 @@
     <Compile Include="Actors\Actor.cs" />
     <Compile Include="Actors\FootSoldier.cs" />
     <Compile Include="Actors\Level1BossPanel.cs" />
+    <Compile Include="Actors\Panel.cs" />
     <Compile Include="Actors\PlayerItem.cs" />
     <Compile Include="Actors\Sniper.cs" />
     <Compile Include="Actors\Turret.cs" />

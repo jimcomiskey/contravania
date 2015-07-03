@@ -23,6 +23,7 @@ namespace RunAndGun.Actors
         public bool Active;
         public bool CollisionIsHazardous;
         public bool VulnerableToBullets;
+        public bool BulletProof;
 
         public Enemy(ContentManager content, Vector2 position, Stage stage, string enemytype)
         {
@@ -35,7 +36,7 @@ namespace RunAndGun.Actors
             EnemyMoveSpeed = 0.0f;
 
             WorldPosition = position;
-            currentStage = stage;            
+            CurrentStage = stage;            
         }
         
 
@@ -51,7 +52,7 @@ namespace RunAndGun.Actors
             ApplyPhysics(gameTime);
 
             // if enemy goes off-screen or health runs out, deactivate
-            if (this.BoundingBox().Right < currentStage.CameraPosition.X || this.BoundingBox().Left > currentStage.CameraPosition.X + Game.iScreenModelWidth + (this.BoundingBox().X - this.WorldPosition.X) || Health <= 0)
+            if (this.BoundingBox().Right < CurrentStage.CameraPosition.X || this.BoundingBox().Left > CurrentStage.CameraPosition.X + Game.iScreenModelWidth + (this.BoundingBox().X - this.WorldPosition.X) || Health <= 0)
             {   Active = false;                
             }
 
@@ -78,7 +79,7 @@ namespace RunAndGun.Actors
 
         public virtual bool SpawnConditionsMet()
         {
-            return this.BoundingBox().Intersects(currentStage.ScreenCoordinates());
+            return this.BoundingBox().Intersects(CurrentStage.ScreenCoordinates());
         }
         
         public override void Die(GameTime gameTime)

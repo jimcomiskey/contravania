@@ -13,6 +13,7 @@ namespace RunAndGun.Actors
     enum CapsuleDirection { Up = -1, Down = 1 };
     class Capsule : Enemy
     {
+        private string _itemType;
         private Texture2D _imageTexture;
         //private SoundEffect soundDestroyed;
         
@@ -21,15 +22,16 @@ namespace RunAndGun.Actors
         private Vector2 _startPosition;
         private ContentManager _contentManager;
         
-        public Capsule(ContentManager content, Vector2 position, Stage stage, string enemytype) : base (content, position, stage, enemytype)
+        public Capsule(ContentManager content, Vector2 position, Stage stage, string itemType) : base (content, position, stage, itemType)
         {
+            _itemType = itemType;
             _contentManager = content;
             _startPosition = position;
             EnemyMoveSpeed = 2.0f;
 
-            _imageTexture = content.Load<Texture2D>("Sprites/Capsule");
+            _imageTexture = content.Load<Texture2D>("Sprites/Enemies/Capsule");
 
-            ExplosionAnimation.Initialize(content.Load<Texture2D>("Sprites/Explosion1"), this.WorldPosition, 36, 36, 3, 150, Color.White, 1f, false, false, this.currentStage);
+            ExplosionAnimation.Initialize(content.Load<Texture2D>("Sprites/Explosion1"), this.WorldPosition, 36, 36, 3, 150, Color.White, 1f, false, false, this.CurrentStage);
             ExplosionSound = content.Load<SoundEffect>("Sounds/Explosion1");
 
             _startingVerticalPosition = position.Y;
@@ -53,7 +55,7 @@ namespace RunAndGun.Actors
         {
             _imageTexture = texture;
             //soundDestroyed = hitsound;
-            currentStage = stage;
+            CurrentStage = stage;
             WorldPosition = position;            
         }
 
@@ -70,8 +72,8 @@ namespace RunAndGun.Actors
         public override void Die(GameTime gameTime)
         {
             ExplosionSound.Play();
-            var item = new PlayerItem(_contentManager, WorldPosition, currentStage, "SpreadGun");
-            currentStage.ActiveEnemies.Add(item);
+            var item = new PlayerItem(_contentManager, WorldPosition, CurrentStage, _itemType);
+            CurrentStage.ActiveEnemies.Add(item);
             
             base.Die(gameTime);
         }
@@ -95,7 +97,7 @@ namespace RunAndGun.Actors
         }
         public override bool SpawnConditionsMet()
         {
-            return (this.currentStage.CameraPosition.X > this.BoundingBox().Left);
+            return (this.CurrentStage.CameraPosition.X > this.BoundingBox().Left);
         }
 
     }

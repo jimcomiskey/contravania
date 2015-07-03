@@ -23,7 +23,7 @@ namespace RunAndGun.Actors
             snipersprites = new PlayerSpriteCollection();
             snipersprites.Initialize(content.Load<Texture2D>("Sprites/Enemies/Sniper"), position, 1, Color.White, 1f);
 
-            ExplosionAnimation.Initialize(content.Load<Texture2D>("Sprites/Explosion1"), position, 36, 36, 3, 150, Color.White, 1f, false, false, this.currentStage);
+            ExplosionAnimation.Initialize(content.Load<Texture2D>("Sprites/Explosion1"), position, 36, 36, 3, 150, Color.White, 1f, false, false, this.CurrentStage);
             ExplosionSound = content.Load<SoundEffect>("Sounds/Explosion1");
         }
 

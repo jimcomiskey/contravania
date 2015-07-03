@@ -10,9 +10,9 @@ using System.Text;
 
 namespace RunAndGun.GameObjects
 {
-    public enum GunType { Standard, Spread };
+    public enum GunType { Standard, MachineGun, Rapid, Spread };
     public class Gun
-    {        
+    {
         public GunType GunType { get; set; }
         private double _recoilTimeRemaining;
 
@@ -20,6 +20,9 @@ namespace RunAndGun.GameObjects
         private SoundEffect _soundProjectileHit;
         private SoundEffect _soundGunshot;
         private ContentManager _contentManager;
+
+        public bool Automatic {get; set; }
+        public bool Rapid { get; set; }
 
         public Gun()
         {
@@ -33,6 +36,8 @@ namespace RunAndGun.GameObjects
             string projectileTextureName = string.Empty;
             string projectileHitSoundName = string.Empty;
             string gunshotSoundName = string.Empty;
+            Automatic = false;
+
             switch (GunType)
             {
                 case GunType.Standard:
@@ -44,6 +49,12 @@ namespace RunAndGun.GameObjects
                     projectileTextureName = "Sprites/Projectiles/redbullet_medium";
                     projectileHitSoundName = "Sounds/projectilehit";
                     gunshotSoundName = "Sounds/spreadgunshot";
+                    break;
+                case GunType.MachineGun:
+                    projectileTextureName = "Sprites/Projectiles/redbullet_medium_animated";
+                    projectileHitSoundName = "Sounds/projectilehit";
+                    gunshotSoundName = "Sounds/machinegunshot1";
+                    Automatic = true;
                     break;
             }
 
@@ -68,6 +79,9 @@ namespace RunAndGun.GameObjects
                 }
             }
 
+            if (Rapid)
+                _recoilTimeRemaining /= 2;
+
             _soundGunshot.Play();
 
             var projectiles = new List<Projectile>();
@@ -76,10 +90,11 @@ namespace RunAndGun.GameObjects
 
             switch (GunType)
             {
-                case GunType.Standard:            
+                case GunType.Standard:
+                case GunType.MachineGun:          
                     projectile = new Projectile();
                     projectileAnimation = new Animation();
-                    projectileAnimation.Initialize(_projectileTexture, gunBarrelLocation, 3, 10, Color.White, 1f, true, currentStage);
+                    projectileAnimation.Initialize(_projectileTexture, gunBarrelLocation, GunType == GunType.Standard ? 3 : 2, 10, Color.White, 1f, true, currentStage);
                     projectile.Initialize(projectileAnimation, _soundProjectileHit, gunBarrelLocation, gunAngle, currentStage, 3f);
                     projectiles.Add(projectile);
                     break;

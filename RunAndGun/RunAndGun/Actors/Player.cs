@@ -135,24 +135,24 @@ namespace RunAndGun.Actors
         }
         
         // when player stage changes, move the animations along with him!
-        public override Stage currentStage
+        public override Stage CurrentStage
         {
             get
             {
-                return base.currentStage;
+                return base.CurrentStage;
             }
             set
             {
-                base.currentStage = value;
+                base.CurrentStage = value;
 
-                _runningTorsoAnimation.currentStage = currentStage;
-                _runningLegsAnimation.currentStage = currentStage;                
-                _jumpingAnimation.currentStage = currentStage;                
-                _idle.currentStage = currentStage;                
-                _idlelegs.currentStage = currentStage;                
-                _prone.currentStage = currentStage;                
-                _dropping.currentStage = currentStage;
-                _deathAnimation.currentStage = currentStage;
+                _runningTorsoAnimation.currentStage = CurrentStage;
+                _runningLegsAnimation.currentStage = CurrentStage;                
+                _jumpingAnimation.currentStage = CurrentStage;                
+                _idle.currentStage = CurrentStage;                
+                _idlelegs.currentStage = CurrentStage;                
+                _prone.currentStage = CurrentStage;                
+                _dropping.currentStage = CurrentStage;
+                _deathAnimation.currentStage = CurrentStage;
 
             }
         }
@@ -164,7 +164,7 @@ namespace RunAndGun.Actors
             // Set the player life count
             LifeCount = 30;
 
-            currentStage = stage; 
+            CurrentStage = stage; 
 
             //running = animation;
             
@@ -172,17 +172,17 @@ namespace RunAndGun.Actors
             playerDirection = PlayerDirection.Right;
             
             // 32wx32h sprite, 6 frames of animation, 350 frame timee (miliseconds?)
-            _runningTorsoAnimation.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizerrunningtorso")), Vector2.Zero, 32, 32, 6, 150, Color.White, 1f, true, false, currentStage);
+            _runningTorsoAnimation.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizerrunningtorso")), Vector2.Zero, 32, 32, 6, 150, Color.White, 1f, true, false, CurrentStage);
             // 32wx24h sprite, 3 frames of animation, , 350 frame timee (miliseconds?)
-            _runningLegsAnimation.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizerrunninglegs")), Vector2.Zero, 32, 24, 3, 150, Color.White, 1f, true, false, currentStage);
+            _runningLegsAnimation.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizerrunninglegs")), Vector2.Zero, 32, 24, 3, 150, Color.White, 1f, true, false, CurrentStage);
             // 32x32 sprite, 4 frames animation, 350 frame time (miliseconds?)
-            _jumpingAnimation.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizerjumping")), Vector2.Zero, 32, 32, 4, 150, Color.White, 1f, true, false, currentStage);
+            _jumpingAnimation.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizerjumping")), Vector2.Zero, 32, 32, 4, 150, Color.White, 1f, true, false, CurrentStage);
             _playermiscsprites.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizermiscsprites")), Vector2.Zero, 6, Color.White, 1);
-            _idle.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizeridle")), position, 1, 1, Color.White, 1f, true, currentStage);
-            _idlelegs.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizeridlelegs")), position, 1, 1, Color.White, 1f, true, currentStage);            
-            _dropping.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizerdropping")), position, 1, 1, Color.White, 1f, true, currentStage);
-            _prone.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizerprone")), position, 1, 1, Color.White, 1f, true, currentStage);
-            _deathAnimation.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizerdying")), position, 6, 200, Color.White, 1f, false, currentStage);
+            _idle.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizeridle")), position, 1, 1, Color.White, 1f, true, CurrentStage);
+            _idlelegs.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizeridlelegs")), position, 1, 1, Color.White, 1f, true, CurrentStage);            
+            _dropping.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizerdropping")), position, 1, 1, Color.White, 1f, true, CurrentStage);
+            _prone.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizerprone")), position, 1, 1, Color.White, 1f, true, CurrentStage);
+            _deathAnimation.Initialize(SwapColor(content.Load<Texture2D>("Sprites/billrizerdying")), position, 6, 200, Color.White, 1f, false, CurrentStage);
             _deathAnimation.Active = false; 
 
             
@@ -282,7 +282,7 @@ namespace RunAndGun.Actors
         {
             //Position.X = currentStage.CameraPosition + new Vector2(5, 0);
             playerDirection = PlayerDirection.Right;
-            WorldPosition = currentStage.CameraPosition + new Vector2(5, 0);
+            WorldPosition = CurrentStage.CameraPosition + new Vector2(5, 0);
             //Position.Y = 0;
             this.WorldPosition.Y = 0;
             WorldPosition.Y = 0;
@@ -554,7 +554,7 @@ namespace RunAndGun.Actors
                     // cancel prone status if it's activated.
                     this._isProne = false;
                     if (CurrentInputState.DirectionDown && 
-                        ((this.BoundingBox().Bottom / currentStage.TileHeight) < currentStage.MapHeight-1))
+                        ((this.BoundingBox().Bottom / CurrentStage.TileHeight) < CurrentStage.MapHeight-1))
                     {
                         // player is dropping down                    
                         this._dropInProgress = true;
@@ -629,7 +629,7 @@ namespace RunAndGun.Actors
 
                 #region Fire gun if button pressed
 
-                if ((!PreviousInputState.WeaponButtonPressed && CurrentInputState.WeaponButtonPressed) &&
+                if (((!PreviousInputState.WeaponButtonPressed || Gun.Automatic) && CurrentInputState.WeaponButtonPressed) &&
                     // firing gun (note: player cannot fire gun while underwater)
                     !(this._isInWater && this._isProne))
                 {
@@ -674,14 +674,14 @@ namespace RunAndGun.Actors
                     if (this.MovingTowardsStairsAscending)
                     {
                         this.MovingUpStairs = true;
-                        st = currentStage.getStageTileByWorldPosition(playerbounds.Center.X, playerbounds.Bottom);
+                        st = CurrentStage.getStageTileByWorldPosition(playerbounds.Center.X, playerbounds.Bottom);
                         this._isOnStairsLeft = st.CollisionType == StageTile.TileCollisionType.StairsBottomLeft;
                         this._isOnStairsRight = st.CollisionType == StageTile.TileCollisionType.StairsBottomRight;
                     }
                     else
                     {
                         this.MovingDownStairs = true;
-                        st = currentStage.getStageTileByWorldPosition(playerbounds.Center.X, playerbounds.Bottom + 1);
+                        st = CurrentStage.getStageTileByWorldPosition(playerbounds.Center.X, playerbounds.Bottom + 1);
                         this._isOnStairsLeft = st.CollisionType == StageTile.TileCollisionType.StairsLeft;
                         this._isOnStairsRight = st.CollisionType == StageTile.TileCollisionType.StairsRight;
                     }
@@ -745,17 +745,17 @@ namespace RunAndGun.Actors
             }
             
             // do not allow player to move off left side of camera view.
-            this.WorldPosition.X = MathHelper.Clamp(this.WorldPosition.X, currentStage.CameraPosition.X, this.WorldPosition.X);
+            this.WorldPosition.X = MathHelper.Clamp(this.WorldPosition.X, CurrentStage.CameraPosition.X, this.WorldPosition.X);
 
-            if (!currentStage.AutoScroll)
+            if (!CurrentStage.AutoScroll)
             {
-                if (this.WorldPosition.X > this.currentStage.CameraPosition.X + Game.iScreenModelWidth - (this.Width * 3))
-                    currentStage.CameraPosition.X += this.WorldPosition.X - (this.currentStage.CameraPosition.X + Game.iScreenModelWidth - (this.Width * 3));
+                if (this.WorldPosition.X > this.CurrentStage.CameraPosition.X + Game.iScreenModelWidth - (this.Width * 3))
+                    CurrentStage.CameraPosition.X += this.WorldPosition.X - (this.CurrentStage.CameraPosition.X + Game.iScreenModelWidth - (this.Width * 3));
 
-                if (this.WorldPosition.X > (this.currentStage.MapWidth * currentStage.TileWidth - Game.iScreenModelWidth ))
+                if (this.WorldPosition.X > (this.CurrentStage.MapWidth * CurrentStage.TileWidth - Game.iScreenModelWidth ))
                 {
-                    if (currentStage.Game.CurrentGame == Game.GameType.Contra)
-                        currentStage.AutoScroll = true;
+                    if (CurrentStage.Game.CurrentGame == Game.GameType.Contra)
+                        CurrentStage.AutoScroll = true;
                 }
             }
 
@@ -765,22 +765,22 @@ namespace RunAndGun.Actors
         }
         public Vector2? FindNearbyStairbase()
         {
-            int searchRange = currentStage.TileWidth;
+            int searchRange = CurrentStage.TileWidth;
 
             Rectangle playerbounds = this.BoundingBox(new Vector2(0f, 1f));
             Rectangle playerSearchbounds = new Rectangle(playerbounds.Left - searchRange , playerbounds.Top, playerbounds.Width + searchRange, playerbounds.Height);
             
-            int leftTile = (int)Math.Floor((float)(playerSearchbounds.Left) / currentStage.TileWidth);
+            int leftTile = (int)Math.Floor((float)(playerSearchbounds.Left) / CurrentStage.TileWidth);
             leftTile = leftTile < 0 ? 0 : leftTile;
-            int rightTile = (int)Math.Ceiling(((float)(playerSearchbounds.Right) / currentStage.TileWidth)) - 1;
-            int bottomTile = (int)Math.Ceiling(((float)playerSearchbounds.Bottom / currentStage.TileHeight)) - 1;
+            int rightTile = (int)Math.Ceiling(((float)(playerSearchbounds.Right) / CurrentStage.TileWidth)) - 1;
+            int bottomTile = (int)Math.Ceiling(((float)playerSearchbounds.Bottom / CurrentStage.TileHeight)) - 1;
 
             for (int x = leftTile; x <= rightTile; ++x)
             {
-                StageTile stageTile = currentStage.getStageTileByGridPosition(x, bottomTile);
+                StageTile stageTile = CurrentStage.getStageTileByGridPosition(x, bottomTile);
                 if (stageTile.CollisionType == StageTile.TileCollisionType.StairsBottomLeft || stageTile.CollisionType == StageTile.TileCollisionType.StairsBottomRight)
                 {
-                    foreach(var platform in currentStage.getTilePlatformBoundsByGridPosition(x, bottomTile))
+                    foreach(var platform in CurrentStage.getTilePlatformBoundsByGridPosition(x, bottomTile))
                     {
                         return new Vector2(platform.PlatformBounds.Center.X, platform.PlatformBounds.Bottom);                        
                     }
@@ -791,22 +791,22 @@ namespace RunAndGun.Actors
         }
         public Vector2? FindNearbyStairtop()
         {
-            int searchRange = currentStage.TileWidth;
+            int searchRange = CurrentStage.TileWidth;
 
             Rectangle playerbounds = this.BoundingBox(new Vector2(0f, 1f));
             Rectangle playerSearchbounds = new Rectangle(playerbounds.Left - searchRange, playerbounds.Top, playerbounds.Width + searchRange, playerbounds.Height);
 
-            int leftTile = (int)Math.Floor((float)(playerSearchbounds.Left) / currentStage.TileWidth);
+            int leftTile = (int)Math.Floor((float)(playerSearchbounds.Left) / CurrentStage.TileWidth);
             leftTile = leftTile < 0 ? 0 : leftTile;
-            int rightTile = (int)Math.Ceiling(((float)(playerSearchbounds.Right) / currentStage.TileWidth)) - 1;
-            int bottomTile = (int)Math.Ceiling(((float)playerSearchbounds.Bottom / currentStage.TileHeight)) - 1;
+            int rightTile = (int)Math.Ceiling(((float)(playerSearchbounds.Right) / CurrentStage.TileWidth)) - 1;
+            int bottomTile = (int)Math.Ceiling(((float)playerSearchbounds.Bottom / CurrentStage.TileHeight)) - 1;
 
             for (int x = leftTile; x <= rightTile; ++x)
             {
-                StageTile stageTile = currentStage.getStageTileByGridPosition(x, bottomTile);
+                StageTile stageTile = CurrentStage.getStageTileByGridPosition(x, bottomTile);
                 if (stageTile.IsStairs())
                 {
-                    Rectangle? stairTopBounds = currentStage.getStairTopBoundsByGridPosition(x, bottomTile);
+                    Rectangle? stairTopBounds = CurrentStage.getStairTopBoundsByGridPosition(x, bottomTile);
                     if (stairTopBounds.HasValue)
                     {
                         if (stairTopBounds.Value.Top == this.BoundingBox().Bottom)
@@ -839,23 +839,23 @@ namespace RunAndGun.Actors
             this._isOnStairsLeft = false;
             this._isOnStairsRight = false;
             
-            int leftTile = (int)Math.Floor((float)playerbounds.Left / currentStage.TileWidth);
-            int rightTile = (int)Math.Ceiling(((float)playerbounds.Right / currentStage.TileWidth)) - 1;
-            int topTile = (int)Math.Floor((float)playerbounds.Top / currentStage.TileHeight);
-            int bottomTile = (int)Math.Ceiling(((float)playerbounds.Bottom / currentStage.TileHeight)) - 1;
+            int leftTile = (int)Math.Floor((float)playerbounds.Left / CurrentStage.TileWidth);
+            int rightTile = (int)Math.Ceiling(((float)playerbounds.Right / CurrentStage.TileWidth)) - 1;
+            int topTile = (int)Math.Floor((float)playerbounds.Top / CurrentStage.TileHeight);
+            int bottomTile = (int)Math.Ceiling(((float)playerbounds.Bottom / CurrentStage.TileHeight)) - 1;
 
             // For each potentially colliding platform tile,
             for (int y = topTile; y <= bottomTile; ++y)
             {
                 for (int x = leftTile; x <= rightTile; ++x)
                 {
-                    StageTile stageTile = currentStage.getStageTileByGridPosition(x, y);
+                    StageTile stageTile = CurrentStage.getStageTileByGridPosition(x, y);
 
                     if (stageTile != null)
                     {
                         if (stageTile.IsImpassable())
                         {
-                            Rectangle tilebounds = currentStage.getTileBoundsByGridPosition(x, y);
+                            Rectangle tilebounds = CurrentStage.getTileBoundsByGridPosition(x, y);
                             Vector2 depth = RectangleExtensions.GetIntersectionDepth(playerbounds, tilebounds);
 
                             if (playerbounds.Intersects(tilebounds))
@@ -868,7 +868,7 @@ namespace RunAndGun.Actors
                         {
                             if (playerwasonstairs || CurrentInputState.DirectionUp || SecuringStairStep)
                             {
-                                List<Platform> tileboundsList = currentStage.getTilePlatformBoundsByGridPosition(x, bottomTile);
+                                List<Platform> tileboundsList = CurrentStage.getTilePlatformBoundsByGridPosition(x, bottomTile);
                                 foreach (Platform platformBounds in tileboundsList)
                                 {
                                     Rectangle tileBounds = platformBounds.PlatformBounds;
@@ -915,7 +915,7 @@ namespace RunAndGun.Actors
                         else if (stageTile.IsPlatform() && y == bottomTile)
                         {
 
-                            List<Platform> platforms = currentStage.getTilePlatformBoundsByGridPosition(x, bottomTile);
+                            List<Platform> platforms = CurrentStage.getTilePlatformBoundsByGridPosition(x, bottomTile);
                             foreach (Platform platform in platforms)
                             {
                                 Rectangle tilebounds = platform.PlatformBounds;
@@ -1044,22 +1044,22 @@ namespace RunAndGun.Actors
             Rectangle playerbounds = this.BoundingBox(new Vector2(0f, 1f));
             List<StageTile> tiles = new List<StageTile>();
 
-            int leftTile = (int)Math.Floor((float)playerbounds.Left / currentStage.TileWidth);
-            int rightTile = (int)Math.Ceiling(((float)playerbounds.Right / currentStage.TileWidth)) - 1;            
-            int bottomTile = (int)Math.Ceiling(((float)playerbounds.Bottom / currentStage.TileHeight)) - 1;
+            int leftTile = (int)Math.Floor((float)playerbounds.Left / CurrentStage.TileWidth);
+            int rightTile = (int)Math.Ceiling(((float)playerbounds.Right / CurrentStage.TileWidth)) - 1;            
+            int bottomTile = (int)Math.Ceiling(((float)playerbounds.Bottom / CurrentStage.TileHeight)) - 1;
 
             bool bReturnValue = false;
             
             for (int x = leftTile; x <= rightTile; ++x)
                 {   
-                    StageTile stageTile = currentStage.getStageTileByGridPosition(x, bottomTile);
+                    StageTile stageTile = CurrentStage.getStageTileByGridPosition(x, bottomTile);
 
                     if (stageTile.IsStairs())
                     {
-                        if ((stageTile.CollisionType == StageTile.TileCollisionType.StairsLeft && !currentStage.getStageTileByGridPosition(x - 1, bottomTile - 1).IsStairs()) ||
-                            (stageTile.CollisionType == StageTile.TileCollisionType.StairsRight && !currentStage.getStageTileByGridPosition(x + 1, bottomTile - 1).IsStairs()))
+                        if ((stageTile.CollisionType == StageTile.TileCollisionType.StairsLeft && !CurrentStage.getStageTileByGridPosition(x - 1, bottomTile - 1).IsStairs()) ||
+                            (stageTile.CollisionType == StageTile.TileCollisionType.StairsRight && !CurrentStage.getStageTileByGridPosition(x + 1, bottomTile - 1).IsStairs()))
                         {
-                            if (this.BoundingBox().Bottom == currentStage.getStairTopBoundsByGridPosition(x, bottomTile).Value.Top)
+                            if (this.BoundingBox().Bottom == CurrentStage.getStairTopBoundsByGridPosition(x, bottomTile).Value.Top)
                             //if (playerbounds.Intersects(currentStage.getStairTopBoundsByGridPosition(x, bottomTile)))
                                 bReturnValue = true;
                         }
@@ -1090,10 +1090,10 @@ namespace RunAndGun.Actors
                 }
 
                 // If we are in the ascent of the jump
-                if (0.0f < this.JumpTime && this.JumpTime <= Player.MaxJumpTime)
+                if (0.0f < this.JumpTime && this.JumpTime <= MaxJumpTime)
                 {
                     // Fully override the vertical velocity with a power curve that gives players more control over the top of the jump
-                    velocityY = launchVelocity * (1.0f - (float)Math.Pow(this.JumpTime / Player.MaxJumpTime, Player.JumpControlPower));
+                    velocityY = launchVelocity * (1.0f - (float)Math.Pow(this.JumpTime / MaxJumpTime, Player.JumpControlPower));
                 }
                 else
                 {
@@ -1206,8 +1206,8 @@ namespace RunAndGun.Actors
 
             gunBarrelLocation = new Vector2(position.X + fHorizontalOffset, position.Y + fVerticalOffset);
 
-            var projectiles = gun.Fire(gunBarrelLocation, gunAngle, currentStage);            
-            currentStage.Projectiles.AddRange(projectiles);
+            var projectiles = gun.Fire(gunBarrelLocation, gunAngle, CurrentStage);            
+            CurrentStage.Projectiles.AddRange(projectiles);
         }
 
         public override void Draw(SpriteBatch spriteBatch)

@@ -21,9 +21,9 @@ namespace RunAndGun.Actors
         {
             EnemyMoveSpeed = 1.2f;
             _runningAnimation = new Animation();
-            _runningAnimation.Initialize(content.Load<Texture2D>("Sprites/Zombie"), this.WorldPosition, 20, 32, 2, 150, Color.White, 1, true, false, currentStage);
+            _runningAnimation.Initialize(content.Load<Texture2D>("Sprites/Zombie"), this.WorldPosition, 20, 32, 2, 150, Color.White, 1, true, false, CurrentStage);
 
-            ExplosionAnimation.Initialize(content.Load<Texture2D>("Sprites/Explosion1"), this.WorldPosition, 36, 36, 3, 150, Color.White, 1f, false, false, this.currentStage);
+            ExplosionAnimation.Initialize(content.Load<Texture2D>("Sprites/Explosion1"), this.WorldPosition, 36, 36, 3, 150, Color.White, 1f, false, false, this.CurrentStage);
             ExplosionSound = content.Load<SoundEffect>("Sounds/Explosion1");
         }
 
@@ -46,23 +46,23 @@ namespace RunAndGun.Actors
 
             bool bWouldBeOnGround = false;
 
-            int leftTile = (int)Math.Floor((float)proposedbounds.Left / currentStage.TileWidth);
-            int rightTile = (int)Math.Ceiling(((float)proposedbounds.Right / currentStage.TileWidth)) - 1;
-            int topTile = (int)Math.Floor((float)proposedbounds.Top / currentStage.TileHeight);
-            int bottomTile = (int)Math.Ceiling(((float)proposedbounds.Bottom / currentStage.TileHeight)) - 1;
+            int leftTile = (int)Math.Floor((float)proposedbounds.Left / CurrentStage.TileWidth);
+            int rightTile = (int)Math.Ceiling(((float)proposedbounds.Right / CurrentStage.TileWidth)) - 1;
+            int topTile = (int)Math.Floor((float)proposedbounds.Top / CurrentStage.TileHeight);
+            int bottomTile = (int)Math.Ceiling(((float)proposedbounds.Bottom / CurrentStage.TileHeight)) - 1;
 
             // For each potentially colliding platform tile,
             for (int y = topTile; y <= bottomTile; ++y)
             {
                 for (int x = leftTile; x <= rightTile; ++x)
                 {
-                    StageTile stageTile = currentStage.getStageTileByGridPosition(x, y);
+                    StageTile stageTile = CurrentStage.getStageTileByGridPosition(x, y);
 
                     if (stageTile != null)
                     {
                         if (stageTile.IsImpassable())
                         {
-                            Rectangle tilebounds = currentStage.getTileBoundsByGridPosition(x, y);
+                            Rectangle tilebounds = CurrentStage.getTileBoundsByGridPosition(x, y);
                             if (proposedbounds.Intersects(tilebounds))
                             {
                                 bChangeDirection = true;
@@ -72,7 +72,7 @@ namespace RunAndGun.Actors
                         if (stageTile.IsPlatform() && y == bottomTile)
                         {
 
-                            List<Platform> tileboundsList = currentStage.getTilePlatformBoundsByGridPosition(x, bottomTile);
+                            List<Platform> tileboundsList = CurrentStage.getTilePlatformBoundsByGridPosition(x, bottomTile);
 
                             foreach (Platform platformbounds in tileboundsList)
                             {

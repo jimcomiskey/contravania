@@ -72,7 +72,7 @@ namespace RunAndGun.Actors
 
             projectileTexture = content.Load<Texture2D>("Sprites/Projectiles/basicbullet");
 
-            ExplosionAnimation.Initialize(content.Load<Texture2D>("Sprites/Explosion2"), WorldPosition, 5, 150, Color.White, 1f, false, this.currentStage);
+            ExplosionAnimation.Initialize(content.Load<Texture2D>("Sprites/Explosion2"), WorldPosition, 5, 150, Color.White, 1f, false, this.CurrentStage);
             ExplosionSound = content.Load<SoundEffect>("Sounds/Explosion2");
 
         }
@@ -124,7 +124,7 @@ namespace RunAndGun.Actors
     
             // do nothing 
             Player nearestPlayer = null;
-            foreach (Player player in currentStage.Players)
+            foreach (Player player in CurrentStage.Players)
             {
                 if (nearestPlayer == null)
                     nearestPlayer = player;
@@ -200,9 +200,9 @@ namespace RunAndGun.Actors
             Vector2 initPosition = new Vector2(bb.Center.X, bb.Center.Y);
 
             var projectileAnimation = new Animation();
-            projectileAnimation.Initialize(projectileTexture, initPosition, 1, 0, Color.White, 1f, true, currentStage);            
-            projectile.Initialize(projectileAnimation, null, initPosition, _currentPosition * 30, currentStage, 2f);
-            currentStage.EnemyProjectiles.Add(projectile);
+            projectileAnimation.Initialize(projectileTexture, initPosition, 1, 0, Color.White, 1f, true, CurrentStage);            
+            projectile.Initialize(projectileAnimation, null, initPosition, _currentPosition * 30, CurrentStage, 2f);
+            CurrentStage.EnemyProjectiles.Add(projectile);
         }
         
         public override void ApplyPhysics(GameTime gameTime)

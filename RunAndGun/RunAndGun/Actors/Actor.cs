@@ -19,7 +19,7 @@ namespace RunAndGun.Actors
         public string Name;  // I only use this for debugging purposes at this point.
         public string DebugInfo; 
 
-        public virtual Stage currentStage { get; set; }
+        public virtual Stage CurrentStage { get; set; }
         
         public Vector2 previousPosition;
 
@@ -27,7 +27,7 @@ namespace RunAndGun.Actors
 
         public Vector2 ScreenPosition
         {
-            get { return WorldPosition - currentStage.CameraPosition; }
+            get { return WorldPosition - CurrentStage.CameraPosition; }
         }
         protected float PreviousBottom;
 
@@ -43,11 +43,11 @@ namespace RunAndGun.Actors
         public abstract int Width { get; }
 
         protected float MaxGroundVelocity = 1.2f; // 1.2f;
-        protected const float MaxJumpTime = 0.4f; // 0.35f; // 0.35f;
-        protected const float JumpLaunchVelocity = -1200f; // -3500.0f;
-        protected const float JumpLaunchVelocityDying = -600f;
-        protected const float GravityAcceleration = 500f; // 3400.0f;
-        protected const float MaxFallVelocity = 550f; //  550.0f;
+        public float MaxJumpTime = 0.42f; // 0.35f; // 0.35f;
+        public float JumpLaunchVelocity = -1200f; // -3500.0f;
+        public float JumpLaunchVelocityDying = -600f;
+        public float GravityAcceleration = 500f; // 3400.0f;
+        public float MaxFallVelocity = 550f; //  550.0f;
         protected const float JumpControlPower = 0.14f; // 0.14f;
         protected const float MoveStickScale = 1.0f;
 
@@ -65,12 +65,12 @@ namespace RunAndGun.Actors
                 Rectangle actorbounds = this.BoundingBox();
 
                 //TODO: borrowing code from HandleCollisions, possible consolidation?
-                int leftTile = (int)Math.Floor((float)actorbounds.Left / currentStage.TileWidth);
-                int rightTile = (int)Math.Ceiling(((float)actorbounds.Right / currentStage.TileWidth)) - 1;
-                int bottomTile = (int)Math.Ceiling(((float)actorbounds.Bottom / currentStage.TileHeight)) - 1;
+                int leftTile = (int)Math.Floor((float)actorbounds.Left / CurrentStage.TileWidth);
+                int rightTile = (int)Math.Ceiling(((float)actorbounds.Right / CurrentStage.TileWidth)) - 1;
+                int bottomTile = (int)Math.Ceiling(((float)actorbounds.Bottom / CurrentStage.TileHeight)) - 1;
 
                 for (int iIndex = leftTile; iIndex <= rightTile; iIndex++)
-                    currentPlatformTiles.Add(currentStage.getStageTileByGridPosition(iIndex, bottomTile));
+                    currentPlatformTiles.Add(CurrentStage.getStageTileByGridPosition(iIndex, bottomTile));
 
                 return currentPlatformTiles;
             }
@@ -129,22 +129,22 @@ namespace RunAndGun.Actors
             // get nearest tile below player.
             this.IsOnGround = false;
             
-            int leftTile = (int)Math.Floor((float)actorbounds.Left / currentStage.TileWidth);
-            int rightTile = (int)Math.Ceiling(((float)actorbounds.Right / currentStage.TileWidth)) - 1;
-            int topTile = (int)Math.Floor((float)actorbounds.Top / currentStage.TileHeight);
-            int bottomTile = (int)Math.Ceiling(((float)actorbounds.Bottom / currentStage.TileHeight)) - 1;
+            int leftTile = (int)Math.Floor((float)actorbounds.Left / CurrentStage.TileWidth);
+            int rightTile = (int)Math.Ceiling(((float)actorbounds.Right / CurrentStage.TileWidth)) - 1;
+            int topTile = (int)Math.Floor((float)actorbounds.Top / CurrentStage.TileHeight);
+            int bottomTile = (int)Math.Ceiling(((float)actorbounds.Bottom / CurrentStage.TileHeight)) - 1;
 
             // For each potentially colliding platform tile,
             for (int y = topTile; y <= bottomTile; ++y)
             {
                 for (int x = leftTile; x <= rightTile; ++x)
                 {
-                    StageTile stageTile = currentStage.getStageTileByGridPosition(x, y);
+                    StageTile stageTile = CurrentStage.getStageTileByGridPosition(x, y);
                     if (stageTile != null)
                     {
                         if (stageTile.IsImpassable())
                         {
-                            Rectangle tilebounds = currentStage.getTileBoundsByGridPosition(x, y);
+                            Rectangle tilebounds = CurrentStage.getTileBoundsByGridPosition(x, y);
                             Vector2 depth = RectangleExtensions.GetIntersectionDepth(actorbounds, tilebounds);
 
                             if (actorbounds.Intersects(tilebounds))
@@ -156,7 +156,7 @@ namespace RunAndGun.Actors
 
                         else if (stageTile.IsPlatform() && y == bottomTile)
                         {
-                            List<Platform> tileboundsList = currentStage.getTilePlatformBoundsByGridPosition(x, bottomTile);
+                            List<Platform> tileboundsList = CurrentStage.getTilePlatformBoundsByGridPosition(x, bottomTile);
                             foreach (Platform platformbounds in tileboundsList)
                             {
                                 Rectangle tilebounds = platformbounds.PlatformBounds;
@@ -205,10 +205,10 @@ namespace RunAndGun.Actors
                 }
 
                 // If we are in the ascent of the jump
-                if (0.0f < this.JumpTime && this.JumpTime <= Player.MaxJumpTime)
+                if (0.0f < this.JumpTime && this.JumpTime <= MaxJumpTime)
                 {
                     // Fully override the vertical velocity with a power curve that gives players more control over the top of the jump
-                    velocityY = launchVelocity * (1.0f - (float)Math.Pow(this.JumpTime / Player.MaxJumpTime, Player.JumpControlPower));
+                    velocityY = launchVelocity * (1.0f - (float)Math.Pow(this.JumpTime / MaxJumpTime, Player.JumpControlPower));
                 }
                 else
                 {
@@ -241,7 +241,7 @@ namespace RunAndGun.Actors
             }
 
             txt.SetData(data);
-            spriteBatch.Draw(txt, new Vector2(boundingbox.X - currentStage.CameraPosition.X, boundingbox.Y - currentStage.CameraPosition.Y), Color.White);
+            spriteBatch.Draw(txt, new Vector2(boundingbox.X - CurrentStage.CameraPosition.X, boundingbox.Y - CurrentStage.CameraPosition.Y), Color.White);
 #endif 
         }
 

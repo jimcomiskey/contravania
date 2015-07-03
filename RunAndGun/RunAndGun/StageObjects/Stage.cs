@@ -319,6 +319,9 @@ namespace RunAndGun
                     case "FootSoldier":
                         e = new Actors.FootSoldier(content, enemyLocation, this, tmxObject.Type);
                         break;
+                    case "Panel":
+                        e = new Actors.Panel(content, enemyLocation, this, tmxObject.Properties["ItemType"]);
+                        break;
                     case "Sniper":
                         e = new Actors.Sniper(content, enemyLocation, this, tmxObject.Type);
                         break;
@@ -329,7 +332,7 @@ namespace RunAndGun
                         e = new Actors.Level1BossPanel(content, enemyLocation, this, tmxObject.Type);
                         break;
                     case "Capsule":
-                        e = new Actors.Capsule(content, enemyLocation, this, tmxObject.Type);
+                        e = new Actors.Capsule(content, enemyLocation, this, tmxObject.Properties["ItemType"]);
                         break;
                     default:
                         throw new Exception("Unexpected enemy type encountered: " + tmxObject.Type);
@@ -804,9 +807,12 @@ namespace RunAndGun
                     // Determine if the two objects collided with each other
                     if (rectangle1.Intersects(rectangle2))
                     {
-                        enemy.Health -= Projectiles[i].Damage;
-                        if (enemy.Health > 0)
-                            Projectiles[i].PlayHitSound();
+                        if (!enemy.BulletProof)
+                        {
+                            enemy.Health -= Projectiles[i].Damage;
+                            if (enemy.Health > 0)
+                                Projectiles[i].PlayHitSound();
+                        }
                         Projectiles[i].Active = false;
                     }
                 }
@@ -844,7 +850,14 @@ namespace RunAndGun
                             // if item acquired is a Gun, equip it to the player.
                             if (((PlayerItem)ActiveEnemies[i]).Gun != null)
                             {
-                                player.Gun = ((PlayerItem)ActiveEnemies[i]).Gun;
+                                if (((PlayerItem)ActiveEnemies[i]).Gun.GunType == GunType.Rapid)
+                                {
+                                    player.Gun.Rapid = true;
+                                }
+                                else
+                                {
+                                    player.Gun = ((PlayerItem)ActiveEnemies[i]).Gun;
+                                }
                             }
                             ActiveEnemies[i].Die(gameTime);
                         }
@@ -858,7 +871,7 @@ namespace RunAndGun
                         rectangle1 = getTileBoundsByGridPosition(StageTiles[i].X, StageTiles[i].Y);
                         if (playerBoundingBox.Intersects(rectangle1))
                         {
-                            player.currentStage = (Stage)this._portals[StageTiles[i].PortalID];
+                            player.CurrentStage = (Stage)this._portals[StageTiles[i].PortalID];
                             player.WorldPosition.X = 0;
                             player.Update(gameTime);
                         }
