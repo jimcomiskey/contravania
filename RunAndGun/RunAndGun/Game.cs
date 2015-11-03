@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using RunAndGun.Actors;
 using RunAndGun.GameObjects;
+using SharpDX.DirectInput;
 
 namespace RunAndGun
 {
@@ -72,7 +73,7 @@ namespace RunAndGun
             gamePaused = false;
 
             InitializeGameLaunchParameters();
-
+            
             base.Initialize();
         }
 
@@ -96,7 +97,7 @@ namespace RunAndGun
                 CurrentGameState = GameState.Initializing;
             }
 
-            if (!this.LaunchParameters.ContainsKey("WindowedMode"))
+            if (!LaunchParameters.ContainsKey("WindowedMode"))
             {
                 //graphics.IsFullScreen = true;
             }
@@ -135,7 +136,7 @@ namespace RunAndGun
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Microsoft.Xna.Framework.Input.Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
 
             switch (CurrentGameState)
@@ -164,10 +165,30 @@ namespace RunAndGun
                             _worldContent = Content;
                         }
 
+                        var directInput = new DirectInput();
+
+                        IList<DeviceInstance> devices = null;
+
+                        if (App.Default.InputType == "USB Gamepad")
+                        {
+                            // TODO: only acquire devices if setting is specified in the application.
+                            devices = directInput.GetDevices(DeviceType.Joystick,
+                                DeviceEnumerationFlags.AllDevices);
+                        }
+
                         _currentStage = new Stage(_worldContent);
 
-                        for (int iPlayerID = 1; iPlayerID <= _titleScreen.NumPlayers; iPlayerID ++)
-                            _players.Add(new Player(iPlayerID, this));
+                        for (int iPlayerID = 1; iPlayerID <= _titleScreen.NumPlayers; iPlayerID++)
+                        {
+                            var newPlayer = new Player(iPlayerID, this);
+                            _players.Add(newPlayer);
+                            
+                            if (devices.Count >= iPlayerID)
+                            {
+                                newPlayer.InitializeJoystick(devices[iPlayerID-1].InstanceGuid, directInput);
+                            }
+
+                        }
                         //players.Add(new Player(2, this));
 
                         int playerStartingPosition = 0;

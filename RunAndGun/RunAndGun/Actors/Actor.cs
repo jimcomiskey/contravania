@@ -47,7 +47,7 @@ namespace RunAndGun.Actors
         public float JumpLaunchVelocity = -1200f; // -3500.0f;
         public float JumpLaunchVelocityDying = -600f;
         public float GravityAcceleration = 500f; // 3400.0f;
-        public float MaxFallVelocity = 550f; //  550.0f;
+        public float MaxFallVelocity = 600f; //  550.0f;
         protected const float JumpControlPower = 0.14f; // 0.14f;
         protected const float MoveStickScale = 1.0f;
 
@@ -224,14 +224,22 @@ namespace RunAndGun.Actors
             this.WasJumping = this.IsJumping;
 
             return velocityY;
-        }
+        } 
         public abstract void Die(GameTime gameTime);
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
 #if DEBUG
-            Rectangle boundingbox = this.BoundingBox();
-            Texture2D txt = new Texture2D(spriteBatch.GraphicsDevice, boundingbox.Width, boundingbox.Height);
+            Rectangle drawBox;
+            if (this.GetType() == typeof(Player))
+            {
+                drawBox = ((Player)this).HurtBox();
+            }
+            else
+            {
+                drawBox = this.BoundingBox();
+            }
+            Texture2D txt = new Texture2D(spriteBatch.GraphicsDevice, drawBox.Width, drawBox.Height);
 
             Color[] data = new Color[txt.Width * txt.Height];
 
@@ -241,7 +249,7 @@ namespace RunAndGun.Actors
             }
 
             txt.SetData(data);
-            spriteBatch.Draw(txt, new Vector2(boundingbox.X - CurrentStage.CameraPosition.X, boundingbox.Y - CurrentStage.CameraPosition.Y), Color.White);
+            spriteBatch.Draw(txt, new Vector2(drawBox.X - CurrentStage.CameraPosition.X, drawBox.Y - CurrentStage.CameraPosition.Y), Color.White);
 #endif 
         }
 

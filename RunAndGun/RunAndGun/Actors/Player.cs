@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Audio;
 using System.Xml;
 using RunAndGun.GameObjects;
 using RunAndGun.Animations;
+using SharpDX.DirectInput;
 
 namespace RunAndGun.Actors
 {
@@ -69,6 +70,13 @@ namespace RunAndGun.Actors
         private int _spawnAnimationElapsedTime; // control flicker of player while spawning.
         public bool Visible;
 
+        private Guid _USBGamePadId { get; set; }
+        private Joystick _joystick;
+
+        private InputState _previousUSBGamePadState;
+        private InputState _currentUSBGGamePadState;
+        
+
         public InputState CurrentInputState;
         public InputState PreviousInputState;
 
@@ -117,13 +125,25 @@ namespace RunAndGun.Actors
             ID = playerID;
             _spawnTimeRemaining = _spawnTime;
             JumpInProgress = true;
-            MaxGroundVelocity = 1.0f;
+            MaxGroundVelocity = 1.2f;
 
             // X, Y - Y velocity is 0.0 by default, and increases/decreases depending on if player is jumping or falling.
             Velocity = new Vector2(0.0f, 0.0f);
 
             Gun = new Gun();
             Gun.Initialize(game.Content, GunType.Standard);
+
+            _USBGamePadId = Guid.Empty;
+            
+        }
+        public void InitializeJoystick(Guid joystickId, DirectInput directInput)
+        {
+            _USBGamePadId = joystickId;            
+            _joystick = new Joystick(directInput, joystickId);
+
+            _joystick.Properties.BufferSize = 128;
+
+            _joystick.Acquire();
             
         }
         public bool IsVulnerable()
@@ -341,10 +361,9 @@ namespace RunAndGun.Actors
     
         }
         public void GetInput()
-        {
-
-            GamePadState currentGamePadState;
-            KeyboardState currentKeyboardState;
+        {   
+            GamePadState currentXBox360GamePadState;
+            Microsoft.Xna.Framework.Input.KeyboardState currentKeyboardState;
 
             // Save the previous state of the input so we can determine single key/button presses
             if (CurrentInputState != null)
@@ -358,31 +377,109 @@ namespace RunAndGun.Actors
                 CurrentInputState = new InputState();
             }
 
-            currentGamePadState = GetGamePadInput(); 
-            // only handle keyboard input for player #1. other players must use gamepads.
-            currentKeyboardState = Keyboard.GetState();                
+            if (_USBGamePadId != Guid.Empty)
+            {
+                if (_currentUSBGGamePadState != null)
+                {
+                    ProcessUSBInput();
+                    
+                }
+                else
+                {
+                    _previousUSBGamePadState = new InputState();
+                    _currentUSBGGamePadState = new InputState();
+                }
+
+            }
+
             
-            if ((currentGamePadState.IsButtonDown(Buttons.DPadUp)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.Up)))
+
+            currentXBox360GamePadState = GetGamePadInput(); 
+            // only handle keyboard input for player #1. other players must use gamepads.
+            currentKeyboardState = Microsoft.Xna.Framework.Input.Keyboard.GetState();                
+            
+            if ((currentXBox360GamePadState.IsButtonDown(Buttons.DPadUp)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.Up)) || _currentUSBGGamePadState.DirectionUp)
                 CurrentInputState.DirectionUp = true;
-            if ((currentGamePadState.IsButtonDown(Buttons.DPadDown)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.Down)))
+            if ((currentXBox360GamePadState.IsButtonDown(Buttons.DPadDown)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.Down)) || _currentUSBGGamePadState.DirectionDown)
                 CurrentInputState.DirectionDown = true;
-            if ((currentGamePadState.IsButtonDown(Buttons.DPadLeft)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.Left)))
+            if ((currentXBox360GamePadState.IsButtonDown(Buttons.DPadLeft)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.Left)) || _currentUSBGGamePadState.DirectionLeft)
                 CurrentInputState.DirectionLeft = true;
-            if ((currentGamePadState.IsButtonDown(Buttons.DPadRight)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.Right)))
+            if ((currentXBox360GamePadState.IsButtonDown(Buttons.DPadRight)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.Right)) || _currentUSBGGamePadState.DirectionRight)
                 CurrentInputState.DirectionRight = true;
-            if ((currentGamePadState.IsButtonDown(Buttons.X)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.A)))
+            if ((currentXBox360GamePadState.IsButtonDown(Buttons.X)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.A)) || _currentUSBGGamePadState.WeaponButtonPressed)
                 CurrentInputState.WeaponButtonPressed = true;
-            if ((currentGamePadState.IsButtonDown(Buttons.A)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.Space)))
+            if ((currentXBox360GamePadState.IsButtonDown(Buttons.A)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.Space)) || _currentUSBGGamePadState.JumpButtonPressed)
                 CurrentInputState.JumpButtonPressed = true;
-            if ((currentGamePadState.IsButtonDown(Buttons.Start)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.Enter)))
+            if ((currentXBox360GamePadState.IsButtonDown(Buttons.Start)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.Enter)) || _currentUSBGGamePadState.StartButtonPressed)
                 CurrentInputState.StartButtonPressed = true;
 
             if (!IsDying && !_game.GamePaused)
             {
-                DetermineAnalogHorizontalMovement(currentGamePadState, currentKeyboardState);                
+                DetermineAnalogHorizontalMovement(currentXBox360GamePadState, currentKeyboardState);                
             }
         }
-        private void DetermineAnalogHorizontalMovement(GamePadState currentGamePadState, KeyboardState currentKeyboardState)
+
+        private void ProcessUSBInput()
+        {
+            _previousUSBGamePadState.CopyFrom(_currentUSBGGamePadState);
+
+            _joystick.Poll();
+
+            var datas = _joystick.GetBufferedData();
+            foreach (var state in datas)
+            {
+                switch (state.Offset)
+                {
+                    case JoystickOffset.Buttons4:
+                    case JoystickOffset.Buttons3:
+                        _currentUSBGGamePadState.WeaponButtonPressed = state.Value == 128 ? true : false;
+                        break;
+                    case JoystickOffset.Buttons2:
+                    case JoystickOffset.Buttons1:
+                        _currentUSBGGamePadState.JumpButtonPressed = state.Value == 128 ? true : false;
+                        break;
+                    case JoystickOffset.Buttons9:
+                        _currentUSBGGamePadState.StartButtonPressed = state.Value == 128 ? true : false;
+                        break;
+                    case JoystickOffset.X:
+                        if (state.Value < 32767)
+                        {
+                            _currentUSBGGamePadState.DirectionRight = false;
+                            _currentUSBGGamePadState.DirectionLeft = true;
+                        }
+                        else if (state.Value > 32767)
+                        {
+                            _currentUSBGGamePadState.DirectionLeft = false;
+                            _currentUSBGGamePadState.DirectionRight = true;
+                        }
+                        else
+                        {
+                            _currentUSBGGamePadState.DirectionLeft = false;
+                            _currentUSBGGamePadState.DirectionRight = false;
+                        }
+                        break;
+                    case JoystickOffset.Y:
+                        if (state.Value < 32767)
+                        {
+                            _currentUSBGGamePadState.DirectionUp = true;
+                            _currentUSBGGamePadState.DirectionDown = false;
+                        }
+                        else if (state.Value > 32767)
+                        {
+                            _currentUSBGGamePadState.DirectionUp = false;
+                            _currentUSBGGamePadState.DirectionDown = true;
+                        }
+                        else
+                        {
+                            _currentUSBGGamePadState.DirectionDown = false;
+                            _currentUSBGGamePadState.DirectionUp = false;
+                        }
+                        break;
+                }
+            }
+        }
+
+        private void DetermineAnalogHorizontalMovement(GamePadState currentGamePadState, Microsoft.Xna.Framework.Input.KeyboardState currentKeyboardState)
         {
             CurrentInputState.Movement = currentGamePadState.ThumbSticks.Left.X * MoveStickScale;
 
@@ -803,8 +900,8 @@ namespace RunAndGun.Actors
 
             for (int x = leftTile; x <= rightTile; ++x)
             {
-                StageTile stageTile = CurrentStage.getStageTileByGridPosition(x, bottomTile);
-                if (stageTile.IsStairs())
+                StageTile stageTile = CurrentStage.getStageTileByGridPosition(x, bottomTile);                
+                if (stageTile != null && stageTile.IsStairs())
                 {
                     Rectangle? stairTopBounds = CurrentStage.getStairTopBoundsByGridPosition(x, bottomTile);
                     if (stairTopBounds.HasValue)

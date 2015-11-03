@@ -1,0 +1,9 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="RunAndGun" GeneratedClassName="App">
+  <Profiles />
+  <Settings>
+    <Setting Name="InputType" Type="System.String" Scope="User">
+      <Value Profile="(Default)">USB Gamepad</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

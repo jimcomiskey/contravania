@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.22310.1
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RunAndGun", "RunAndGun\RunAndGun\RunAndGun.csproj", "{34920DC8-5E8D-41B6-A6A1-DFB2CD64A332}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContraVania", "ContraVania\ContraVania.contentproj", "{E5C4785F-38EC-471B-A5CE-B680C3613E7D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TiledSharp", "TiledSharp-0.9.1r0\TiledSharp\TiledSharp.csproj", "{E4130F8D-D301-4E0C-916D-489C4A23C9B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpDXDirectInputTester", "SharepDXDirectInputTester\SharpDXDirectInputTester.csproj", "{B7F2CA86-55F6-4B04-8582-2A0319AE93D8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +55,18 @@ Global
 		{E4130F8D-D301-4E0C-916D-489C4A23C9B1}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{E4130F8D-D301-4E0C-916D-489C4A23C9B1}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{E4130F8D-D301-4E0C-916D-489C4A23C9B1}.Release|x86.ActiveCfg = Release|Any CPU
+		{B7F2CA86-55F6-4B04-8582-2A0319AE93D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7F2CA86-55F6-4B04-8582-2A0319AE93D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7F2CA86-55F6-4B04-8582-2A0319AE93D8}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B7F2CA86-55F6-4B04-8582-2A0319AE93D8}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{B7F2CA86-55F6-4B04-8582-2A0319AE93D8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B7F2CA86-55F6-4B04-8582-2A0319AE93D8}.Debug|x86.Build.0 = Debug|Any CPU
+		{B7F2CA86-55F6-4B04-8582-2A0319AE93D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7F2CA86-55F6-4B04-8582-2A0319AE93D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7F2CA86-55F6-4B04-8582-2A0319AE93D8}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{B7F2CA86-55F6-4B04-8582-2A0319AE93D8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{B7F2CA86-55F6-4B04-8582-2A0319AE93D8}.Release|x86.ActiveCfg = Release|Any CPU
+		{B7F2CA86-55F6-4B04-8582-2A0319AE93D8}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
