@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using RunAndGun.Animations;
 using Microsoft.Xna.Framework.Audio;
+using RunAndGun.GameObjects;
 
 namespace RunAndGun.Actors
 {
@@ -78,7 +79,7 @@ namespace RunAndGun.Actors
             return new Rectangle((int)proposedPosition.X + iBoundingBoxLeftOffset, (int)proposedPosition.Y + iBoundingBoxTopOffset, spritecollectionlist[0].FrameWidth - iBoundingBoxRightOffset - iBoundingBoxLeftOffset, spritecollectionlist[0].FrameHeight - iBoundingBoxBottomOffset - iBoundingBoxTopOffset);
         }
         
-        public override void Move(GameTime gameTime)
+        public override void Move(CVGameTime gameTime)
         {
             _elapsedOpenCloseTime += gameTime.ElapsedGameTime.Milliseconds;
 
@@ -97,11 +98,11 @@ namespace RunAndGun.Actors
             BulletProof = _currentOpenCloseFrame > 0 ? false : true;            
             
         }
-        public override void ApplyPhysics(GameTime gameTime)
+        public override void ApplyPhysics(CVGameTime gameTime)
         {
             // do nothing - Panel is anchored to the stage
         }
-        public override void Die(GameTime gameTime)
+        public override void Die(CVGameTime gameTime)
         {
             ExplosionSound.Play();
             var item = new PlayerItem(_contentManager, WorldPosition, CurrentStage, _itemType);
@@ -115,7 +116,7 @@ namespace RunAndGun.Actors
             base.Draw(spriteBatch);
         }
 
-        protected override void UpdateAnimations(GameTime gameTime)
+        protected override void UpdateAnimations(CVGameTime gameTime)
         {
             _elapsedGlowTime += (int)gameTime.ElapsedGameTime.TotalMilliseconds;
 

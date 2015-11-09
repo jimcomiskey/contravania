@@ -133,7 +133,7 @@ namespace RunAndGun.GameObjects
             
             return projectiles;
         }
-        public void Update(GameTime gameTime)
+        public void Update(CVGameTime gameTime)
         {
             if (_recoilTimeRemaining > 0)
             {

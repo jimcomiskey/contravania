@@ -140,7 +140,7 @@ namespace RunAndGun.GameObjects
 
         //}
 
-        public void Update(GameTime gameTime, Vector2 cameraPosition)
+        public void Update(CVGameTime gameTime, Vector2 cameraPosition)
         {
             WorldPosition += Velocity;
 

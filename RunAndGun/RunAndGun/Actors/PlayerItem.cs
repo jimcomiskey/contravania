@@ -56,7 +56,7 @@ namespace RunAndGun.Actors
             return new Rectangle((int)WorldPosition.X, (int)WorldPosition.Y, _imageTexture.Width, _imageTexture.Height);
         }
 
-        public override void ApplyPhysics(GameTime gameTime)
+        public override void ApplyPhysics(CVGameTime gameTime)
         {
             base.ApplyPhysics(gameTime);
 
@@ -65,7 +65,7 @@ namespace RunAndGun.Actors
                 this.Velocity.X = 0;
             }
         }
-        public override void Move(GameTime gameTime)
+        public override void Move(CVGameTime gameTime)
         {
             // aside from physics (gravity), capsules do not move            
         }
@@ -75,11 +75,11 @@ namespace RunAndGun.Actors
             base.Draw(spriteBatch);
         }
 
-        protected override void UpdateAnimations(GameTime gameTime)
+        protected override void UpdateAnimations(CVGameTime gameTime)
         {
             //
         }
-        public override void Die(GameTime gameTime)
+        public override void Die(CVGameTime gameTime)
         {
             //soundDestroyed.Play();
             ExplosionSound.Play();

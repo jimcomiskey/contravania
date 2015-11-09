@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using RunAndGun.Actors;
+using RunAndGun.GameObjects;
 
 namespace RunAndGun.StageObjects
 {
@@ -18,7 +19,7 @@ namespace RunAndGun.StageObjects
             _enemyType = enemyType;
             _enemySpawnTime = 0;
         }
-        public override void Update(GameTime gameTime)
+        public override void Update(CVGameTime gameTime)
         {
             Random r;
             if (_spawnedEnemy != null && _spawnedEnemy.Active == false)

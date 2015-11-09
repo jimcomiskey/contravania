@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using RunAndGun.Actors;
+using RunAndGun.GameObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,17 +60,17 @@ namespace RunAndGun.Actors
             WorldPosition = position;            
         }
 
-        public override void Move(Microsoft.Xna.Framework.GameTime gameTime)
+        public override void Move(CVGameTime gameTime)
         {
             // TODO: create "wave" movement pattern by manipulating velocity
             Velocity.X = EnemyMoveSpeed;            
         }
-        public override void ApplyPhysics(GameTime gameTime)
+        public override void ApplyPhysics(CVGameTime gameTime)
         {
             WorldPosition.X += EnemyMoveSpeed;
             WorldPosition.Y = _startPosition.Y + (-(float)Math.Cos(WorldPosition.X / 20) * 20);            
         }
-        public override void Die(GameTime gameTime)
+        public override void Die(CVGameTime gameTime)
         {
             ExplosionSound.Play();
             var item = new PlayerItem(_contentManager, WorldPosition, CurrentStage, _itemType);
@@ -78,7 +79,7 @@ namespace RunAndGun.Actors
             base.Die(gameTime);
         }
 
-        protected override void UpdateAnimations(GameTime gametime)
+        protected override void UpdateAnimations(CVGameTime gametime)
         {
             // Do nothing; this sprite is not animated.
         }

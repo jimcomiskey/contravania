@@ -139,6 +139,8 @@ namespace RunAndGun
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Microsoft.Xna.Framework.Input.Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
 
+            var cvGameTime = new CVGameTime(gameTime);
+
             switch (CurrentGameState)
             {
                 case GameState.TitleScreen:
@@ -249,7 +251,7 @@ namespace RunAndGun
                         int iLifeCount = 0;
                         foreach (Player player in _players)
                         {
-                            player.Update(gameTime);
+                            player.Update(cvGameTime);
                             iLifeCount += player.LifeCount;
                         }
 
@@ -259,10 +261,10 @@ namespace RunAndGun
 
                         if (!gamePaused)
                         {
-                            UpdateProjectiles(gameTime, _currentStage.Projectiles);
-                            UpdateProjectiles(gameTime, _currentStage.EnemyProjectiles);
+                            UpdateProjectiles(cvGameTime, _currentStage.Projectiles);
+                            UpdateProjectiles(cvGameTime, _currentStage.EnemyProjectiles);
 
-                            _currentStage.Update(gameTime, _players);
+                            _currentStage.Update(cvGameTime, _players);
 
                         }
 
@@ -293,7 +295,7 @@ namespace RunAndGun
         }
         
         
-        private void UpdateProjectiles(GameTime gameTime, List<Projectile> lstProjectiles)
+        private void UpdateProjectiles(CVGameTime gameTime, List<Projectile> lstProjectiles)
         {
             // Update the Projectiles
             for (int i = lstProjectiles.Count - 1; i >= 0; i--)

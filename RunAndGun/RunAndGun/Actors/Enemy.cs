@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
 using System.Xml;
-
+using RunAndGun.GameObjects;
 
 namespace RunAndGun.Actors
 {
@@ -40,9 +40,9 @@ namespace RunAndGun.Actors
         }
         
 
-        protected abstract void UpdateAnimations(GameTime gameTime);
+        protected abstract void UpdateAnimations(CVGameTime gameTime);
 
-        public void Update(GameTime gameTime)
+        public void Update(CVGameTime gameTime)
         {
             
             UpdateAnimations(gameTime);
@@ -82,7 +82,7 @@ namespace RunAndGun.Actors
             return this.BoundingBox().Intersects(CurrentStage.ScreenCoordinates());
         }
         
-        public override void Die(GameTime gameTime)
+        public override void Die(CVGameTime gameTime)
         {
             Active = false;
             // do nothing 

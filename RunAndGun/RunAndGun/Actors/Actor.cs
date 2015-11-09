@@ -80,8 +80,8 @@ namespace RunAndGun.Actors
             }
 
         }
-        public abstract void Move(GameTime gameTime);
-        public virtual void ApplyPhysics(GameTime gameTime)
+        public abstract void Move(CVGameTime gameTime);
+        public virtual void ApplyPhysics(CVGameTime gameTime)
         {
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -115,7 +115,7 @@ namespace RunAndGun.Actors
                 Velocity.Y = 0.0f;
 
         }        
-        public virtual void HandleCollisions(GameTime gameTime)
+        public virtual void HandleCollisions(CVGameTime gameTime)
         {
             if (this.WorldPosition.Y > Game.iScreenModelWidth && IsDying == false)
             {
@@ -185,7 +185,7 @@ namespace RunAndGun.Actors
 
             this.PreviousBottom = actorbounds.Bottom;
         }
-        protected virtual float DoJump(float velocityY, GameTime gameTime)
+        protected virtual float DoJump(float velocityY, CVGameTime gameTime)
         {
             float launchVelocity = 0f;
             if (IsDying)
@@ -225,7 +225,7 @@ namespace RunAndGun.Actors
 
             return velocityY;
         } 
-        public abstract void Die(GameTime gameTime);
+        public abstract void Die(CVGameTime gameTime);
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {

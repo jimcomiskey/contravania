@@ -713,7 +713,7 @@ namespace RunAndGun
 
         }
 
-        public void Update(GameTime gameTime, List<Player> players)
+        public void Update(CVGameTime gameTime, List<Player> players)
         {
 
             _elapsedTime += (int)gameTime.ElapsedGameTime.TotalMilliseconds;
@@ -785,7 +785,7 @@ namespace RunAndGun
 
         }
 
-        private void HandleCollisions(GameTime gameTime, List<Player> players)
+        private void HandleCollisions(CVGameTime gameTime, List<Player> players)
         {
             Rectangle rectangle1;
             Rectangle rectangle2;
@@ -908,7 +908,7 @@ namespace RunAndGun
             e.Play();
             _explosionsounds.Add(e);            
         }
-        public void SpawnEnemies(GameTime gameTime)
+        public void SpawnEnemies(CVGameTime gameTime)
         {
             //if (!Game.LaunchParameters.ContainsKey("DoNotSpawnRandomEnemies"))
             //{
@@ -962,7 +962,7 @@ namespace RunAndGun
             }
 
         }        
-        public void UpdateEnemies(GameTime gameTime)
+        public void UpdateEnemies(CVGameTime gameTime)
         {
             // Update the Enemies
             for (int i = ActiveEnemies.Count - 1; i >= 0; i--)
@@ -989,7 +989,7 @@ namespace RunAndGun
             }
         }
 
-        private void UpdateExplosions(GameTime gameTime)
+        private void UpdateExplosions(CVGameTime gameTime)
         {
             for (int i = _explosions.Count - 1; i >= 0; i--)
             {   
@@ -1006,7 +1006,7 @@ namespace RunAndGun
                     _explosionsounds.RemoveAt(i);
             }
         }
-        private void UpdateStageObjects(GameTime gameTime, List<StageObject> lStageObjects)
+        private void UpdateStageObjects(CVGameTime gameTime, List<StageObject> lStageObjects)
         {
             for (int i = lStageObjects.Count - 1; i >= 0; i--)
             {

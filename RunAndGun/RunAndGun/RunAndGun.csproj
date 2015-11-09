@@ -187,6 +187,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>App.settings</DependentUpon>
     </Compile>
+    <Compile Include="GameObjects\CVGameTime.cs" />
     <Compile Include="GameObjects\Gun.cs" />
     <Compile Include="GameObjects\InputState.cs" />
     <Compile Include="StageObjects\Platform.cs" />

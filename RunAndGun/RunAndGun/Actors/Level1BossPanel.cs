@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
 using RunAndGun.Animations;
+using RunAndGun.GameObjects;
 
 namespace RunAndGun.Actors
 {
@@ -49,24 +50,24 @@ namespace RunAndGun.Actors
             return new Rectangle((int)proposedPosition.X + iBoundingBoxLeftOffset, (int)proposedPosition.Y + iBoundingBoxTopOffset, _animation.FrameWidth - iBoundingBoxRightOffset - iBoundingBoxLeftOffset, _animation.FrameHeight - iBoundingBoxBottomOffset - iBoundingBoxTopOffset);
         }
 
-        public override void Move(GameTime gameTime)
+        public override void Move(CVGameTime gameTime)
         {
             // do nothing
         }
 
-        public override void ApplyPhysics(GameTime gameTime)
+        public override void ApplyPhysics(CVGameTime gameTime)
         {
             // do nothing- fixed to the Stage.
         }
 
-        public override void Die(GameTime gameTime)
+        public override void Die(CVGameTime gameTime)
         {
             base.Die(gameTime);
 
             CurrentStage.StartComplete();
         }
 
-        protected override void UpdateAnimations(GameTime gameTime)
+        protected override void UpdateAnimations(CVGameTime gameTime)
         {
 
             _animation.Update(gameTime);

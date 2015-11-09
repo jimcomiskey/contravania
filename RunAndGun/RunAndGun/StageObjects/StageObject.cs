@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
-
+using RunAndGun.GameObjects;
 
 namespace RunAndGun
 {
@@ -40,7 +40,7 @@ namespace RunAndGun
             return new Rectangle((int)WorldPosition.X, (int)WorldPosition.Y, Width, Height);
         }
 
-        public virtual void Update(GameTime gameTime)
+        public virtual void Update(CVGameTime gameTime)
         {
             // do nothing by default.  inherited objects might do something
         }

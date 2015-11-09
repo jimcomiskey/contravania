@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using RunAndGun.Actors;
+using RunAndGun.GameObjects;
 
 namespace RunAndGun.Animations
 {
@@ -25,7 +26,7 @@ namespace RunAndGun.Animations
             this._flickerTime = flickerTime;
             _flickerDisplay = true;
         }
-        public override void Update(GameTime gameTime)
+        public override void Update(CVGameTime gameTime)
         {
             // Update the elapsed time
             elapsedTime += (int)gameTime.ElapsedGameTime.TotalMilliseconds;

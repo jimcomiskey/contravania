@@ -116,7 +116,7 @@ namespace RunAndGun.Actors
             return new Rectangle((int)proposedPosition.X + iBoundingBoxLeftOffset, (int)proposedPosition.Y + iBoundingBoxTopOffset, spritecollectionlist[0].FrameWidth - iBoundingBoxRightOffset - iBoundingBoxLeftOffset, spritecollectionlist[0].FrameHeight - iBoundingBoxBottomOffset - iBoundingBoxTopOffset);
         }
 
-        public override void Move(GameTime gameTime)
+        public override void Move(CVGameTime gameTime)
         {
 
             float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -205,12 +205,12 @@ namespace RunAndGun.Actors
             CurrentStage.EnemyProjectiles.Add(projectile);
         }
         
-        public override void ApplyPhysics(GameTime gameTime)
+        public override void ApplyPhysics(CVGameTime gameTime)
         {
             // do nothing- Turret is fixed to the Stage.
         }
 
-        protected override void UpdateAnimations(GameTime gameTime)
+        protected override void UpdateAnimations(CVGameTime gameTime)
         {
 
             _elapsedTime += (int)gameTime.ElapsedGameTime.TotalMilliseconds;

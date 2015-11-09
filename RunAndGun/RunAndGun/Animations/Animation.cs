@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using RunAndGun.Actors;
+using RunAndGun.GameObjects;
 
 namespace RunAndGun.Animations
 {
@@ -115,7 +116,7 @@ namespace RunAndGun.Animations
             Active = true;
         }
 
-        public virtual void Update(GameTime gameTime)
+        public virtual void Update(CVGameTime gameTime)
         {
             
             // Update the elapsed time

@@ -253,7 +253,7 @@ namespace RunAndGun.Actors
         }
 
         // Update the player animation
-        public void Update(GameTime gameTime)
+        public void Update(CVGameTime gameTime)
         {
             this.GetInput();
 
@@ -311,7 +311,7 @@ namespace RunAndGun.Actors
             _spawnTimeRemaining = _spawnTime;
             
         }
-        private void UpdateSpawnFlicker(GameTime gameTime)
+        private void UpdateSpawnFlicker(CVGameTime gameTime)
         {
             _spawnAnimationElapsedTime += (int)gameTime.ElapsedGameTime.TotalMilliseconds;
             const int spawnFlickerTime = 15;
@@ -323,7 +323,7 @@ namespace RunAndGun.Actors
             }
         }
         
-        private void UpdateAnimations(GameTime gameTime)
+        private void UpdateAnimations(CVGameTime gameTime)
         {
             Vector2 legsPosition;
             if (playerDirection == PlayerDirection.Right)
@@ -514,7 +514,7 @@ namespace RunAndGun.Actors
             return currentGamePadState;
         }
 
-        public override void Move(GameTime gameTime)
+        public override void Move(CVGameTime gameTime)
         {
             #region Set Horizontal Velocity, if Player isn't in the process of performing an automated action such as climbing stairs
             if ((!this.IsOnStairs ||
@@ -749,7 +749,7 @@ namespace RunAndGun.Actors
 
         
 
-        public override void ApplyPhysics(GameTime gameTime)
+        public override void ApplyPhysics(CVGameTime gameTime)
         {
             if (this.MovingTowardsStairs)
             {
@@ -917,7 +917,7 @@ namespace RunAndGun.Actors
             return null;
         }
 
-        public override void HandleCollisions(GameTime gameTime)
+        public override void HandleCollisions(CVGameTime gameTime)
         {
 
             if (this.WorldPosition.Y > Game.iScreenModelHeight && IsDying == false)
@@ -1167,7 +1167,7 @@ namespace RunAndGun.Actors
 
         }
         
-        protected override float DoJump(float velocityY, GameTime gameTime)
+        protected override float DoJump(float velocityY, CVGameTime gameTime)
         {
             float launchVelocity = 0f;
             if (IsDying)
@@ -1207,7 +1207,7 @@ namespace RunAndGun.Actors
 
             return velocityY;
         }
-        public override void Die(GameTime gameTime)
+        public override void Die(CVGameTime gameTime)
         {
             _soundDeath.Play();
             _deathAnimation.Play();

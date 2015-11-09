@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContraVania", "ContraVania\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TiledSharp", "TiledSharp-0.9.1r0\TiledSharp\TiledSharp.csproj", "{E4130F8D-D301-4E0C-916D-489C4A23C9B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpDXDirectInputTester", "SharepDXDirectInputTester\SharpDXDirectInputTester.csproj", "{B7F2CA86-55F6-4B04-8582-2A0319AE93D8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpDXDirectInputTester", "SharpDXDirectInputTester\SharpDXDirectInputTester.csproj", "{B7F2CA86-55F6-4B04-8582-2A0319AE93D8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

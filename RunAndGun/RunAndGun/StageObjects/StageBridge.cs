@@ -33,7 +33,7 @@ namespace RunAndGun.GameObjects
 
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update(CVGameTime gameTime)
         {
             base.Update(gameTime);
 

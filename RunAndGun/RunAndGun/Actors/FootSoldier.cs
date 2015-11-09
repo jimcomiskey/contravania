@@ -27,7 +27,7 @@ namespace RunAndGun.Actors
             ExplosionSound = content.Load<SoundEffect>("Sounds/Explosion1");
         }
 
-        public override void Move(Microsoft.Xna.Framework.GameTime gameTime)
+        public override void Move(CVGameTime gameTime)
         {
             
             Vector2 proposedPosition;
@@ -113,7 +113,7 @@ namespace RunAndGun.Actors
             
         //}
 
-        protected override void UpdateAnimations(GameTime gameTime)
+        protected override void UpdateAnimations(CVGameTime gameTime)
         {
             _runningAnimation.WorldPosition = this.WorldPosition;
             ExplosionAnimation.WorldPosition = this.WorldPosition;
