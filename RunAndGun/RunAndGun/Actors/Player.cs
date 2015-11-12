@@ -178,11 +178,11 @@ namespace RunAndGun.Actors
         }
 
         // Initialize the player
-        public void Initialize(ContentManager content, Vector2 position, Stage stage)
+        public void Initialize(ContentManager content, Vector2 position, Stage stage, int lifeCount)
         {
 
             // Set the player life count
-            LifeCount = 30;
+            LifeCount = lifeCount;
 
             CurrentStage = stage; 
 
@@ -398,19 +398,19 @@ namespace RunAndGun.Actors
             // only handle keyboard input for player #1. other players must use gamepads.
             currentKeyboardState = Microsoft.Xna.Framework.Input.Keyboard.GetState();                
             
-            if ((currentXBox360GamePadState.IsButtonDown(Buttons.DPadUp)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.Up)) || _currentUSBGGamePadState.DirectionUp)
+            if ((currentXBox360GamePadState.IsButtonDown(Buttons.DPadUp)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.Up)) || (_currentUSBGGamePadState != null && _currentUSBGGamePadState.DirectionUp))
                 CurrentInputState.DirectionUp = true;
-            if ((currentXBox360GamePadState.IsButtonDown(Buttons.DPadDown)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.Down)) || _currentUSBGGamePadState.DirectionDown)
+            if ((currentXBox360GamePadState.IsButtonDown(Buttons.DPadDown)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.Down)) || (_currentUSBGGamePadState != null && _currentUSBGGamePadState.DirectionDown))
                 CurrentInputState.DirectionDown = true;
-            if ((currentXBox360GamePadState.IsButtonDown(Buttons.DPadLeft)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.Left)) || _currentUSBGGamePadState.DirectionLeft)
+            if ((currentXBox360GamePadState.IsButtonDown(Buttons.DPadLeft)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.Left)) || (_currentUSBGGamePadState != null && _currentUSBGGamePadState.DirectionLeft))
                 CurrentInputState.DirectionLeft = true;
-            if ((currentXBox360GamePadState.IsButtonDown(Buttons.DPadRight)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.Right)) || _currentUSBGGamePadState.DirectionRight)
+            if ((currentXBox360GamePadState.IsButtonDown(Buttons.DPadRight)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.Right)) || (_currentUSBGGamePadState != null && _currentUSBGGamePadState.DirectionRight))
                 CurrentInputState.DirectionRight = true;
-            if ((currentXBox360GamePadState.IsButtonDown(Buttons.X)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.A)) || _currentUSBGGamePadState.WeaponButtonPressed)
+            if ((currentXBox360GamePadState.IsButtonDown(Buttons.X)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.A)) || (_currentUSBGGamePadState != null && _currentUSBGGamePadState.WeaponButtonPressed))
                 CurrentInputState.WeaponButtonPressed = true;
-            if ((currentXBox360GamePadState.IsButtonDown(Buttons.A)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.Space)) || _currentUSBGGamePadState.JumpButtonPressed)
+            if ((currentXBox360GamePadState.IsButtonDown(Buttons.A)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.Space)) || (_currentUSBGGamePadState != null && _currentUSBGGamePadState.JumpButtonPressed))
                 CurrentInputState.JumpButtonPressed = true;
-            if ((currentXBox360GamePadState.IsButtonDown(Buttons.Start)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.Enter)) || _currentUSBGGamePadState.StartButtonPressed)
+            if ((currentXBox360GamePadState.IsButtonDown(Buttons.Start)) || (this.ID == 1 && currentKeyboardState.IsKeyDown(Keys.Enter)) || (_currentUSBGGamePadState != null && _currentUSBGGamePadState.StartButtonPressed))
                 CurrentInputState.StartButtonPressed = true;
 
             if (!IsDying && !_game.GamePaused)

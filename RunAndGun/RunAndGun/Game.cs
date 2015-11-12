@@ -32,6 +32,8 @@ namespace RunAndGun
         public GameState CurrentGameState;
 
         public GameType CurrentGame;
+
+        private int _startingLifeCount = 3;
         
         private GraphicsDeviceManager _graphics;
         private ContentManager _worldContent;
@@ -100,6 +102,11 @@ namespace RunAndGun
             if (!LaunchParameters.ContainsKey("WindowedMode"))
             {
                 //graphics.IsFullScreen = true;
+            }
+
+            if (LaunchParameters.ContainsKey("LifeCount"))
+            {
+                _startingLifeCount = int.Parse(LaunchParameters["LifeCount"]);
             }
         }
 
@@ -221,7 +228,7 @@ namespace RunAndGun
                                             new Vector2(
                                             GraphicsDevice.Viewport.TitleSafeArea.X + ((player.ID - 1) * _currentStage.TileWidth) + playerStartingPosition, 
                                             GraphicsDevice.Viewport.TitleSafeArea.Y),
-                                            _currentStage);
+                                            _currentStage, _startingLifeCount);
 
                         
                         if (CurrentGame == GameType.Contra)

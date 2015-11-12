@@ -14,7 +14,7 @@ namespace RunAndGun.Actors
 {
     public class Level1BossBomber : Enemy
     {   
-        private PlayerSpriteCollection _frames;
+        private PlayerSpriteCollection _frames; 
         private Texture2D projectileTexture;        
         
         private enum _frameTypes

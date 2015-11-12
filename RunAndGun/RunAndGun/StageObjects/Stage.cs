@@ -14,6 +14,7 @@ using RunAndGun.Actors;
 using RunAndGun.GameObjects;
 using RunAndGun.Animations;
 using RunAndGun.StageObjects;
+using RunAndGun.Helpers;
 
 namespace RunAndGun
 {
@@ -43,6 +44,8 @@ namespace RunAndGun
         //private Dictionary<string, Stage> portals;
         
         private System.Collections.Specialized.OrderedDictionary _portals = new System.Collections.Specialized.OrderedDictionary();
+
+        private Texture2D _playerLifeIcon;        
         
         //public enum TileLayers { Display = 0, Collisions = 1 };
 
@@ -138,7 +141,9 @@ namespace RunAndGun
             _worldContent = worldcontent;
 
             TiledSharp.TmxMap tmx;
-            string appDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            string appDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
+            _playerLifeIcon = game.Content.Load<Texture2D>("Sprites/PlayerLifeIcon");
 
             if (game.CurrentGame == Game.GameType.Contra)
             {
@@ -752,6 +757,20 @@ namespace RunAndGun
             for (int i = 0; i < _explosions.Count; i++)
             {
                 _explosions[i].Draw(spriteBatch, Player.PlayerDirection.Right, 1f);
+            }
+
+            const int leftOffset = 5;
+
+            for (int i = 0; i < Players.Count; i++)
+            {
+                if (Players[i].LifeCount > 1)
+                {
+                    Texture2D currentPlayerLifeIcon = currentPlayerLifeIcon = TextureHelper.SwapPlayerColor(_playerLifeIcon, i + 1);
+                    for (int j = 1; j <= Math.Min(Players[i].LifeCount, 5) - 1; j++)
+                    {   
+                        spriteBatch.Draw(currentPlayerLifeIcon, new Rectangle(leftOffset + (i * 65) + ((j-1) * 12), 10, currentPlayerLifeIcon.Width, currentPlayerLifeIcon.Height), Color.White);
+                    }
+                }
             }
 
         }

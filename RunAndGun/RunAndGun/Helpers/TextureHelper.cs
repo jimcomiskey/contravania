@@ -30,5 +30,39 @@ namespace RunAndGun.Helpers
             return newTexture;
 
         }
+        public static Texture2D SwapPlayerColor(Texture2D playerOneTexture, int newPlayerId)
+        {
+            if (newPlayerId == 1)
+                // no color swap for player 1
+                return playerOneTexture;
+            else
+            {
+                Texture2D newTexture = new Texture2D(playerOneTexture.GraphicsDevice, playerOneTexture.Width, playerOneTexture.Height);
+
+                Color[] data = new Color[playerOneTexture.Width * playerOneTexture.Height];
+                playerOneTexture.GetData(data);
+
+                for (int i = 0; i < data.Length; i++)
+                {
+                    if (data[i].B > 200)
+                    {
+                        switch (newPlayerId)
+                        {
+                            case 2:
+                                data[i] = new Color(255, 0, 0);
+                                break;
+                            case 3:
+                                data[i] = new Color(255, 0, 255);
+                                break;
+                            case 4:
+                                data[i] = new Color(255, 255, 0);
+                                break;
+                        }
+                    }
+                }
+                newTexture.SetData(data);
+                return newTexture;
+            }
+        }
     }
 }
