@@ -22,14 +22,14 @@ namespace RunAndGun.Actors
         {
 
             _animation = new Animation();            
-            //TODO: animation.initialize
+            
             _animation.Initialize(content.Load<Texture2D>("Sprites/Bosses/Boss1Panel"), position, 26, 32, 3, 100, Color.White, 1f, true, true, CurrentStage);
 
             ExplosionAnimation.Initialize(content.Load<Texture2D>("Sprites/Explosion2"), position, 32, 32, 5, 150, Color.White, 1f, false, false, CurrentStage);
             ExplosionSound = content.Load<SoundEffect>("Sounds/Explosion3");
 
             CollisionIsHazardous = false;
-            Health = 50;            
+            _health = 50;            
 
         }
 
@@ -62,9 +62,26 @@ namespace RunAndGun.Actors
 
         public override void Die(CVGameTime gameTime)
         {
-            base.Die(gameTime);
+            IsDead = true;
+            Active = false;
+            Vector2 firstExplosionPosition = this.WorldPosition;
 
-            CurrentStage.StartComplete();
+            CurrentStage.AddExplosion(firstExplosionPosition + new Vector2(0, 0), ExplosionAnimation.CreateCopy(), ExplosionSound, 0);
+            CurrentStage.AddExplosion(firstExplosionPosition + new Vector2(-15, -10), ExplosionAnimation.CreateCopy(), ExplosionSound, 100);
+            CurrentStage.AddExplosion(firstExplosionPosition + new Vector2(-15, 10), ExplosionAnimation.CreateCopy(), null, 200);
+            CurrentStage.AddExplosion(firstExplosionPosition + new Vector2(5, -10), ExplosionAnimation.CreateCopy(), ExplosionSound, 300);
+            CurrentStage.AddExplosion(firstExplosionPosition + new Vector2(5, 10), ExplosionAnimation.CreateCopy(), null, 400);
+            CurrentStage.AddExplosion(firstExplosionPosition + new Vector2(25, -10), ExplosionAnimation.CreateCopy(), ExplosionSound, 500);
+            CurrentStage.AddExplosion(firstExplosionPosition + new Vector2(25, 10), ExplosionAnimation.CreateCopy(), null, 600);
+            CurrentStage.AddExplosion(firstExplosionPosition + new Vector2(45, -10), ExplosionAnimation.CreateCopy(), ExplosionSound, 700);
+            CurrentStage.AddExplosion(firstExplosionPosition + new Vector2(45, 10), ExplosionAnimation.CreateCopy(), null, 800);
+            CurrentStage.AddExplosion(firstExplosionPosition + new Vector2(65, -10), ExplosionAnimation.CreateCopy(), ExplosionSound, 900);
+            CurrentStage.AddExplosion(firstExplosionPosition + new Vector2(65, 10), ExplosionAnimation.CreateCopy(), null, 1000);
+
+            foreach (var tile in CurrentStage.StageTiles.Where(t => t.DestructionLayer1GID > 0))
+                tile.Status = StageTile.TileStatus.Destroyed;
+
+            CurrentStage.StartComplete(gameTime, this);
         }
 
         protected override void UpdateAnimations(CVGameTime gameTime)

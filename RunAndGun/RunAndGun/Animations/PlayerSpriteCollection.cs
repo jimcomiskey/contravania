@@ -26,10 +26,7 @@ namespace RunAndGun.Animations
         {
             Temporary = 0
         }
-        public enum EnemySniperSpriteTypes
-        {
-            GunNeutral = 0
-        }
+        
 
         // The image representing the collection of images used for animation
         Texture2D spriteStrip;
@@ -92,20 +89,13 @@ namespace RunAndGun.Animations
             {   
                 spriteBatch.Draw(spriteStrip, destinationRect, sourceRect, color, 0, Vector2.Zero, SpriteEffects.None, depth);
             }            
-        }
-        public void Draw(SpriteBatch spriteBatch, Actors.Player.PlayerDirection dir, float depth, EnemySniperSpriteTypes spriteType)
-        {
-            sourceRect = new Rectangle((int)spriteType * FrameWidth, 0, FrameWidth, FrameHeight);
-            destinationRect = new Rectangle((int)ScreenPosition.X, (int)ScreenPosition.Y, FrameWidth, FrameHeight);
-
-            spriteBatch.Draw(spriteStrip, destinationRect, sourceRect, color, 0, Vector2.Zero, SpriteEffects.None, depth);
-        }
+        }        
         public void Draw(SpriteBatch spriteBatch, Player.PlayerDirection dir, float depth, int frameID)
         {
             sourceRect = new Rectangle((int)frameID * FrameWidth, 0, FrameWidth, FrameHeight);
             destinationRect = new Rectangle((int)ScreenPosition.X, (int)ScreenPosition.Y, FrameWidth, FrameHeight);
-
-            spriteBatch.Draw(spriteStrip, destinationRect, sourceRect, color, 0, Vector2.Zero, SpriteEffects.None, depth);
+            
+            spriteBatch.Draw(spriteStrip, destinationRect, sourceRect, color, 0, Vector2.Zero, dir == Player.PlayerDirection.Left ? SpriteEffects.None : SpriteEffects.FlipHorizontally, depth);
         }
 
 

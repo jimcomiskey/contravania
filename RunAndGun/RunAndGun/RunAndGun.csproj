@@ -170,7 +170,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actors\Actor.cs" />
+    <Compile Include="Actors\Cannon.cs" />
     <Compile Include="Actors\FootSoldier.cs" />
+    <Compile Include="Actors\Level1BossBomber.cs" />
     <Compile Include="Actors\Level1BossPanel.cs" />
     <Compile Include="Actors\Panel.cs" />
     <Compile Include="Actors\PlayerItem.cs" />
@@ -188,8 +190,12 @@
       <DependentUpon>App.settings</DependentUpon>
     </Compile>
     <Compile Include="GameObjects\CVGameTime.cs" />
-    <Compile Include="GameObjects\Gun.cs" />
+    <Compile Include="GameObjects\EnemyGun.cs" />
+    <Compile Include="GameObjects\PlayerGun.cs" />
     <Compile Include="GameObjects\InputState.cs" />
+    <Compile Include="GameObjects\TargetingLogic.cs" />
+    <Compile Include="Helpers\PointHelper.cs" />
+    <Compile Include="Helpers\TextureHelper.cs" />
     <Compile Include="StageObjects\Platform.cs" />
     <Compile Include="GameObjects\Projectile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

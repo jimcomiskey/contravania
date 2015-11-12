@@ -34,7 +34,7 @@ namespace RunAndGun.Actors
             : base(content, position, stage, "Panel")
         {
             _contentManager = content;
-            Health = 1;
+            _health = 1;
             _currentGlowFrame = 0;
             _glowAnimatingforward = true;
 

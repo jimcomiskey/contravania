@@ -11,7 +11,7 @@ using System.Text;
 namespace RunAndGun.GameObjects
 {
     public enum GunType { Standard, MachineGun, Rapid, Spread };
-    public class Gun
+    public class PlayerGun
     {
         public GunType GunType { get; set; }
         private double _recoilTimeRemaining;
@@ -24,7 +24,7 @@ namespace RunAndGun.GameObjects
         public bool Automatic {get; set; }
         public bool Rapid { get; set; }
 
-        public Gun()
+        public PlayerGun()
         {
             GunType = GunType.Standard;
             _recoilTimeRemaining = 0;

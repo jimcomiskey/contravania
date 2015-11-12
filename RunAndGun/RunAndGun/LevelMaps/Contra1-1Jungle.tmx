@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="108" height="8" tilewidth="32" tileheight="32" backgroundcolor="#ffffff">
- <tileset firstgid="1" name="Level1Tileset" tilewidth="32" tileheight="32">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="108" height="8" tilewidth="32" tileheight="32" backgroundcolor="#ffffff" nextobjectid="59">
+ <tileset firstgid="1" name="Level1Tileset" tilewidth="32" tileheight="32" tilecount="42">
   <image source="../../RunAndGunContent/StageData/Level1Tileset.png" trans="ffffff" width="192" height="224"/>
   <terraintypes>
    <terrain name="Platform" tile="-1"/>
@@ -12,7 +12,7 @@
   </tile>
   <tile id="16" terrain="0,0,,"/>
  </tileset>
- <tileset firstgid="43" name="CollisionTiles" tilewidth="32" tileheight="32">
+ <tileset firstgid="43" name="CollisionTiles" tilewidth="32" tileheight="32" tilecount="5">
   <image source="../../RunAndGunContent/StageData/CollisionTiles.png" trans="ffffff" width="160" height="32"/>
   <tile id="0">
    <properties>
@@ -41,10 +41,10 @@
    </properties>
   </tile>
  </tileset>
- <tileset firstgid="48" name="Sniper" tilewidth="32" tileheight="48">
-  <image source="../../RunAndGunContent/Sprites/Enemies/Sniper.png" trans="ffffff" width="32" height="48"/>
+ <tileset firstgid="48" name="Sniper" tilewidth="24" tileheight="40" tilecount="1">
+  <image source="../../RunAndGunContent/Sprites/Enemies/SniperPortrait.png" trans="ffffff" width="24" height="40"/>
  </tileset>
- <tileset firstgid="49" name="Boss1Panel" tilewidth="26" tileheight="32">
+ <tileset firstgid="49" name="Boss1Panel" tilewidth="26" tileheight="32" tilecount="3">
   <image source="../../RunAndGunContent/Sprites/Bosses/boss1panel.png" trans="005500" width="78" height="32"/>
   <tile id="0">
    <properties>
@@ -52,20 +52,26 @@
    </properties>
   </tile>
  </tileset>
- <tileset firstgid="52" name="boss1backlayer" tilewidth="128" tileheight="192">
+ <tileset firstgid="52" name="boss1backlayer" tilewidth="128" tileheight="192" tilecount="1">
   <image source="../../RunAndGunContent/Sprites/Bosses/boss1backlayer.png" width="128" height="192"/>
  </tileset>
- <tileset firstgid="53" name="boss1frontlayer" tilewidth="128" tileheight="192">
+ <tileset firstgid="53" name="boss1frontlayer" tilewidth="128" tileheight="192" tilecount="1">
   <image source="../../RunAndGunContent/Sprites/Bosses/boss1frontlayer.png" width="128" height="192"/>
  </tileset>
- <tileset firstgid="54" name="boss1paneldestroyed" tilewidth="32" tileheight="32">
+ <tileset firstgid="54" name="boss1paneldestroyed" tilewidth="32" tileheight="32" tilecount="8">
   <image source="../../RunAndGunContent/Sprites/Bosses/boss1paneldestroyed.png" trans="ff007f" width="128" height="64"/>
  </tileset>
- <tileset firstgid="62" name="capsule" tilewidth="24" tileheight="14">
+ <tileset firstgid="62" name="capsule" tilewidth="24" tileheight="14" tilecount="1">
   <image source="../../RunAndGunContent/Sprites/Enemies/capsule.png" width="24" height="14"/>
  </tileset>
- <tileset firstgid="63" name="FootSoldier" tilewidth="32" tileheight="48">
+ <tileset firstgid="63" name="FootSoldier" tilewidth="32" tileheight="48" tilecount="1">
   <image source="../../RunAndGunContent/Sprites/Enemies/EnemyFootSoldierPortrait.png" width="32" height="48"/>
+ </tileset>
+ <tileset firstgid="64" name="Cannon" tilewidth="32" tileheight="32" tilecount="1">
+  <image source="../../RunAndGunContent/Sprites/Enemies/cannonPortrait.png" width="32" height="32"/>
+ </tileset>
+ <tileset firstgid="65" name="boss1bomber" tilewidth="14" tileheight="7" tilecount="6">
+  <image source="../../RunAndGunContent/Sprites/Bosses/boss1bomber.png" width="84" height="7"/>
  </tileset>
  <layer name="Background" width="108" height="8">
   <data encoding="csv">
@@ -79,70 +85,76 @@
 31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,30,33,33,33,30,26,26,26,26,26,26,26,30,33,33,33,33,26,26,26,30,26,26,30,26,26,33,33,33,26,26,26,26,26,26,26
 </data>
  </layer>
- <objectgroup name="BackgroundObjects" width="108" height="8">
-  <object type="Sprites/Bosses/boss1backlayer" gid="52" x="3328" y="216"/>
-  <object type="Bridge" x="736" y="96" width="128" height="32"/>
-  <object type="Bridge" x="1024" y="96" width="128" height="32"/>
-  <object type="EnemySpawnLocation" x="331" y="50" width="144" height="38"/>
-  <object type="EnemySpawnLocation" x="633" y="128" width="64" height="32"/>
-  <object type="EnemySpawnLocation" x="1211" y="50" width="144" height="38"/>
-  <object type="EnemySpawnLocation" x="1467" y="14" width="288" height="38"/>
-  <object type="EnemySpawnLocation" x="1912" y="51" width="64" height="38"/>
-  <object type="EnemySpawnLocation" x="2064" y="11" width="128" height="38"/>
-  <object type="EnemySpawnLocation" x="2385" y="48" width="32" height="38"/>
-  <object type="EnemySpawnLocation" x="2483" y="78" width="32" height="38"/>
-  <object type="EnemySpawnLocation" x="2598" y="55" width="32" height="38"/>
-  <object type="EnemySpawnLocation" x="2798" y="84" width="96" height="38"/>
-  <object type="EnemySpawnLocation" x="3154" y="54" width="96" height="38"/>
+ <objectgroup name="BackgroundObjects">
+  <object id="1" type="Sprites/Bosses/boss1backlayer" gid="52" x="3328" y="216" width="128" height="192"/>
+  <object id="2" type="Bridge" x="736" y="96" width="128" height="32"/>
+  <object id="3" type="Bridge" x="1024" y="96" width="128" height="32"/>
+  <object id="4" type="EnemySpawnLocation" x="331" y="50" width="144" height="38"/>
+  <object id="5" type="EnemySpawnLocation" x="633" y="128" width="64" height="32"/>
+  <object id="6" type="EnemySpawnLocation" x="1211" y="50" width="144" height="38"/>
+  <object id="7" type="EnemySpawnLocation" x="1467" y="14" width="288" height="38"/>
+  <object id="8" type="EnemySpawnLocation" x="1912" y="51" width="64" height="38"/>
+  <object id="9" type="EnemySpawnLocation" x="2064" y="11" width="128" height="38"/>
+  <object id="10" type="EnemySpawnLocation" x="2385" y="48" width="32" height="38"/>
+  <object id="11" type="EnemySpawnLocation" x="2483" y="78" width="32" height="38"/>
+  <object id="12" type="EnemySpawnLocation" x="2598" y="55" width="32" height="38"/>
+  <object id="13" type="EnemySpawnLocation" x="2798" y="84" width="96" height="38"/>
+  <object id="14" type="EnemySpawnLocation" x="3154" y="54" width="96" height="38"/>
  </objectgroup>
- <objectgroup color="#aa55ff" name="WaitingEnemies" width="108" height="8">
-  <object type="Sniper" gid="48" x="303" y="193"/>
-  <object type="Sniper" gid="48" x="626" y="162"/>
-  <object type="Sniper" gid="48" x="3349" y="62"/>
-  <object type="Turret" gid="19" x="1216" y="160"/>
-  <object type="Turret" gid="19" x="1664" y="128"/>
-  <object type="Turret" gid="19" x="1824" y="128"/>
-  <object type="Turret" gid="19" x="3232" y="192"/>
-  <object type="Turret" gid="19" x="3104" y="192"/>
-  <object type="Level1BossPanel" gid="49" x="3352" y="179"/>
-  <object type="Capsule" gid="62" x="109" y="62">
+ <objectgroup color="#aa55ff" name="WaitingEnemies">
+  <object id="15" type="Sniper" gid="48" x="303" y="193" width="24" height="40"/>
+  <object id="16" type="Sniper" gid="48" x="626" y="162" width="24" height="40"/>
+  <object id="17" type="Sniper" gid="48" x="3354" y="62" width="24" height="40"/>
+  <object id="18" type="Turret" gid="19" x="1216" y="160" width="32" height="32"/>
+  <object id="19" type="Turret" gid="19" x="1664" y="128" width="32" height="32"/>
+  <object id="20" type="Turret" gid="19" x="1824" y="128" width="32" height="32"/>
+  <object id="21" type="Turret" gid="19" x="3232" y="192" width="32" height="32"/>
+  <object id="22" type="Turret" gid="19" x="3104" y="192" width="32" height="32"/>
+  <object id="23" type="Level1BossPanel" gid="49" x="3352" y="179" width="26" height="32"/>
+  <object id="24" type="Capsule" gid="62" x="109" y="62" width="24" height="14">
    <properties>
     <property name="ItemType" value="RapidGun"/>
    </properties>
   </object>
-  <object type="FootSoldier" gid="63" x="512" y="96"/>
-  <object type="FootSoldier" gid="63" x="761" y="95"/>
-  <object type="FootSoldier" gid="63" x="794" y="96"/>
-  <object type="FootSoldier" gid="63" x="826" y="95"/>
-  <object type="Capsule" gid="62" x="1088" y="82">
+  <object id="25" type="FootSoldier" gid="63" x="512" y="96" width="32" height="48"/>
+  <object id="26" type="FootSoldier" gid="63" x="761" y="95" width="32" height="48"/>
+  <object id="27" type="FootSoldier" gid="63" x="794" y="96" width="32" height="48"/>
+  <object id="28" type="FootSoldier" gid="63" x="826" y="95" width="32" height="48"/>
+  <object id="29" type="Capsule" gid="62" x="1088" y="82" width="24" height="14">
    <properties>
     <property name="ItemType" value="SpreadGun"/>
    </properties>
   </object>
-  <object type="Panel" gid="13" x="320" y="160">
+  <object id="30" type="Panel" gid="13" x="320" y="160" width="32" height="32">
    <properties>
     <property name="ItemType" value="MachineGun"/>
    </properties>
   </object>
-  <object type="Panel" gid="13" x="1568" y="160">
+  <object id="31" type="Panel" gid="13" x="1568" y="160" width="32" height="32">
    <properties>
     <property name="ItemType" value="MachineGun"/>
    </properties>
   </object>
-  <object type="Panel" gid="13" x="2400" y="192">
+  <object id="32" type="Panel" gid="13" x="2400" y="192" width="32" height="32">
    <properties>
     <property name="ItemType" value="SpreadGun"/>
    </properties>
   </object>
+  <object id="34" type="Cannon" gid="64" x="2048" y="164" width="32" height="32"/>
+  <object id="35" type="Cannon" gid="64" x="2176" y="68" width="32" height="32"/>
+  <object id="42" type="Level1BossBomberLeft" gid="65" x="3346" y="119" width="14" height="7"/>
+  <object id="45" type="Level1BossBomberRight" gid="68" x="3368" y="119" width="14" height="7"/>
+  <object id="52" type="Cannon" gid="64" x="2880" y="128" width="32" height="32"/>
+  <object id="53" type="Sniper" gid="48" x="2483" y="133" width="24" height="40"/>
  </objectgroup>
- <objectgroup name="ForegroundObjects" width="108" height="8">
-  <object type="Sprites/Bosses/boss1frontlayer" gid="53" x="3328" y="216"/>
+ <objectgroup name="ForegroundObjects">
+  <object id="33" type="Sprites/Bosses/boss1frontlayer" gid="53" x="3328" y="216" width="128" height="192"/>
  </objectgroup>
  <layer name="Meta" width="108" height="8">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,37,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,0,0,0,0,0,43,43,43,43,43,0,0,0,0,0,0,0,0,0,0,0,0,0,43,43,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,47,43,43,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,0,0,0,0,0,43,43,43,43,43,0,0,0,0,0,0,0,0,0,0,0,0,0,43,43,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,43,43,43,
 43,43,43,43,43,43,43,0,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,0,0,0,0,0,0,0,0,0,0,0,0,0,43,43,43,43,43,43,43,0,0,0,0,0,43,43,0,0,43,43,0,0,0,0,0,43,43,0,0,43,43,0,0,0,0,0,0,0,0,0,0,0,43,43,43,43,0,0,0,47,47,0,
 0,0,0,0,0,43,43,43,46,0,0,43,43,43,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,46,46,0,43,43,43,43,43,43,43,0,0,0,0,0,0,0,0,0,46,0,43,43,43,0,0,43,43,0,0,43,43,0,0,0,0,46,0,0,0,43,43,43,43,0,0,0,0,0,43,43,0,46,46,46,43,0,0,47,47,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,43,43,43,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,43,43,0,43,43,0,0,0,0,0,0,0,0,0,0,0,0,0,43,43,43,0,0,0,0,0,0,0,0,0,0,0,0,43,43,0,0,0,0,0,0,0,0,43,0,47,47,0,
@@ -174,5 +186,5 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup name="GameObjects" width="108" height="8"/>
+ <objectgroup name="GameObjects"/>
 </map>

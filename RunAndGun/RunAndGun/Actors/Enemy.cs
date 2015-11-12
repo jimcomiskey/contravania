@@ -18,18 +18,32 @@ namespace RunAndGun.Actors
 
         protected float EnemyMoveSpeed;
 
-        public int Health;
+        protected int _health;
 
-        public bool Active;
+        public int Health
+        {
+            get { return _health; }            
+        }
+        public void SustainDamage(CVGameTime gameTime, int damage)
+        {
+            _health -= damage;
+            if (_health <= 0)
+            {
+                Die(gameTime);
+            }
+        }
+
+        public bool Active;        
         public bool CollisionIsHazardous;
         public bool VulnerableToBullets;
         public bool BulletProof;
+        public bool IsDead;
 
         public Enemy(ContentManager content, Vector2 position, Stage stage, string enemytype)
         {
             Name = enemytype;
             Active = true;
-            Health = 1;
+            _health = 1;
             CollisionIsHazardous = true;
             VulnerableToBullets = true;
             direction = Player.PlayerDirection.Left;
@@ -52,8 +66,12 @@ namespace RunAndGun.Actors
             ApplyPhysics(gameTime);
 
             // if enemy goes off-screen or health runs out, deactivate
-            if (this.BoundingBox().Right < CurrentStage.CameraPosition.X || this.BoundingBox().Left > CurrentStage.CameraPosition.X + Game.iScreenModelWidth + (this.BoundingBox().X - this.WorldPosition.X) || Health <= 0)
+            if (this.BoundingBox().Right < CurrentStage.CameraPosition.X || this.BoundingBox().Left > CurrentStage.CameraPosition.X + Game.iScreenModelWidth + (this.BoundingBox().X - this.WorldPosition.X))
             {   Active = false;                
+            }
+            else if (_health <= 0 && !IsDead)
+            {
+                Die(gameTime);
             }
 
         }
@@ -84,6 +102,7 @@ namespace RunAndGun.Actors
         
         public override void Die(CVGameTime gameTime)
         {
+            CurrentStage.AddExplosion(this.WorldPosition, this.ExplosionAnimation, this.ExplosionSound);
             Active = false;
             // do nothing 
         }

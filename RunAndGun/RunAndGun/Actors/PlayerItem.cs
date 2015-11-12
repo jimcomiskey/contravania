@@ -15,7 +15,7 @@ namespace RunAndGun.Actors
         private Texture2D _imageTexture;
         //private SoundEffect soundDestroyed;
 
-        public Gun Gun { get; }
+        public PlayerGun Gun { get; }
 
         public PlayerItem(ContentManager content, Vector2 position, Stage stage, string itemType) : base(content, position, stage, itemType)
         {
@@ -28,15 +28,15 @@ namespace RunAndGun.Actors
             switch(itemType)
             {                
                 case "MachineGun":
-                    Gun = new Gun();
+                    Gun = new PlayerGun();
                     Gun.Initialize(content, GunType.MachineGun);
                     break;
                 case "RapidGun":
-                    Gun = new Gun();
+                    Gun = new PlayerGun();
                     Gun.GunType = GunType.Rapid;                    
                     break;
                 case "SpreadGun":
-                    Gun = new Gun();
+                    Gun = new PlayerGun();
                     Gun.Initialize(content, GunType.Spread);
                     break;
             }

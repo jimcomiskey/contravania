@@ -16,7 +16,7 @@ namespace RunAndGun
     /// A set of helpful methods for working with rectangles.
     /// </summary>
     public static class RectangleExtensions
-    {
+    {   
         /// <summary>
         /// Calculates the signed depth of intersection between two rectangles.
         /// </summary>

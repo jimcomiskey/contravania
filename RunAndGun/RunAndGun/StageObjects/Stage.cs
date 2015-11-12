@@ -31,7 +31,11 @@ namespace RunAndGun
         //    get { return tmx; }
         //}
         public List<StageTile> StageTiles = new List<StageTile>();
-        private List<Texture2D> _tilesource = new List<Texture2D>();
+        private List<Texture2D> _backgroundTileSource = new List<Texture2D>();
+
+        private Texture2D _destroyedTileSource;
+        private int _destroyedTileSourceBaseGID;
+
         private int _tileSourceCurrentFrame = 0;
         private int _elapsedTime;
         private int _frameTime = 180;
@@ -138,15 +142,17 @@ namespace RunAndGun
 
             if (game.CurrentGame == Game.GameType.Contra)
             {
-                _tilesource.Add(worldcontent.Load<Texture2D>("StageData/Level1Tileset"));
-                _tilesource.Add(worldcontent.Load<Texture2D>("StageData/Level1TilesetALT"));
+                _backgroundTileSource.Add(worldcontent.Load<Texture2D>("StageData/Level1Tileset"));
+                _backgroundTileSource.Add(worldcontent.Load<Texture2D>("StageData/Level1TilesetALT"));
+                _destroyedTileSource = worldcontent.Load<Texture2D>("StageData/boss1paneldestroyed");
+                
                 //explosionTexture = content.Load<Texture2D>("Sprites/Explosion1");
                 //explosionSound = content.Load<SoundEffect>("Sounds/Explosion1");
                 _redalertSound = game.Content.Load<SoundEffect>("Sounds/redalert");
 
                 _gameplayMusic = worldcontent.Load<Song>("Music/Contra - Jungle Theme");
                 _fanfare = worldcontent.Load<Song>("Music/fanfare");
-
+                
                 PlayMusic();
 
                 string tmxFile = appDirectory + "\\LevelMaps\\" + stageid + ".tmx";
@@ -155,6 +161,7 @@ namespace RunAndGun
                 {
                     Trace.TraceInformation("Tmx file located: {0}", tmxFile);
                     tmx = new TiledSharp.TmxMap(tmxFile);
+                    _destroyedTileSourceBaseGID = tmx.Tilesets["boss1paneldestroyed"].FirstGid;
                     Trace.TraceInformation("Tmx file loaded.");
                 }
                 else
@@ -173,7 +180,7 @@ namespace RunAndGun
                         {
                             _gameplayMusic = worldcontent.Load<Song>("Music/Level1VampireKiller");
                             PlayMusic();
-                            _tilesource.Add(worldcontent.Load<Texture2D>("StageData/Level1A"));
+                            _backgroundTileSource.Add(worldcontent.Load<Texture2D>("StageData/Level1A"));
                             tmx = new TiledSharp.TmxMap(appDirectory + "\\LevelMaps\\" + stageid + ".tmx");
                             
                             _screenTileWidth = 16;
@@ -186,7 +193,7 @@ namespace RunAndGun
                         }
                     case "Castlevania1-1-2":
                         {
-                            _tilesource.Add(worldcontent.Load<Texture2D>("StageData/Level1B"));
+                            _backgroundTileSource.Add(worldcontent.Load<Texture2D>("StageData/Level1B"));
                             tmx = new TiledSharp.TmxMap(appDirectory + "\\LevelMaps\\" + stageid + ".tmx");
                             _screenTileWidth = 16;
                             break;
@@ -198,14 +205,16 @@ namespace RunAndGun
                 }
             }
 
+            
+
             // Initialize StageTiles
             InitializeStageTiles(tmx);
 
             if (game.CurrentGame == Game.GameType.Contra)
             {
                 InitializeWaitingEnemies(worldcontent, tmx);
-                InitializeSpecialStageObjects(worldcontent, tmx, tmx.ObjectGroups[SpecialStageBackgroundObjectsGroupName].Objects);
-                InitializeSpecialStageObjects(worldcontent, tmx, tmx.ObjectGroups[SpecialStageForegroundObjectsGroupName].Objects);                
+                InitializeSpecialStageObjects(worldcontent, uniqueBackgroundObjects, tmx, tmx.ObjectGroups[SpecialStageBackgroundObjectsGroupName].Objects);
+                InitializeSpecialStageObjects(worldcontent, uniqueForegroundObjects, tmx, tmx.ObjectGroups[SpecialStageForegroundObjectsGroupName].Objects);                
             }
 
             // Set the time keepers to zero
@@ -223,6 +232,8 @@ namespace RunAndGun
             MapHeight = tmx.Height;
             MapWidth = tmx.Width;
 
+            
+
             for (int i = 0; i < tmx.Layers[0].Tiles.Count; i++)            
             {
                 StageTile st = new StageTile();
@@ -232,10 +243,11 @@ namespace RunAndGun
                 if (Game.CurrentGame == Game.GameType.Contra)
                 {
                     st.DestructionLayer1GID = tmx.Layers["Destruction1"].Tiles[i].Gid;
-                    st.DestructionLayer1GID = tmx.Layers["Destruction2"].Tiles[i].Gid;
+                    //st.DestructionLayer1GID = tmx.Layers["Destruction2"].Tiles[i].Gid;
                 }
                 
                 st.MetaGID = tmx.Layers["Meta"].Tiles[i].Gid;
+                st.Status = StageTile.TileStatus.Active;
                 
                 TiledSharp.TmxTilesetTile t = tmx.GetTmxTilesetTileByGID(tmx.Layers["Meta"].Tiles[i].Gid);
 
@@ -309,6 +321,8 @@ namespace RunAndGun
                 {
                     fObjectHeight = (float)tmx.Tilesets[i].TileHeight;
                     if (gid > tmx.Tilesets[i].FirstGid)
+                        continue;
+                    if (gid <= tmx.Tilesets[i].FirstGid)
                         break;
                 }
 
@@ -334,6 +348,13 @@ namespace RunAndGun
                     case "Capsule":
                         e = new Actors.Capsule(content, enemyLocation, this, tmxObject.Properties["ItemType"]);
                         break;
+                    case "Cannon":
+                        e = new Actors.Cannon(content, enemyLocation, this, tmxObject.Type);
+                        break;
+                    case "Level1BossBomberLeft":
+                    case "Level1BossBomberRight":
+                        e = new Actors.Level1BossBomber(content, enemyLocation, this, tmxObject.Type);
+                        break;
                     default:
                         throw new Exception("Unexpected enemy type encountered: " + tmxObject.Type);
                 }
@@ -342,7 +363,7 @@ namespace RunAndGun
             }
         }
 
-        private void InitializeSpecialStageObjects(ContentManager content, TiledSharp.TmxMap tmx, TiledSharp.TmxList<TiledSharp.TmxObjectGroup.TmxObject> objectgroup)
+        private void InitializeSpecialStageObjects(ContentManager content, List<StageObject> stageObjects, TiledSharp.TmxMap tmx, TiledSharp.TmxList<TiledSharp.TmxObjectGroup.TmxObject> objectgroup)
         {
             // Initialize Special Background Objects
             foreach (TiledSharp.TmxObjectGroup.TmxObject tmxObject in objectgroup)
@@ -381,9 +402,11 @@ namespace RunAndGun
                         int gid = tmxObject.Tile.Gid;
                         for (int i = 0; i < StageTiles.Count; i++)
                         {
-                            fObjectHeight = (float)tmx.Tilesets[i].TileHeight;
-                            if (gid <= tmx.Tilesets[i].FirstGid)
+                            if (gid < tmx.Tilesets[i].FirstGid)
                                 break;
+
+                            fObjectHeight = (float)tmx.Tilesets[i].TileHeight;
+                            
                         }
 
                         s = new StageObject();
@@ -392,7 +415,7 @@ namespace RunAndGun
                 }
 
                 //e.Initialize(content, new Vector2((float)tmxObject.X, (float)tmxObject.Y), this, "Sniper");
-                uniqueBackgroundObjects.Add(s);
+                stageObjects.Add(s);
             }
         }
 
@@ -674,26 +697,47 @@ namespace RunAndGun
         {
             //Debug.WriteLine("Stage Draw");
 
-            for (int i = 0; i < StageTiles.Count; i++ )
+            for (int i = 0; i < StageTiles.Count; i++)
             {
-                StageTile t = StageTiles[i];                
+                StageTile t = StageTiles[i];
 
                 if (t.X >= ((int)cameraPosition.X / TileWidth) && (t.X <= ((int)cameraPosition.X / TileWidth) + _screenTileWidth))
                 {
-                    int x = (((int)(t.BackgroundGID) - 1) * TileWidth) % _tilesource[0].Width;
-                    int y = ((((int)(t.BackgroundGID) - 1) * TileWidth) / _tilesource[0].Width) * TileHeight;
+                    int x, y;
 
-                    spriteBatch.Draw(_tilesource[_tileSourceCurrentFrame], new Rectangle((t.X * TileWidth) - (int) cameraPosition.X, t.Y * TileHeight, TileHeight, TileWidth), new Rectangle(x, y, TileWidth, TileHeight), Color.White);
-
+                    if (t.Status == StageTile.TileStatus.Active || t.DestructionLayer1GID == 0)
+                    {
+                        x = (((int)(t.BackgroundGID) - 1) * TileWidth) % _backgroundTileSource[0].Width;
+                        y = ((((int)(t.BackgroundGID) - 1) * TileWidth) / _backgroundTileSource[0].Width) * TileHeight;
+                        spriteBatch.Draw(_backgroundTileSource[_tileSourceCurrentFrame], new Rectangle((t.X * TileWidth) - (int)cameraPosition.X, t.Y * TileHeight, TileHeight, TileWidth), new Rectangle(x, y, TileWidth, TileHeight), Color.White);
+                    }                    
 
                 }
+
             }
 
-            foreach(StageObject s in uniqueBackgroundObjects)
+            foreach (StageObject s in uniqueBackgroundObjects)
             {
-                if (s.VisibleRectangle().Intersects(this.ScreenCoordinates())) 
+                if (s.VisibleRectangle().Intersects(this.ScreenCoordinates()))
                     s.Draw(spriteBatch);
             }
+
+            for (int i = 0; i < StageTiles.Count; i++)
+            {
+                StageTile t = StageTiles[i];
+
+                if (t.X >= ((int)cameraPosition.X / TileWidth) && (t.X <= ((int)cameraPosition.X / TileWidth) + _screenTileWidth))
+                {
+                    int x, y;
+
+                    if (t.Status == StageTile.TileStatus.Destroyed)
+                    {
+                        x = (((int)(t.DestructionLayer1GID) - _destroyedTileSourceBaseGID) * TileWidth) % _destroyedTileSource.Width;
+                        y = ((((int)(t.DestructionLayer1GID) - _destroyedTileSourceBaseGID) * TileWidth) / _destroyedTileSource.Width) * TileHeight;
+                        spriteBatch.Draw(_destroyedTileSource, new Rectangle((t.X * TileWidth) - (int)cameraPosition.X, t.Y * TileHeight, TileHeight, TileWidth), new Rectangle(x, y, TileWidth, TileHeight), Color.White);
+                    }
+                }
+            }       
 
             for (int i = 0; i < ActiveEnemies.Count; i++)
                 ActiveEnemies[i].Draw(spriteBatch);
@@ -703,8 +747,7 @@ namespace RunAndGun
                 if (s.VisibleRectangle().Intersects(this.ScreenCoordinates()))
                     s.Draw(spriteBatch);
             }
-
-
+            
             // Draw the explosions
             for (int i = 0; i < _explosions.Count; i++)
             {
@@ -722,7 +765,7 @@ namespace RunAndGun
             {
                 _tileSourceCurrentFrame++;
                 _elapsedTime = 0;
-                if (_tileSourceCurrentFrame == _tilesource.Count)
+                if (_tileSourceCurrentFrame == _backgroundTileSource.Count)
                     _tileSourceCurrentFrame = 0;
             }
 
@@ -734,7 +777,7 @@ namespace RunAndGun
                 
                 UpdateEnemies(gameTime);
 
-                if (_explosions.Count == 0 && ActiveEnemies.Count == 0 && _explosionsounds.Count == 0)
+                if (_explosions.Count == 0 && ActiveEnemies.Where(e => !e.IsDead).Count() == 0 && _explosionsounds.Count == 0)
                 {
                     if (momentOfSilence > 0.0f)
                     {
@@ -797,47 +840,53 @@ namespace RunAndGun
                 rectangle1 = new Rectangle((int)Projectiles[i].WorldPosition.X -
                     Projectiles[i].Width() / 2, (int)Projectiles[i].WorldPosition.Y -
                     Projectiles[i].Height() / 2, Projectiles[i].Width(), Projectiles[i].Height());
-                foreach (var enemy in ActiveEnemies.Where(e => e.VulnerableToBullets))
-                //for (int j = 0; j < ActiveEnemies.Count; j++)
+                //foreach (var enemy in ActiveEnemies.ToList()) // .Where(e => e.VulnerableToBullets))
+                for (int j = ActiveEnemies.Count - 1; j >= 0;  j--)
                 {
-
-                    // Create the rectangles we need to determine if we collided with each other
-                    rectangle2 = enemy.BoundingBox();
-
-                    // Determine if the two objects collided with each other
-                    if (rectangle1.Intersects(rectangle2))
+                    Enemy enemy = ActiveEnemies[j];
+                    if (enemy.VulnerableToBullets)
                     {
-                        if (!enemy.BulletProof)
+                        // Create the rectangles we need to determine if we collided with each other
+                        rectangle2 = enemy.BoundingBox();
+
+                        // Determine if the two objects collided with each other
+                        if (rectangle1.Intersects(rectangle2))
                         {
-                            enemy.Health -= Projectiles[i].Damage;
-                            if (enemy.Health > 0)
-                                Projectiles[i].PlayHitSound();
+                            if (!enemy.BulletProof)
+                            {
+                                enemy.SustainDamage(gameTime, Projectiles[i].Damage);
+                                if (enemy.Health > 0)
+                                    Projectiles[i].PlayHitSound();
+                            }
+                            Projectiles[i].Active = false;
                         }
-                        Projectiles[i].Active = false;
                     }
                 }
             }
 
             // player Collision: enemies, portals
-            foreach (Player player in players.Where(p => p.IsVulnerable()))
+            foreach (Player player in players)
             {
-                //playerBoundingBox = player.BoundingBox();
                 playerBoundingBox = player.HurtBox();
-                for (int i = 0; i < EnemyProjectiles.Count; i++)
-                {
-                    rectangle1 = new Rectangle((int)EnemyProjectiles[i].WorldPosition.X -
-                        EnemyProjectiles[i].Width() / 2, (int)EnemyProjectiles[i].WorldPosition.Y -
-                        EnemyProjectiles[i].Height() / 2, EnemyProjectiles[i].Width(), EnemyProjectiles[i].Height());
-                    if (rectangle1.Intersects(playerBoundingBox))
+                //playerBoundingBox = player.BoundingBox();
+                if (player.IsVulnerable())
+                    {                    
+                    for (int i = 0; i < EnemyProjectiles.Count; i++)
                     {
-                        player.Die(gameTime);
-                        EnemyProjectiles[i].Active = false;
+                        rectangle1 = new Rectangle((int)EnemyProjectiles[i].WorldPosition.X -
+                            EnemyProjectiles[i].Width() / 2, (int)EnemyProjectiles[i].WorldPosition.Y -
+                            EnemyProjectiles[i].Height() / 2, EnemyProjectiles[i].Width(), EnemyProjectiles[i].Height());
+                        if (rectangle1.Intersects(playerBoundingBox))
+                        {
+                            player.Die(gameTime);
+                            EnemyProjectiles[i].Active = false;
+                        }
                     }
                 }
 
                 for (int i = 0; i < ActiveEnemies.Count; i++)
                 {
-                    if (ActiveEnemies[i].CollisionIsHazardous || ActiveEnemies[i].GetType() == typeof(PlayerItem))
+                    if ((ActiveEnemies[i].CollisionIsHazardous && player.IsVulnerable()) || ActiveEnemies[i].GetType() == typeof(PlayerItem))
                     {
                         rectangle1 = ActiveEnemies[i].BoundingBox();
 
@@ -898,15 +947,26 @@ namespace RunAndGun
                     break;
             }            
         }
+        public void AddExplosion(Vector2 position, Animation explosion, SoundEffect explosionSound, int delayStart)
+        {
+            explosion.DelayStart = delayStart;
+            AddExplosion(position, explosion, explosionSound);
+        }
         public void AddExplosion(Vector2 position, Animation explosion, SoundEffect explosionSound)
-        {   
+        {
             //explosion.Initialize(explosionTexture, position, 36, 36, 3, 150, Color.White, 1f, false, false, this);
-            explosion.WorldPosition = position;
-            _explosions.Add(explosion);
+            if (explosion != null)
+            {
+                explosion.WorldPosition = position;
+                _explosions.Add(explosion);
+            }
 
-            SoundEffectInstance e = explosionSound.CreateInstance();
-            e.Play();
-            _explosionsounds.Add(e);            
+            if (explosionSound != null)
+            {
+                SoundEffectInstance e = explosionSound.CreateInstance();
+                e.Play();
+                _explosionsounds.Add(e);
+            }
         }
         public void SpawnEnemies(CVGameTime gameTime)
         {
@@ -972,18 +1032,18 @@ namespace RunAndGun
                 if (ActiveEnemies[i].Active == false)
                 {
                     // If not active and health <= 0
-                    if (ActiveEnemies[i].Health <= 0)
-                    {
-                        // Add an explosion
-                        AddExplosion(ActiveEnemies[i].WorldPosition, ActiveEnemies[i].ExplosionAnimation, ActiveEnemies[i].ExplosionSound);
-                        ActiveEnemies[i].Die(gameTime);
+                    //if (ActiveEnemies[i].Health <= 0 && !ActiveEnemies[i].IsDead)
+                    //{
+                    //    // Add an explosion
+                    //    AddExplosion(ActiveEnemies[i].WorldPosition, ActiveEnemies[i].ExplosionAnimation, ActiveEnemies[i].ExplosionSound);
+                    //    ActiveEnemies[i].Die(gameTime);
 
-                        // Play the explosion sound
+                    //    // Play the explosion sound
                         
 
-                        //Add to the player's score
-                        //score += enemies[i].Value;
-                    }
+                    //    //Add to the player's score
+                    //    //score += enemies[i].Value;
+                    //}
                     ActiveEnemies.RemoveAt(i);                    
                 }
             }
@@ -1018,11 +1078,16 @@ namespace RunAndGun
         }
 
         
-        public void StartComplete()
+        public void StartComplete(CVGameTime gameTime, Enemy boss)
         {
             // destroy all enemies on screen
             for (int i = 0; i < this.ActiveEnemies.Count; i++)
-                this.ActiveEnemies[i].Active = false;
+            {
+                if (boss != this.ActiveEnemies[i])
+                {
+                    this.ActiveEnemies[i].Die(gameTime);
+                }
+            }
 
             MediaPlayer.Stop();
 

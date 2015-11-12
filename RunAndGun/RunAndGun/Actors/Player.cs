@@ -24,7 +24,7 @@ namespace RunAndGun.Actors
 
         public enum PlayerDirection { Left = -1, Right = 1};
         public PlayerDirection playerDirection;
-        public Gun Gun;
+        public PlayerGun Gun;
         public enum GunDirection { StraightUp, High, Low, Neutral, StraightDown };
         public GunDirection gunDirection;
 
@@ -130,7 +130,7 @@ namespace RunAndGun.Actors
             // X, Y - Y velocity is 0.0 by default, and increases/decreases depending on if player is jumping or falling.
             Velocity = new Vector2(0.0f, 0.0f);
 
-            Gun = new Gun();
+            Gun = new PlayerGun();
             Gun.Initialize(game.Content, GunType.Standard);
 
             _USBGamePadId = Guid.Empty;
@@ -1097,21 +1097,24 @@ namespace RunAndGun.Actors
         {
             Vector2 position = this.WorldPosition + offset;
 
-            int iFootWidth = 8;
+            int iFootWidth;
             int iSpriteOffsetTop;
             int iSpriteOffsetBottom;
             if (_isProne)
             {
+                iFootWidth = 20;
                 iSpriteOffsetTop = 27;
                 iSpriteOffsetBottom = 35;
             }
             else
             {
+                iFootWidth = 8;
                 iSpriteOffsetTop = 6;
                 iSpriteOffsetBottom = 14;
             }
             int iSpriteOffsetX = 0;
 
+            
             if (playerDirection == PlayerDirection.Right)
                 iSpriteOffsetX = 11;
             else
@@ -1235,11 +1238,11 @@ namespace RunAndGun.Actors
             // player loses special gun if they die.
             if (Gun.GunType != GunType.Standard)
             {
-                Gun = new Gun();
+                Gun = new PlayerGun();
                 Gun.Initialize(_game.Content, GunType.Standard);
             }
         }
-        private void FireGun(Vector2 position, Gun gun)
+        private void FireGun(Vector2 position, PlayerGun gun)
         {
             
             float fHorizontalOffset = 0.0f;

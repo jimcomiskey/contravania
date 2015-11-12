@@ -23,7 +23,7 @@ namespace RunAndGun
 
         public enum TileCollisionType { None, Impassable, Platform, PlatformHalfDrop, PlatformWater, StairsLeft, StairsRight, StairsBottomRight, StairsBottomLeft }
         public TileCollisionType CollisionType = TileCollisionType.None;
-
+        
         public bool IsImpassable()
         {
             if (CollisionType == TileCollisionType.Impassable)

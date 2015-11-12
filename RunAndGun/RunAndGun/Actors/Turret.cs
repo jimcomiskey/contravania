@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
 using RunAndGun.GameObjects;
 using RunAndGun.Animations;
+using RunAndGun.Helpers;
 
 namespace RunAndGun.Actors
 {
@@ -28,6 +29,8 @@ namespace RunAndGun.Actors
         private int _elapsedTime;
         private bool _animatingforward;
         private int _currentFrame;
+
+        private EnemyGun _gun;
         
 
         List<PlayerSpriteCollection> spritecollectionlist;
@@ -45,11 +48,11 @@ namespace RunAndGun.Actors
             turrettileset = content.Load<Texture2D>("Sprites/Enemies/Turret");
 
             spritecollection = new PlayerSpriteCollection();
-            spritecollection.Initialize(SwapColor(turrettileset, new Color(192, 32, 0), new Color(184, 28, 12)), position, 12, Color.White, 1f);
+            spritecollection.Initialize(TextureHelper.SwapColor(turrettileset, new Color(192, 32, 0), new Color(184, 28, 12)), position, 12, Color.White, 1f);
             spritecollectionlist.Add(spritecollection);
 
             spritecollection = new PlayerSpriteCollection();
-            spritecollection.Initialize(SwapColor(turrettileset, new Color(192, 32, 0), new Color(228, 68, 52)), position, 12, Color.White, 1f);
+            spritecollection.Initialize(TextureHelper.SwapColor(turrettileset, new Color(192, 32, 0), new Color(228, 68, 52)), position, 12, Color.White, 1f);
             spritecollectionlist.Add(spritecollection);            
 
             spritecollection = new PlayerSpriteCollection();
@@ -58,7 +61,7 @@ namespace RunAndGun.Actors
             
             CollisionIsHazardous = false;
 
-            Health = 15;
+            _health = 15;
             _currentPosition = 3;
             TimeTargetLocked = 0.0f;
             _elapsedTime = 0;
@@ -75,29 +78,11 @@ namespace RunAndGun.Actors
             ExplosionAnimation.Initialize(content.Load<Texture2D>("Sprites/Explosion2"), WorldPosition, 5, 150, Color.White, 1f, false, this.CurrentStage);
             ExplosionSound = content.Load<SoundEffect>("Sounds/Explosion2");
 
+            _gun = new EnemyGun(this, projectileTexture);
+
         }
 
-        private Texture2D SwapColor(Texture2D thisTexture, Color searchColor, Color replaceColor)
-        {
-            Texture2D newTexture = new Texture2D(thisTexture.GraphicsDevice, thisTexture.Width, thisTexture.Height);
-
-            Color[] data = new Color[thisTexture.Width * thisTexture.Height];
-            thisTexture.GetData(data);
-
-            for (int i = 0; i < data.Length; i++)
-            {
-                if (data[i].Equals(searchColor))
-                {
-                    data[i].A = replaceColor.A;
-                    data[i].R = replaceColor.R;
-                    data[i].G = replaceColor.G;
-                    data[i].B = replaceColor.B;
-                }
-            }
-            newTexture.SetData(data);
-            return newTexture;
-            
-        }
+        
 
         public override Rectangle BoundingBox(Vector2 proposedPosition)
         {
@@ -121,24 +106,11 @@ namespace RunAndGun.Actors
 
             float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             TimeSinceLastMove += elapsedTime;
-    
+
             // do nothing 
-            Player nearestPlayer = null;
-            foreach (Player player in CurrentStage.Players)
-            {
-                if (nearestPlayer == null)
-                    nearestPlayer = player;
-                else if ((this.WorldPosition - nearestPlayer.WorldPosition).Length() > (this.WorldPosition - player.WorldPosition).Length())
-                    // TODO: test and see if this actually works!
-                    nearestPlayer = player;
-            }
-
-            double d = Math.Atan2(nearestPlayer.WorldPosition.X - this.WorldPosition.X, -(nearestPlayer.WorldPosition.Y - this.WorldPosition.Y));
-            AngleBetweenTurretAndPlayer = MathHelper.ToDegrees((float)d);
-            if (AngleBetweenTurretAndPlayer < 0)
-                AngleBetweenTurretAndPlayer = 360 + AngleBetweenTurretAndPlayer;
-
-            AngleBetweenTurretAndPlayer = (float)Math.Round(AngleBetweenTurretAndPlayer / 30);
+            Player nearestPlayer = (Player) TargetingLogic.FindNearest(this.WorldPosition, CurrentStage.Players); 
+            
+            AngleBetweenTurretAndPlayer = TargetingLogic.FindClockPosition(this.WorldPosition, nearestPlayer.BoundingBox().Center.ToVector());
 
             if (AngleBetweenTurretAndPlayer != _currentPosition)
             {
@@ -174,7 +146,7 @@ namespace RunAndGun.Actors
                 if (TimeTargetLocked > TurretFireDelay)
                 {
                     TimeTargetLocked = 0.0f;
-                    AddProjectile(this.WorldPosition);
+                    _gun.AddProjectile(this.CurrentStage, GunBarrelLocation(), _currentPosition * 30, 2f);
                 }
             }
             
@@ -185,26 +157,43 @@ namespace RunAndGun.Actors
 
         }
 
-        private void AddProjectile(Vector2 position)
-        {
-            Projectile projectile = new Projectile();
-            Vector2 gunBarrelLocation;
-
-            float fHorizontalOffset = 0.0f;
-            float fVerticalOffset = 0.0f;
-
-            gunBarrelLocation = new Vector2(position.X + fHorizontalOffset, position.Y + fVerticalOffset);
-
-            Rectangle bb = this.BoundingBox();
-
-            Vector2 initPosition = new Vector2(bb.Center.X, bb.Center.Y);
-
-            var projectileAnimation = new Animation();
-            projectileAnimation.Initialize(projectileTexture, initPosition, 1, 0, Color.White, 1f, true, CurrentStage);            
-            projectile.Initialize(projectileAnimation, null, initPosition, _currentPosition * 30, CurrentStage, 2f);
-            CurrentStage.EnemyProjectiles.Add(projectile);
+        private Vector2 GunBarrelLocation()
+        {            
+            return this.BoundingBox().Center.ToVector() + GunBarrelLocationOffset(_currentPosition);
         }
-        
+        private Vector2 GunBarrelLocationOffset(int position)
+        {
+            switch (_currentPosition)
+            {
+                case 0:
+                    return new Vector2(-2, -16);
+                case 1:
+                    return new Vector2(6, -16);
+                case 2:
+                    return new Vector2(13, -10);
+                case 3:
+                    return new Vector2(14, -2);
+                case 4:
+                    return new Vector2(13, 6);
+                case 5:
+                    return new Vector2(6, 12);
+                case 6:
+                    return new Vector2(-2, 12);
+                case 7:
+                    return new Vector2(-9, 12);
+                case 8:
+                    return new Vector2(-15, 7);
+                case 9:
+                    return new Vector2(-17, -2);
+                case 10:
+                    return new Vector2(-15, -10);
+                case 11:
+                    return new Vector2(-9, -16);
+                default:
+                    return new Vector2(0, 0);
+            }
+        }
+
         public override void ApplyPhysics(CVGameTime gameTime)
         {
             // do nothing- Turret is fixed to the Stage.

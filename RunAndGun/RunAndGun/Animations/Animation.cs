@@ -14,6 +14,9 @@ namespace RunAndGun.Animations
         // The image representing the collection of images used for animation
         Texture2D spriteStrip;
 
+        private int _delayStart;
+        public int DelayStart { get { return _delayStart; } set { _delayStart = value; } }                
+
         // The scale used to display the sprite strip
         float scale;
 
@@ -54,7 +57,6 @@ namespace RunAndGun.Animations
         public bool Looping;
         public bool Loopingbackandforth;
         private bool _animatingforward;
-
         
         public Vector2 WorldPosition;
         public Stage currentStage;
@@ -80,6 +82,17 @@ namespace RunAndGun.Animations
             currentFrame = 0;
             this.frameTime = frametime;
         }
+        public void Initialize(Texture2D texture, Vector2 position,
+            int frameWidth, int frameHeight, int frameCount,
+            int frametime, Color color, float scale, bool looping, bool loopingbackandforth,
+            Stage stage, int delayStart)
+        {
+            _delayStart = delayStart;
+            Initialize(texture, position, frameWidth, frameHeight, frameCount,
+            frametime, color, scale, looping, loopingbackandforth,
+            stage);
+        }
+
         public void Initialize(Texture2D texture, Vector2 position,
             int frameWidth, int frameHeight, int frameCount,
             int frametime, Color color, float scale, bool looping, bool loopingbackandforth, 
@@ -109,6 +122,34 @@ namespace RunAndGun.Animations
             Active = true;
         }
 
+        public Animation CreateCopy()
+        {
+            var a = new Animation();
+            a.Active = true;
+            a.color = color;
+            a.currentFrame = currentFrame;
+            a.currentStage = currentStage;
+            a.destinationRect = destinationRect;
+            a.elapsedTime = elapsedTime;
+            a.frameCount = frameCount;
+            a.frameTime = frameTime;
+            a.Looping = Looping;
+            a.Loopingbackandforth = Loopingbackandforth;
+            a.scale = scale;
+            a.spriteStrip = spriteStrip;
+            a.sourceRect = sourceRect;
+            a.WorldPosition = WorldPosition;
+            a._animatingforward = _animatingforward;
+            a._delayStart = _delayStart;
+
+            return a;
+        }
+
+        public void Play(int delayStart)
+        {
+            _delayStart = delayStart;
+            Play();
+        }
         public void Play()
         {
             elapsedTime = 0;
@@ -118,67 +159,75 @@ namespace RunAndGun.Animations
 
         public virtual void Update(CVGameTime gameTime)
         {
-            
-            // Update the elapsed time
-            elapsedTime += (int)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-
-            // If the elapsed time is larger than the frame time
-            // we need to switch frames
-            if (elapsedTime > frameTime)
+            if (Active)
             {
-                // Move to the next frame
-                if (_animatingforward)
+                if (_delayStart > 0)
                 {
-                    currentFrame++;
-                    // If the currentFrame is equal to frameCount reset currentFrame to zero
-                    if (currentFrame == frameCount)
-                    {
-                        if (Loopingbackandforth)
-                        {
-                            currentFrame = frameCount - 1;
-                            _animatingforward = false;
-                        }
-                        else
-                            currentFrame = 0;
-
-                        // If we are not looping deactivate the animation
-                        if (Looping == false)
-                            Active = false;
-                    }
+                    _delayStart -= (int)gameTime.ElapsedGameTime.TotalMilliseconds;
                 }
                 else
                 {
-                    currentFrame--;
-                    if (currentFrame == 0)
+                    // Update the elapsed time
+                    elapsedTime += (int)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+
+                    // If the elapsed time is larger than the frame time
+                    // we need to switch frames
+                    if (elapsedTime > frameTime)
                     {
+                        // Move to the next frame
+                        if (_animatingforward)
+                        {
+                            currentFrame++;
+                            // If the currentFrame is equal to frameCount reset currentFrame to zero
+                            if (currentFrame == frameCount)
+                            {
+                                if (Loopingbackandforth)
+                                {
+                                    currentFrame = frameCount - 1;
+                                    _animatingforward = false;
+                                }
+                                else
+                                    currentFrame = 0;
 
-                        if (Loopingbackandforth)
-                            _animatingforward = true;
-                        
-                        currentFrame = 0;
+                                // If we are not looping deactivate the animation
+                                if (Looping == false)
+                                    Active = false;
+                            }
+                        }
+                        else
+                        {
+                            currentFrame--;
+                            if (currentFrame == 0)
+                            {
 
-                        // If we are not looping deactivate the animation
-                        if (Looping == false)
-                            Active = false;
+                                if (Loopingbackandforth)
+                                    _animatingforward = true;
+
+                                currentFrame = 0;
+
+                                // If we are not looping deactivate the animation
+                                if (Looping == false)
+                                    Active = false;
+                            }
+                        }
+
+                        // Reset the elapsed time to zero
+                        elapsedTime = 0;
                     }
+                    // Grab the correct frame in the image strip by multiplying the currentFrame index by the frame width
+                    sourceRect = new Rectangle(currentFrame * FrameWidth, 0, FrameWidth, FrameHeight);
+
+
+                    // Grab the correct frame in the image strip by multiplying the currentFrame index by the frame width
+                    //destinationRect = new Rectangle((int)Position.X - (int)(FrameWidth * scale) / 2,
+                    //(int)Position.Y - (int)(FrameHeight * scale) / 2,
+                    //(int)(FrameWidth * scale),
+                    //(int)(FrameHeight * scale));
+                    destinationRect = new Rectangle((int)ScreenPosition().X, (int)ScreenPosition().Y, FrameWidth, FrameHeight);
                 }
-
-                // Reset the elapsed time to zero
-                elapsedTime = 0;
             }
-
-
-            // Grab the correct frame in the image strip by multiplying the currentFrame index by the frame width
-            sourceRect = new Rectangle(currentFrame * FrameWidth, 0, FrameWidth, FrameHeight);
-
-
-            // Grab the correct frame in the image strip by multiplying the currentFrame index by the frame width
-            //destinationRect = new Rectangle((int)Position.X - (int)(FrameWidth * scale) / 2,
-            //(int)Position.Y - (int)(FrameHeight * scale) / 2,
-            //(int)(FrameWidth * scale),
-            //(int)(FrameHeight * scale));
-            destinationRect = new Rectangle((int)ScreenPosition().X, (int)ScreenPosition().Y, FrameWidth, FrameHeight);
+            
         }
 
 
@@ -189,17 +238,20 @@ namespace RunAndGun.Animations
         }
         public virtual void Draw(SpriteBatch spriteBatch, Player.PlayerDirection dir, float depth, Vector2 offset)
         {
-            var drawRect = new Rectangle((int)(destinationRect.X + offset.X), (int)(destinationRect.Y + offset.Y), destinationRect.Width, destinationRect.Height);
-            // Only draw the animation when we are active
             if (Active)
             {
-                if (dir == Player.PlayerDirection.Left)
+                if (_delayStart <= 0)
                 {
-                    spriteBatch.Draw(spriteStrip, drawRect, sourceRect, color, 0, Vector2.Zero, SpriteEffects.FlipHorizontally, depth);                    
-                }
-                else
-                {   
-                    spriteBatch.Draw(spriteStrip, drawRect, sourceRect, color, 0, Vector2.Zero, SpriteEffects.None, depth);
+                    var drawRect = new Rectangle((int)(destinationRect.X + offset.X), (int)(destinationRect.Y + offset.Y), destinationRect.Width, destinationRect.Height);
+                    // Only draw the animation when we are active
+                    if (dir == Player.PlayerDirection.Left)
+                    {
+                        spriteBatch.Draw(spriteStrip, drawRect, sourceRect, color, 0, Vector2.Zero, SpriteEffects.FlipHorizontally, depth);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(spriteStrip, drawRect, sourceRect, color, 0, Vector2.Zero, SpriteEffects.None, depth);
+                    }                    
                 }
             }
         }
