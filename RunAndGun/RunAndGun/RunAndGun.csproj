@@ -45,7 +45,7 @@
     <PublisherName>Jim Comiskey</PublisherName>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>36</ApplicationRevision>
+    <ApplicationRevision>58</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -79,10 +79,10 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>2EDBB0AF6AD831FFCC2B50CAB5BA60A40138F8EF</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>8F293D75152B8A2E908CBA33BD4B9879C5873781</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>RunAndGun_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>ContravaniaSignature.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -196,6 +196,7 @@
     <Compile Include="GameObjects\TargetingLogic.cs" />
     <Compile Include="Helpers\PointHelper.cs" />
     <Compile Include="Helpers\TextureHelper.cs" />
+    <Compile Include="StageObjects\ContraLevel1String.cs" />
     <Compile Include="StageObjects\Platform.cs" />
     <Compile Include="GameObjects\Projectile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -252,16 +253,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="LevelMaps\Castlevania1-1-1.tmx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="LevelMaps\Castlevania1-1-2.tmx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="LevelMaps\Contra1-1Jungle.tmx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <None Include="app.config" />
     <None Include="App.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>App.Designer.cs</LastGenOutput>
@@ -271,12 +262,28 @@
     <None Include="Properties\app.manifest" />
     <None Include="RunAndGun_TemporaryKey.pfx" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="LevelMaps\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
+    <PublishOnlyDependsOn>
+      SetGenerateManifests;
+      PublishBuild;
+      BeforePublish;
+      GenerateManifests;
+      CopyFilesToOutputDirectory;
+      CleanPublishFolder;
+      _CopyFilesToPublishFolder;
+	  _CopyManifestFiles;
+      _DeploymentGenerateBootstrapper;
+      ResolveKeySource;
+      _DeploymentSignClickOnceDeployment;
+      AfterPublish
+    </PublishOnlyDependsOn>
   </PropertyGroup>
   <Import Project="..\..\packages\SharpDX.2.6.3\build\SharpDX.targets" Condition="Exists('..\..\packages\SharpDX.2.6.3\build\SharpDX.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -285,4 +292,20 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\..\packages\SharpDX.2.6.3\build\SharpDX.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\SharpDX.2.6.3\build\SharpDX.targets'))" />
   </Target>
+  <Target Name="_CopyManifestFiles" Condition=" '$(_DeploymentCopyApplicationManifest)'=='true' or '$(GenerateClickOnceManifests)'=='true' " DependsOnTargets="PrepareForBuild">
+    <Copy SourceFiles="@(ApplicationManifest)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="$(SkipCopyUnchangedFiles)" OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)" Retries="$(CopyRetryCount)" RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)" UseHardlinksIfPossible="$(CreateHardLinksForAdditionalFilesIfPossible)" Condition="'$(GenerateClickOnceManifests)'=='true' or '$(_DeploymentCopyApplicationManifest)'=='true'">
+      <Output TaskParameter="DestinationFiles" ItemName="_DeploymentMainApplicationManifest" />
+      <Output TaskParameter="DestinationFiles" ItemName="FileWrites" />
+    </Copy>
+    <Message Importance="Normal" Condition="'$(_DeploymentCopyApplicationManifest)'=='true'" Text="$(MSBuildProjectName) -&gt; @(_DeploymentMainApplicationManifest->'%(FullPath)')" />
+    <Copy SourceFiles="@(DeployManifest)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="$(SkipCopyUnchangedFiles)" OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)" Retries="$(CopyRetryCount)" RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)" UseHardlinksIfPossible="$(CreateHardLinksForAdditionalFilesIfPossible)" Condition="'$(GenerateClickOnceManifests)'=='true'">
+      <Output TaskParameter="DestinationFiles" ItemName="_DeploymentMainDeployManifest" />
+      <Output TaskParameter="DestinationFiles" ItemName="FileWrites" />
+    </Copy>
+    <Message Importance="Normal" Condition="'$(GenerateClickOnceManifests)'=='true'" Text="$(MSBuildProjectName) -&gt; @(_DeploymentMainDeployManifest->'%(FullPath)')" />
+  </Target>
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
 </Project>
