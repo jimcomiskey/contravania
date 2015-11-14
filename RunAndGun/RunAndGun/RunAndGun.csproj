@@ -19,7 +19,7 @@
     <XnaOutputType>Game</XnaOutputType>
     <ApplicationIcon>Resources\Game.ico</ApplicationIcon>
     <Thumbnail>Resources\GameThumbnail.png</Thumbnail>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
     <SccProjectName>
     </SccProjectName>
     <SccLocalPath>
@@ -30,9 +30,9 @@
     </SccProvider>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <PublishUrl>C:\Git\projects\publish\</PublishUrl>
+    <PublishUrl>ftp://waws-prod-dm1-007.ftp.azurewebsites.windows.net/site/wwwroot/publish/</PublishUrl>
     <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
+    <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateMode>Foreground</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
@@ -40,12 +40,13 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <UpdateUrl>http://jimcomiskey.github.io/projects/publish/</UpdateUrl>
+    <InstallUrl>http://contravania.azurewebsites.net/publish/</InstallUrl>
     <ProductName>Contravania</ProductName>
     <PublisherName>Jim Comiskey</PublisherName>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>36</ApplicationRevision>
+    <ApplicationRevision>73</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -79,10 +80,10 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>2EDBB0AF6AD831FFCC2B50CAB5BA60A40138F8EF</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>3CBCE02A0B955D3AA4FC10E45606722973EF702B</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>RunAndGun_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>ContravaniaSignature.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -153,6 +154,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml">
@@ -201,7 +203,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Game.cs" />
-    <Compile Include="GameObjects\RectangleExtensions.cs" />
+    <Compile Include="Helpers\RectangleExtensions.cs" />
     <Compile Include="Animations\PlayerSpriteCollection.cs" />
     <Compile Include="StageObjects\EnemySpawnLocation.cs" />
     <Compile Include="StageObjects\Stage.cs" />

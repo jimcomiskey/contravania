@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="108" height="8" tilewidth="32" tileheight="32" backgroundcolor="#ffffff" nextobjectid="59">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="108" height="8" tilewidth="32" tileheight="32" backgroundcolor="#ffffff" nextobjectid="60">
  <tileset firstgid="1" name="Level1Tileset" tilewidth="32" tileheight="32" tilecount="42">
   <image source="../../RunAndGunContent/StageData/Level1Tileset.png" trans="ffffff" width="192" height="224"/>
   <terraintypes>
@@ -146,6 +146,7 @@
   <object id="45" type="Level1BossBomberRight" gid="68" x="3368" y="119" width="14" height="7"/>
   <object id="52" type="Cannon" gid="64" x="2880" y="128" width="32" height="32"/>
   <object id="53" type="Sniper" gid="48" x="2483" y="133" width="24" height="40"/>
+  <object id="59" type="Sniper" gid="48" x="1315" y="84" width="24" height="40"/>
  </objectgroup>
  <objectgroup name="ForegroundObjects">
   <object id="33" type="Sprites/Bosses/boss1frontlayer" gid="53" x="3328" y="216" width="128" height="192"/>
