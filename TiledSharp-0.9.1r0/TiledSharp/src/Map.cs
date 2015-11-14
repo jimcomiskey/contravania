@@ -23,16 +23,9 @@ namespace TiledSharp
         public TmxList<TmxImageLayer> ImageLayers {get; private set;}
         public PropertyDict Properties {get; private set;}
 
-        public enum IsFileOrString { File = 0, String = 1 }
-
-        public TmxMap(string filename, IsFileOrString isFileOrString )
+        public TmxMap(string filename)
         {
-            XDocument xDoc;
-            if (isFileOrString == IsFileOrString.File)
-                xDoc = ReadXml(filename);
-            else
-                xDoc = ReadXmlFromString(filename);
-
+            XDocument xDoc = ReadXml(filename);
             var xMap = xDoc.Element("map");
 
             Version = (string)xMap.Attribute("version");

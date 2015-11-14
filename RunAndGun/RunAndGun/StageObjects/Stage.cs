@@ -15,7 +15,6 @@ using RunAndGun.GameObjects;
 using RunAndGun.Animations;
 using RunAndGun.StageObjects;
 using RunAndGun.Helpers;
-using TiledSharp;
 
 namespace RunAndGun
 {
@@ -146,8 +145,6 @@ namespace RunAndGun
 
             _playerLifeIcon = game.Content.Load<Texture2D>("Sprites/PlayerLifeIcon");
 
-            
-
             if (game.CurrentGame == Game.GameType.Contra)
             {
                 _backgroundTileSource.Add(worldcontent.Load<Texture2D>("StageData/Level1Tileset"));
@@ -160,29 +157,22 @@ namespace RunAndGun
 
                 _gameplayMusic = worldcontent.Load<Song>("Music/Contra - Jungle Theme");
                 _fanfare = worldcontent.Load<Song>("Music/fanfare");
-
+                
                 PlayMusic();
 
-                //string tmxFile = appDirectory + "\\LevelMaps\\" + stageid + ".tmx";
-
-                //if (File.Exists(tmxFile))
-                //{
-                //    Trace.TraceInformation("Tmx file located: {0}", tmxFile);
-                //    tmx = new TiledSharp.TmxMap(tmxFile, TiledSharp.TmxMap.IsFileOrString.File);
-
-                //    _destroyedTileSourceBaseGID = tmx.Tilesets["boss1paneldestroyed"].FirstGid;
-                //    Trace.TraceInformation("Tmx file loaded.");
-                //}
-                //else
-                //{
-                //    throw new FileNotFoundException(string.Format("Cannot load file: {0}", tmxFile));
-                //}
-
-                string myXml = ContraLevel1String.LevelXML();
-
+                string tmxFile = appDirectory + "\\LevelMaps\\" + stageid + ".tmx";
                 
-                tmx = new TiledSharp.TmxMap(myXml, TiledSharp.TmxMap.IsFileOrString.String);
-
+                if (File.Exists(tmxFile))
+                {
+                    Trace.TraceInformation("Tmx file located: {0}", tmxFile);
+                    tmx = new TiledSharp.TmxMap(tmxFile);
+                    _destroyedTileSourceBaseGID = tmx.Tilesets["boss1paneldestroyed"].FirstGid;
+                    Trace.TraceInformation("Tmx file loaded.");
+                }
+                else
+                {
+                    throw new FileNotFoundException(string.Format("Cannot load file: {0}", tmxFile));
+                }
                 _screenTileWidth = 8;
                 
             }
@@ -196,7 +186,7 @@ namespace RunAndGun
                             _gameplayMusic = worldcontent.Load<Song>("Music/Level1VampireKiller");
                             PlayMusic();
                             _backgroundTileSource.Add(worldcontent.Load<Texture2D>("StageData/Level1A"));
-                            tmx = new TiledSharp.TmxMap(appDirectory + "\\LevelMaps\\" + stageid + ".tmx", TiledSharp.TmxMap.IsFileOrString.File);
+                            tmx = new TiledSharp.TmxMap(appDirectory + "\\LevelMaps\\" + stageid + ".tmx");
                             
                             _screenTileWidth = 16;
 
@@ -209,7 +199,7 @@ namespace RunAndGun
                     case "Castlevania1-1-2":
                         {
                             _backgroundTileSource.Add(worldcontent.Load<Texture2D>("StageData/Level1B"));
-                            tmx = new TiledSharp.TmxMap(appDirectory + "\\LevelMaps\\" + stageid + ".tmx", TiledSharp.TmxMap.IsFileOrString.File);
+                            tmx = new TiledSharp.TmxMap(appDirectory + "\\LevelMaps\\" + stageid + ".tmx");
                             _screenTileWidth = 16;
                             break;
                         }
