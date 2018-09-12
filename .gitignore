@@ -191,3 +191,4 @@ _Pvt_Extensions/
 ModelManifest.xml
 *.deploy
 RunAndGun/RunAndGun/Publish Notes.txt
+/.vs/RunAndGun/v15/Server/sqlite3

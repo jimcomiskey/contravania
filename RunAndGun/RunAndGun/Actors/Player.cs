@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Audio;
-using System.Xml;
 using RunAndGun.GameObjects;
 using RunAndGun.Animations;
-using SharpDX.DirectInput;
+//using SharpDX.DirectInput;
 
 namespace RunAndGun.Actors
 {
@@ -71,7 +67,7 @@ namespace RunAndGun.Actors
         public bool Visible;
 
         private Guid _USBGamePadId { get; set; }
-        private Joystick _joystick;
+        //private SharpDX.DirectInput.Joystick _joystick;
 
         private InputState _previousUSBGamePadState;
         private InputState _currentUSBGGamePadState;
@@ -136,16 +132,16 @@ namespace RunAndGun.Actors
             _USBGamePadId = Guid.Empty;
             
         }
-        public void InitializeJoystick(Guid joystickId, DirectInput directInput)
-        {
-            _USBGamePadId = joystickId;            
-            _joystick = new Joystick(directInput, joystickId);
+        //public void InitializeJoystick(Guid joystickId, DirectInput directInput)
+        //{
+        //    _USBGamePadId = joystickId;            
+        //    //_joystick = new SharpDX.DirectInput.Joystick(directInput, joystickId);
 
-            _joystick.Properties.BufferSize = 128;
+        //    //_joystick.Properties.BufferSize = 128;
 
-            _joystick.Acquire();
+        //    //_joystick.Acquire();
             
-        }
+        //}
         public bool IsVulnerable()
         {
             if (_spawnTimeRemaining > 0 || IsDying)
@@ -381,7 +377,7 @@ namespace RunAndGun.Actors
             {
                 if (_currentUSBGGamePadState != null)
                 {
-                    ProcessUSBInput();
+                    //ProcessUSBInput();
                     
                 }
                 else
@@ -419,65 +415,65 @@ namespace RunAndGun.Actors
             }
         }
 
-        private void ProcessUSBInput()
-        {
-            _previousUSBGamePadState.CopyFrom(_currentUSBGGamePadState);
+        //private void ProcessUSBInput()
+        //{
+        //    _previousUSBGamePadState.CopyFrom(_currentUSBGGamePadState);
 
-            _joystick.Poll();
+        //    _joystick.Poll();
 
-            var datas = _joystick.GetBufferedData();
-            foreach (var state in datas)
-            {
-                switch (state.Offset)
-                {
-                    case JoystickOffset.Buttons4:
-                    case JoystickOffset.Buttons3:
-                        _currentUSBGGamePadState.WeaponButtonPressed = state.Value == 128 ? true : false;
-                        break;
-                    case JoystickOffset.Buttons2:
-                    case JoystickOffset.Buttons1:
-                        _currentUSBGGamePadState.JumpButtonPressed = state.Value == 128 ? true : false;
-                        break;
-                    case JoystickOffset.Buttons9:
-                        _currentUSBGGamePadState.StartButtonPressed = state.Value == 128 ? true : false;
-                        break;
-                    case JoystickOffset.X:
-                        if (state.Value < 32767)
-                        {
-                            _currentUSBGGamePadState.DirectionRight = false;
-                            _currentUSBGGamePadState.DirectionLeft = true;
-                        }
-                        else if (state.Value > 32767)
-                        {
-                            _currentUSBGGamePadState.DirectionLeft = false;
-                            _currentUSBGGamePadState.DirectionRight = true;
-                        }
-                        else
-                        {
-                            _currentUSBGGamePadState.DirectionLeft = false;
-                            _currentUSBGGamePadState.DirectionRight = false;
-                        }
-                        break;
-                    case JoystickOffset.Y:
-                        if (state.Value < 32767)
-                        {
-                            _currentUSBGGamePadState.DirectionUp = true;
-                            _currentUSBGGamePadState.DirectionDown = false;
-                        }
-                        else if (state.Value > 32767)
-                        {
-                            _currentUSBGGamePadState.DirectionUp = false;
-                            _currentUSBGGamePadState.DirectionDown = true;
-                        }
-                        else
-                        {
-                            _currentUSBGGamePadState.DirectionDown = false;
-                            _currentUSBGGamePadState.DirectionUp = false;
-                        }
-                        break;
-                }
-            }
-        }
+        //    var datas = _joystick.GetBufferedData();
+        //    foreach (var state in datas)
+        //    {
+        //        switch (state.Offset)
+        //        {
+        //            case JoystickOffset.Buttons4:
+        //            case JoystickOffset.Buttons3:
+        //                _currentUSBGGamePadState.WeaponButtonPressed = state.Value == 128 ? true : false;
+        //                break;
+        //            case JoystickOffset.Buttons2:
+        //            case JoystickOffset.Buttons1:
+        //                _currentUSBGGamePadState.JumpButtonPressed = state.Value == 128 ? true : false;
+        //                break;
+        //            case JoystickOffset.Buttons9:
+        //                _currentUSBGGamePadState.StartButtonPressed = state.Value == 128 ? true : false;
+        //                break;
+        //            case JoystickOffset.X:
+        //                if (state.Value < 32767)
+        //                {
+        //                    _currentUSBGGamePadState.DirectionRight = false;
+        //                    _currentUSBGGamePadState.DirectionLeft = true;
+        //                }
+        //                else if (state.Value > 32767)
+        //                {
+        //                    _currentUSBGGamePadState.DirectionLeft = false;
+        //                    _currentUSBGGamePadState.DirectionRight = true;
+        //                }
+        //                else
+        //                {
+        //                    _currentUSBGGamePadState.DirectionLeft = false;
+        //                    _currentUSBGGamePadState.DirectionRight = false;
+        //                }
+        //                break;
+        //            case JoystickOffset.Y:
+        //                if (state.Value < 32767)
+        //                {
+        //                    _currentUSBGGamePadState.DirectionUp = true;
+        //                    _currentUSBGGamePadState.DirectionDown = false;
+        //                }
+        //                else if (state.Value > 32767)
+        //                {
+        //                    _currentUSBGGamePadState.DirectionUp = false;
+        //                    _currentUSBGGamePadState.DirectionDown = true;
+        //                }
+        //                else
+        //                {
+        //                    _currentUSBGGamePadState.DirectionDown = false;
+        //                    _currentUSBGGamePadState.DirectionUp = false;
+        //                }
+        //                break;
+        //        }
+        //    }
+        //}
 
         private void DetermineAnalogHorizontalMovement(GamePadState currentGamePadState, Microsoft.Xna.Framework.Input.KeyboardState currentKeyboardState)
         {

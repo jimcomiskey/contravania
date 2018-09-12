@@ -7,19 +7,19 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using RunAndGun.Actors;
 using RunAndGun.GameObjects;
-using SharpDX.DirectInput;
+//using SharpDX.DirectInput;
 
 namespace RunAndGun
 {
     // Command Line Arguments:
-    // 
+    //
     // [/StartupGame:TitleScreen||Contra||ContraVania]
     // [/PlayerStartingPosition:[X]
     // WindowedMode
     // StartupStage
     // DoNotSpawnEnemies - when setting is present, do not spawn enemies
     // DoNotSpawnRandomEnemies
-    // 
+    //
 
     public class Game : Microsoft.Xna.Framework.Game
     {
@@ -34,7 +34,7 @@ namespace RunAndGun
         public GameType CurrentGame;
 
         private int _startingLifeCount = 3;
-        
+
         private GraphicsDeviceManager _graphics;
         private ContentManager _worldContent;
 
@@ -42,9 +42,9 @@ namespace RunAndGun
         private Matrix _spriteScale;
 
         //Player player1;
-        private List<Player> _players;        
-        private Stage _currentStage;        
-        private SoundEffect _soundGamePause;        
+        private List<Player> _players;
+        private Stage _currentStage;
+        private SoundEffect _soundGamePause;
 
         // The font used to display UI elements
         private SpriteFont _font;
@@ -58,9 +58,9 @@ namespace RunAndGun
         public Game()
         {
             CurrentGameState = GameState.TitleScreen;
-                        
+
             _graphics = new GraphicsDeviceManager(this);
-            
+
             // Non-World-Specific Game Content: Player sprite, Generic sound effects, etc.
             Content.RootDirectory = "Content";
 
@@ -75,7 +75,7 @@ namespace RunAndGun
             gamePaused = false;
 
             InitializeGameLaunchParameters();
-            
+
             base.Initialize();
         }
 
@@ -114,7 +114,7 @@ namespace RunAndGun
         {
 
             _players = new List<Player>();
-            
+
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             float screenscaleWidth =
@@ -122,18 +122,18 @@ namespace RunAndGun
 
             float screenscaleHeight =
                 (float)_graphics.GraphicsDevice.Viewport.Height / (float)Game.iScreenModelHeight;
-            
-            // Create the scale transform for Draw. 
+
+            // Create the scale transform for Draw.
             // Do not scale the sprite depth (Z=1).
             //SpriteScale = Matrix.CreateScale(screenscale, screenscale, 1);
             _spriteScale = Matrix.CreateScale(screenscaleWidth, screenscaleHeight, 1);
 
-            _soundGamePause = Content.Load<SoundEffect>("Sounds/gamepause");            
+            _soundGamePause = Content.Load<SoundEffect>("Sounds/gamepause");
             _font = Content.Load<SpriteFont>("spriteFont1");
 
             _titleScreen = new TitleScreen();
             _titleScreen.Initialize(Content, _font);
-            
+
 
         }
         protected override void UnloadContent()
@@ -164,26 +164,26 @@ namespace RunAndGun
                     {
                         // if playing ContraVania, load world content from ContraVania folder.
                         // otherwise, assume we are playing Contra, which loads from Content folder, same as Core Game Content.
-                        if (CurrentGame == GameType.ContraVania)
-                        {
-                            _worldContent = new ContentManager(this.Services);
-                            _worldContent.RootDirectory = "ContraVania";
-                        }
-                        else
-                        {
+                        //if (CurrentGame == GameType.ContraVania)
+                        //{
+                        //    _worldContent = new ContentManager(this.Services);
+                        //    _worldContent.RootDirectory = "ContraVania";
+                        //}
+                        //else
+                        //{
                             _worldContent = Content;
-                        }
+                        //}
 
-                        var directInput = new DirectInput();
+                        //var directInput = new DirectInput();
 
-                        IList<DeviceInstance> devices = null;
+                        //IList<DeviceInstance> devices = null;
 
-                        if (App.Default.InputType == "USB Gamepad")
-                        {
-                            // TODO: only acquire devices if setting is specified in the application.
-                            devices = directInput.GetDevices(DeviceType.Joystick,
-                                DeviceEnumerationFlags.AllDevices);
-                        }
+                        //if (App.Default.InputType == "USB Gamepad")
+                        //{
+                        //    // TODO: only acquire devices if setting is specified in the application.
+                        //    devices = directInput.GetDevices(DeviceType.Joystick,
+                        //        DeviceEnumerationFlags.AllDevices);
+                        //}
 
                         _currentStage = new Stage(_worldContent);
 
@@ -191,11 +191,11 @@ namespace RunAndGun
                         {
                             var newPlayer = new Player(iPlayerID, this);
                             _players.Add(newPlayer);
-                            
-                            if (devices.Count >= iPlayerID)
-                            {
-                                newPlayer.InitializeJoystick(devices[iPlayerID-1].InstanceGuid, directInput);
-                            }
+
+                            //if (devices.Count >= iPlayerID)
+                            //{
+                            //    newPlayer.InitializeJoystick(devices[iPlayerID-1].InstanceGuid, directInput);
+                            //}
 
                         }
                         //players.Add(new Player(2, this));
@@ -226,11 +226,11 @@ namespace RunAndGun
                         foreach (Player player in _players)
                             player.Initialize(Content,
                                             new Vector2(
-                                            GraphicsDevice.Viewport.TitleSafeArea.X + ((player.ID - 1) * _currentStage.TileWidth) + playerStartingPosition, 
+                                            GraphicsDevice.Viewport.TitleSafeArea.X + ((player.ID - 1) * _currentStage.TileWidth) + playerStartingPosition,
                                             GraphicsDevice.Viewport.TitleSafeArea.Y),
                                             _currentStage, _startingLifeCount);
 
-                        
+
                         if (CurrentGame == GameType.Contra)
                         {
 
@@ -275,7 +275,7 @@ namespace RunAndGun
 
                         }
 
-                        // TODO: update code so that currentStage doesn't advance until all players advance. 
+                        // TODO: update code so that currentStage doesn't advance until all players advance.
                         // (already-advanced players will be inactive until game stage advances. //
                         if (_players[0].CurrentStage.StageID != _currentStage.StageID)
                             _currentStage = _players[0].CurrentStage;
@@ -283,7 +283,7 @@ namespace RunAndGun
                         break;
                     }
             }
-            
+
             base.Update(gameTime);
         }
 
@@ -300,8 +300,8 @@ namespace RunAndGun
                 _currentStage.PlayMusic();
             }
         }
-        
-        
+
+
         private void UpdateProjectiles(CVGameTime gameTime, List<Projectile> lstProjectiles)
         {
             // Update the Projectiles
@@ -332,13 +332,13 @@ namespace RunAndGun
             {
                 case GameState.TitleScreen:
                     {
-                        _titleScreen.Draw(_spriteBatch);                        
+                        _titleScreen.Draw(_spriteBatch);
                         break;
                     }
 
                 case GameState.Playing:
                     {
-                    
+
                     //spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
                     _currentStage.Draw(_spriteBatch, _currentStage.CameraPosition);
@@ -371,7 +371,7 @@ namespace RunAndGun
                             _spriteBatch.DrawString(_font, string.Format("IsOnGround: {0}", _players[0].IsOnGround), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + 40), Color.Blue);
                             //spriteBatch.DrawString(font, players[0].IsOnStairsRight.ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + 60), Color.Red);
                         }
-                        
+
                         break;
                     } // GameState.Playing
             }
