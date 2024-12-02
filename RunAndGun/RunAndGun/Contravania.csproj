@@ -14,24 +14,17 @@
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 	</PropertyGroup>
 	<ItemGroup>
-		<Compile Update="App1.Designer.cs">
-			<AutoGen>True</AutoGen>
-			<DesignTimeSharedInput>True</DesignTimeSharedInput>
-			<DependentUpon>App.settings</DependentUpon>
-		</Compile>
-	</ItemGroup>
-	<ItemGroup>
 		<Content Include="Icon.ico" />
 		<Content Include="Resources\Game.ico" />
 		<Content Include="Resources\GameThumbnail.png" />
 	</ItemGroup>
 	<ItemGroup>
-		<MonoGameContentReference Include="..\RunAndGunContent\RunAndGunContent.mgcb" />
-		<MonoGameContentReference Include="..\..\ContraVania\ContraVania.mgcb" />
-		<None Update="App.settings">
-			<Generator>SettingsSingleFileGenerator</Generator>
-			<LastGenOutput>App1.Designer.cs</LastGenOutput>
-		</None>
+		<MonoGameContentReference Include="..\RunAndGunContent\RunAndGunContent.mgcb">
+			<Link>Content\RunAndGunContent.mgcb</Link>			
+		</MonoGameContentReference>
+		<MonoGameContentReference Include="..\..\ContraVania\ContraVania.mgcb">
+			<Link>Content\ContraVania.mgcb</Link>
+		</MonoGameContentReference>
 		<None Update="LevelMaps\Castlevania1-1-1.tmx">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
@@ -50,9 +43,6 @@
 		<PackageReference Include="MonoGame.Framework.DesktopGL">
 			<Version>3.8.2.1105</Version>
 		</PackageReference>
-	</ItemGroup>
-	<ItemGroup>
-		<PackageReference Include="OpenTK" Version="4.8.2" />
 	</ItemGroup>
 	<Target Name="RestoreDotnetTools" BeforeTargets="Restore">
 		<Message Text="Restoring dotnet tools" Importance="High" />

@@ -63,11 +63,6 @@ namespace RunAndGun
 
             // Non-World-Specific Game Content: Player sprite, Generic sound effects, etc.
             Content.RootDirectory = "Content";
-
-            _graphics.PreferredBackBufferWidth = 768;
-            _graphics.PreferredBackBufferHeight = 720;
-            Window.AllowUserResizing = true;
-
         }
 
         protected override void Initialize()
@@ -101,7 +96,13 @@ namespace RunAndGun
 
             if (!LaunchParameters.ContainsKey("WindowedMode"))
             {
-                //graphics.IsFullScreen = true;
+                _graphics.IsFullScreen = true;
+            }
+            else
+            {
+                _graphics.PreferredBackBufferWidth = 768;
+                _graphics.PreferredBackBufferHeight = 720;
+                Window.AllowUserResizing = true;
             }
 
             if (LaunchParameters.ContainsKey("LifeCount"))
