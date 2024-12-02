@@ -1,60 +1,61 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0-windows</TargetFramework>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <OutputType>WinExe</OutputType>
-    <MonoGamePlatform>Windows</MonoGamePlatform>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-  </PropertyGroup>  
-  <PropertyGroup>
-    <ApplicationIcon>Icon.ico</ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Update="App1.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>App.settings</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Icon.ico" />
-    <Content Include="Resources\Game.ico" />
-    <Content Include="Resources\GameThumbnail.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <MonoGameContentReference Include="..\RunAndGunContent\RunAndGunContent.mgcb" />
-    <MonoGameContentReference Include="..\..\ContraVania\ContraVania.mgcb" />
-    <None Update="App.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>App1.Designer.cs</LastGenOutput>
-    </None>
-    <None Update="LevelMaps\Castlevania1-1-1.tmx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="LevelMaps\Castlevania1-1-2.tmx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="LevelMaps\Contra1-1Jungle.tmx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\TiledSharp-0.9.1r0\TiledSharp\TiledSharp.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.2.1105" />
-    <PackageReference Include="MonoGame.Framework.DesktopGL">
-      <Version>3.8.2.1105</Version>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="OpenTK" Version="4.8.2" />
-  </ItemGroup>
-  <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
-    <Message Text="Restoring dotnet tools" Importance="High" />
-    <Exec Command="dotnet tool restore" />
-  </Target>
+	<PropertyGroup>
+		<TargetFramework>net9.0-windows</TargetFramework>
+		<Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+		<OutputType>WinExe</OutputType>
+		<MonoGamePlatform>Windows</MonoGamePlatform>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<Configurations>Debug;Release</Configurations>
+	</PropertyGroup>
+	<PropertyGroup>
+		<ApplicationIcon>Icon.ico</ApplicationIcon>
+	</PropertyGroup>
+	<PropertyGroup>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Update="App1.Designer.cs">
+			<AutoGen>True</AutoGen>
+			<DesignTimeSharedInput>True</DesignTimeSharedInput>
+			<DependentUpon>App.settings</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="Icon.ico" />
+		<Content Include="Resources\Game.ico" />
+		<Content Include="Resources\GameThumbnail.png" />
+	</ItemGroup>
+	<ItemGroup>
+		<MonoGameContentReference Include="..\RunAndGunContent\RunAndGunContent.mgcb" />
+		<MonoGameContentReference Include="..\..\ContraVania\ContraVania.mgcb" />
+		<None Update="App.settings">
+			<Generator>SettingsSingleFileGenerator</Generator>
+			<LastGenOutput>App1.Designer.cs</LastGenOutput>
+		</None>
+		<None Update="LevelMaps\Castlevania1-1-1.tmx">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="LevelMaps\Castlevania1-1-2.tmx">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="LevelMaps\Contra1-1Jungle.tmx">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\TiledSharp-0.9.1r0\TiledSharp\TiledSharp.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.2.1105" />
+		<PackageReference Include="MonoGame.Framework.DesktopGL">
+			<Version>3.8.2.1105</Version>
+		</PackageReference>
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="OpenTK" Version="4.8.2" />
+	</ItemGroup>
+	<Target Name="RestoreDotnetTools" BeforeTargets="Restore">
+		<Message Text="Restoring dotnet tools" Importance="High" />
+		<Exec Command="dotnet tool restore" />
+	</Target>
 </Project>
