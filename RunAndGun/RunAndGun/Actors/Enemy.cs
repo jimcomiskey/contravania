@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Audio;
-using System.Xml;
 using RunAndGun.GameObjects;
 
 namespace RunAndGun.Actors
@@ -34,7 +28,7 @@ namespace RunAndGun.Actors
         }
 
         public bool Active;        
-        public bool CollisionIsHazardous;
+        public bool CollisionIsHazardous = true;
         public bool VulnerableToBullets;
         public bool BulletProof;
         public bool IsDead;
@@ -43,8 +37,7 @@ namespace RunAndGun.Actors
         {
             Name = enemytype;
             Active = true;
-            _health = 1;
-            CollisionIsHazardous = true;
+            _health = 1;            
             VulnerableToBullets = true;
             direction = Player.PlayerDirection.Left;
             EnemyMoveSpeed = 0.0f;

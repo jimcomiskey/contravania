@@ -146,6 +146,8 @@ namespace RunAndGun.Actors
         {
             if (_spawnTimeRemaining > 0 || IsDying)
                 return false;
+            else if (_isInWater && _isProne)
+                return false;
             else
                 return true;
         }

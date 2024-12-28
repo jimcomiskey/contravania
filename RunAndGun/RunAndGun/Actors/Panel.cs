@@ -37,6 +37,7 @@ namespace RunAndGun.Actors
             _health = 1;
             _currentGlowFrame = 0;
             _glowAnimatingforward = true;
+            CollisionIsHazardous = false;
 
             PlayerSpriteCollection spritecollection;
             Texture2D turrettileset;
