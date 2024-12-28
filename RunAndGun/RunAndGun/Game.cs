@@ -60,6 +60,10 @@ namespace RunAndGun
             CurrentGameState = GameState.TitleScreen;
 
             _graphics = new GraphicsDeviceManager(this);
+            // Monogame's workaround to have backwards compatibility with XNA. 
+            // per their documentation, they encourage setting this to false and updating codebase to support the
+            // "modern style of pixel addressing".
+            _graphics.PreferHalfPixelOffset = true;
 
             // Non-World-Specific Game Content: Player sprite, Generic sound effects, etc.
             Content.RootDirectory = "Content";
