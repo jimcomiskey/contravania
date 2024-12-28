@@ -1,20 +1,18 @@
-﻿// ParallaxingBackground.cs
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
-using System.Xml;
-using System.IO;
 using RunAndGun.Actors;
-using RunAndGun.GameObjects;
 using RunAndGun.Animations;
-using RunAndGun.StageObjects;
+using RunAndGun.GameObjects;
 using RunAndGun.Helpers;
+using RunAndGun.StageObjects;
 
 namespace RunAndGun
 {

@@ -1,13 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using RunAndGun.Actors;
 using RunAndGun.GameObjects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace RunAndGun.Actors
 {
