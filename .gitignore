@@ -398,3 +398,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/RunAndGun/RunAndGun/Properties/launchSettings.json
