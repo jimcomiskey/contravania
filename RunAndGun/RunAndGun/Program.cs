@@ -9,9 +9,15 @@ namespace RunAndGun
         static void Main(string[] args)
         {
             using (Game game = new Game())
-            {                   
-                game.Run();
-                
+            {
+                foreach (var arg in args)
+                {
+                    if (arg.Split('=').Length == 2)
+                    {
+                        game.LaunchParameters.Add(arg.Split('=')[0], arg.Split('=')[1]);
+                    }
+                }                
+                game.Run();                
             }
         }
     }
