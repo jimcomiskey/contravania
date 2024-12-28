@@ -17,7 +17,7 @@ namespace RunAndGun.Actors
     {
 
         public string Name;  // I only use this for debugging purposes at this point.
-        public string DebugInfo; 
+        public string DebugInfo;        
 
         public virtual Stage CurrentStage { get; set; }
         
@@ -54,7 +54,7 @@ namespace RunAndGun.Actors
         public bool IsDying;
         public bool IsOnGround; // set to false at beginning of ApplyPhysics and set to true when a collision is detected. therefore, gravity is applied at all times, even when player is on the ground.
         public Animation ExplosionAnimation = new Animation();
-        public SoundEffect ExplosionSound;
+        public SoundEffect ExplosionSound;        
 
         public List<StageTile> getCurrentPlatformTiles()
         {
@@ -229,7 +229,10 @@ namespace RunAndGun.Actors
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-#if DEBUG
+        }
+
+        public void DrawDebug(SpriteBatch spriteBatch)
+        {
             Rectangle drawBox;
             if (this.GetType() == typeof(Player))
             {
@@ -250,11 +253,7 @@ namespace RunAndGun.Actors
 
             txt.SetData(data);
             spriteBatch.Draw(txt, new Vector2(drawBox.X - CurrentStage.CameraPosition.X, drawBox.Y - CurrentStage.CameraPosition.Y), Color.White);
-#endif 
+
         }
-
-
-
-        
     }
 }

@@ -740,10 +740,16 @@ namespace RunAndGun
                         spriteBatch.Draw(_destroyedTileSource, new Rectangle((t.X * TileWidth) - (int)cameraPosition.X, t.Y * TileHeight, TileHeight, TileWidth), new Rectangle(x, y, TileWidth, TileHeight), Color.White);
                     }
                 }
-            }       
+            }
 
             for (int i = 0; i < ActiveEnemies.Count; i++)
+            {
+                if (Game.LaunchParameters.ContainsKey("DebugBounds") && Game.LaunchParameters["DebugBounds"] == "true")
+                {
+                    ActiveEnemies[i].DrawDebug(spriteBatch);
+                }
                 ActiveEnemies[i].Draw(spriteBatch);
+            }
 
             foreach (StageObject s in uniqueForegroundObjects)
             {
