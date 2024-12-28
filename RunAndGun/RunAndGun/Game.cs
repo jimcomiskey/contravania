@@ -97,6 +97,7 @@ namespace RunAndGun
             if (!LaunchParameters.ContainsKey("WindowedMode"))
             {
                 _graphics.IsFullScreen = true;
+                _graphics.ApplyChanges();
             }
             else
             {
