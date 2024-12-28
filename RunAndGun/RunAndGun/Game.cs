@@ -26,7 +26,7 @@ namespace RunAndGun
         public const float iScreenModelWidth = 256f;
         public const float iScreenModelHeight = 240f;
         public const bool bDrawBoundingBox = false;
-        public enum GameType { ContraVania = 1, Contra = 2}
+        public enum GameType { ContraVania = 1, Contra = 2 }
 
         public enum GameState { TitleScreen, Initializing, Playing };
         public GameState CurrentGameState;
@@ -60,6 +60,10 @@ namespace RunAndGun
             CurrentGameState = GameState.TitleScreen;
 
             _graphics = new GraphicsDeviceManager(this);
+            // Monogame's workaround to have backwards compatibility with XNA. 
+            // per their documentation, they encourage setting this to false and updating codebase to support the
+            // "modern style of pixel addressing".
+            _graphics.PreferHalfPixelOffset = true;
 
             // Non-World-Specific Game Content: Player sprite, Generic sound effects, etc.
             Content.RootDirectory = "Content";
@@ -94,7 +98,7 @@ namespace RunAndGun
                 CurrentGameState = GameState.Initializing;
             }
 
-            if (!LaunchParameters.ContainsKey("WindowedMode"))
+            if (!LaunchParameters.ContainsKey("WindowedMode") || LaunchParameters["WindowedMode"] == "false")
             {
                 _graphics.IsFullScreen = true;
                 _graphics.ApplyChanges();
@@ -173,7 +177,7 @@ namespace RunAndGun
                         //}
                         //else
                         //{
-                            _worldContent = Content;
+                        _worldContent = Content;
                         //}
 
                         //var directInput = new DirectInput();
@@ -330,7 +334,7 @@ namespace RunAndGun
             GraphicsDevice.Clear(Color.Black);
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, _spriteScale);
 
-            switch(CurrentGameState)
+            switch (CurrentGameState)
             {
                 case GameState.TitleScreen:
                     {
@@ -341,26 +345,32 @@ namespace RunAndGun
                 case GameState.Playing:
                     {
 
-                    //spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+                        //spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
-                    _currentStage.Draw(_spriteBatch, _currentStage.CameraPosition);
+                        _currentStage.Draw(_spriteBatch, _currentStage.CameraPosition);
 
-                    foreach (Player player in _players)
-                    {
-                        if (player.Visible)
-                            player.Draw(_spriteBatch);
-                    }
+                        foreach (Player player in _players)
+                        {
+                            if (player.Visible)
+                            {
+                                if (LaunchParameters.ContainsKey("DebugBounds") && LaunchParameters["DebugBounds"] == "true")
+                                {
+                                    player.DrawDebug(_spriteBatch);
+                                }
+                                player.Draw(_spriteBatch);
+                            }
+                        }
 
-                    // Draw the Player Projectiles
-                    for (int i = 0; i < _currentStage.Projectiles.Count; i++)
-                    {
-                        _currentStage.Projectiles[i].Draw(_spriteBatch, _currentStage.CameraPosition);
-                    }
+                        // Draw the Player Projectiles
+                        for (int i = 0; i < _currentStage.Projectiles.Count; i++)
+                        {
+                            _currentStage.Projectiles[i].Draw(_spriteBatch, _currentStage.CameraPosition);
+                        }
 
-                    for (int i = 0; i < _currentStage.EnemyProjectiles.Count; i++)
-                    {
-                        _currentStage.EnemyProjectiles[i].Draw(_spriteBatch, _currentStage.CameraPosition);
-                    }
+                        for (int i = 0; i < _currentStage.EnemyProjectiles.Count; i++)
+                        {
+                            _currentStage.EnemyProjectiles[i].Draw(_spriteBatch, _currentStage.CameraPosition);
+                        }
 
 
                         //spriteBatch.DrawString(font, players[0].IsOnStairs.ToString(), new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y ), Color.Red);
